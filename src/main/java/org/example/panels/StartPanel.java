@@ -1,4 +1,4 @@
-package panels;
+package org.example.panels;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import Manager.GameManager;
+import org.example.Manager.GameManager;
 
 public class StartPanel extends JPanel {
 
