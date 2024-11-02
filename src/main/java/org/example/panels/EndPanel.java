@@ -1,8 +1,8 @@
-package panels;
+package org.example.panels;
 
 import javax.swing.*;
 
-import Manager.GameManager;
+import org.example.Manager.GameManager;
 
 import java.awt.*;
 

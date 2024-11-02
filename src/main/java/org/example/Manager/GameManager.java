@@ -1,8 +1,8 @@
-package Manager;
+package org.example.Manager;
 
-import panels.EndPanel;
-import panels.GamePanel;
-import panels.StartPanel;
+import org.example.panels.EndPanel;
+import org.example.panels.GamePanel;
+import org.example.panels.StartPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +12,7 @@ public class GameManager extends JFrame {
     private JPanel mainPanel;
 
     public GameManager() {
-        setTitle("학점을 지켜라!");
+        setTitle("Save Credits!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1080, 768);
 
