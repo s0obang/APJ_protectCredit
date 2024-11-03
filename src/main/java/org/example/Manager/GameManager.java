@@ -12,8 +12,9 @@ public class GameManager extends JFrame {
     private JPanel mainPanel;
 
     public GameManager() {
-        setTitle("Save Credits!");
+        setTitle("학점을 지켜라!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // 배경 사이즈
         setSize(1080, 768);
 
         cardLayout = new CardLayout();
