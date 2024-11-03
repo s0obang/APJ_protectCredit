@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import org.example.Manager.BackgroundPanel;
 import org.example.Manager.GameManager;
 
 public class StartPanel extends JPanel {
@@ -15,49 +16,86 @@ public class StartPanel extends JPanel {
     private JPanel cardPanel; // 패널들을 담을 메인 패널
 
     public StartPanel(GameManager manager) {
-        // CardLayout과 cardPanel 설정
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        // 여러 패널 생성 및 버튼 추가
-        JPanel panel1 = createPanel("Welcome to the Game!", Color.RED, "Go to Panel 2", "panel2");
-        JPanel panel2 = createPanel("Get Ready!", Color.BLUE, "Go to Panel 3", "panel3");
-        JPanel panel3 = createPanel("Press Start to Begin", Color.GREEN, "Go to Panel 1", "panel1");
 
-        // CardLayout에 패널 추가
-        cardPanel.add(panel1, "panel1");
-        cardPanel.add(panel2, "panel2");
-        cardPanel.add(panel3, "panel3");
-
-        JButton startButton = new JButton("Start Game");
-        startButton.addActionListener(e -> manager.showScreen("game")); // GameScreen으로 이동
-        panel3.add(startButton, BorderLayout.SOUTH);
+        cardPanel.add(startGamePanel(manager), "start");
 
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
     }
 
-    // 패널 생성 메서드
-    private JPanel createPanel(String labelText, Color bgColor, String buttonText, String targetPanelName) {
-        JPanel panel = new JPanel();
-        panel.setBackground(bgColor);
-        panel.setLayout(new BorderLayout());
+    private JPanel startGamePanel(GameManager manager) {
+        JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
+        panel.setLayout(null); // bPanel 절대 위치 정하려고
 
-        JLabel label = new JLabel(labelText, SwingConstants.CENTER);
-        panel.add(label, BorderLayout.CENTER);
+        JPanel bPanel = new JPanel(new GridBagLayout()); // 버튼 감싸는 패널
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        bPanel.setOpaque(false);
 
-        JButton button = new JButton(buttonText);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, targetPanelName); // 버튼 클릭 시 지정된 패널로 전환
-            }
-        });
-        panel.add(button, BorderLayout.SOUTH);
+        Font labelFont = new Font("Neo둥근모", Font.PLAIN, 26);
+
+        ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/historyButton.png");
+        Image img = buttonIcon1.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
+        buttonIcon1 = new ImageIcon(img);
+        JButton historyButton = new JButton(buttonIcon1);
+        historyButton.setPreferredSize(new Dimension(75, 75));
+        historyButton.setBorderPainted(false);
+        historyButton.setFocusPainted(false);
+        historyButton.setContentAreaFilled(false);
+
+        JLabel historyLabel = new JLabel("history");
+        historyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        historyLabel.setFont(labelFont);
+        historyLabel.setForeground(Color.decode("#5E5E5E"));
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        bPanel.add(historyButton, gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(5, 0, 0, 0);
+        bPanel.add(historyLabel, gbc);
+
+
+        ImageIcon buttonIcon2 = new ImageIcon("src/main/java/org/example/img/intro/playButton.png");
+        Image img2 = buttonIcon2.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
+        buttonIcon2 = new ImageIcon(img2);
+        JButton playButton = new JButton(buttonIcon2);
+        playButton.setPreferredSize(new Dimension(75, 75));
+        playButton.addActionListener(e -> manager.showScreen("game")); // 임의로 파라미터 받아서 GameScreen으로 이동
+
+        playButton.setBorderPainted(false);
+        playButton.setFocusPainted(false);
+        playButton.setContentAreaFilled(false);
+
+        JLabel playLabel = new JLabel("play!");
+        playLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        playLabel.setFont(labelFont);
+        playLabel.setForeground(Color.decode("#5E5E5E"));
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 120, 0, 0);
+        bPanel.add(playButton, gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(5, 120, 0, 0);
+        bPanel.add(playLabel, gbc);
+
+
+        bPanel.setBounds(398, 570, 290, 135);
+
+        panel.add(bPanel);
 
         return panel;
     }
 
-    //어떻게 넘어가는지 감잡으슈 이해했으면 지워도 됨
 
 }
