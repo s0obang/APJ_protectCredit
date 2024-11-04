@@ -51,7 +51,7 @@ public class GamePanel extends JPanel {
     //true -> 졸업, false -> 실패
 
     // Player 객체 생성 (초기 위치와 크기 설정)
-    player = new Player(500, 500, 50, 50);
+    player = new Player(500, 500, 70, 70);
     //플레이어 방향키로 이동하느느거!!!
     setFocusable(true);
     addKeyListener(new KeyAdapter() {
