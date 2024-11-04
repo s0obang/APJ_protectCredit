@@ -33,7 +33,9 @@ public class GamePanel extends JPanel {
   // 절대 경로로 변경
   private final String[] iconPaths = {
       new File("").getAbsolutePath() + "/src/main/java/org/example/img/gradeItem/F.png",
-      new File("").getAbsolutePath() + "/src/main/java/org/example/img/gradeItem/A+.png"
+      new File("").getAbsolutePath() + "/src/main/java/org/example/img/gradeItem/A+.png",
+          new File("").getAbsolutePath() + "/src/main/java/org/example/img/gradeItem/Coffee.png",
+          new File("").getAbsolutePath() + "/src/main/java/org/example/img/gradeItem/textBook.png"
   };
 
   public GamePanel(GameManager manager) {
