@@ -14,10 +14,14 @@ public class Player extends Entity {
   private Image characterImageLeft;
   private Image characterImageRight;
   private boolean facingRight = true;
+  private int boundaryWidth;  // 경계 너비
+  private int boundaryHeight;
 
   public Player(int x, int y, int width, int height) {
     super(x, y, width, height);
     this.speed = 15;
+    this.boundaryWidth = 1080;
+    this.boundaryHeight = 720;
 
     try {
       characterImageLeft = ImageIO.read(
@@ -31,9 +35,16 @@ public class Player extends Entity {
   }
 
   public void move(int dx, int dy) {
-    x += dx * speed;
-    y += dy * speed;
+    int newX = x + dx * speed;
+    int newY = y + dy * speed;
 
+    // 경계를 벗어나지 않도록 위치 제한
+    if (newX >= 0 && newX + width <= boundaryWidth) {
+      x = newX;
+    }
+    if (newY >= 0 && newY + height <= boundaryHeight) {
+      y = newY;
+    }
     // 이동 방향에 따라 이미지 변경
     if (dx < 0) {
       characterImage = characterImageLeft;
