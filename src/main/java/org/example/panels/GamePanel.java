@@ -1,11 +1,15 @@
 package org.example.panels;
 
+import org.example.entity.Coin1;
+import org.example.entity.Entity;
+import org.example.object.Crash;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import org.example.Manager.GameManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.JTextField;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.example.entity.Player;
 
@@ -25,10 +28,10 @@ public class GamePanel extends JPanel {
   private Player player; //이거 메인캐릭터임^^
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   private final Random random = new Random(); // 무작위 생성기
-  private final int iconSize = 15;// 아이콘의 크기
+  private final int iconSize = 20;// 아이콘의 크기
   private final ArrayList<FallingIcon> icons = new ArrayList<>(); // 떨어지는 아이콘들을 저장하는 리스트
-  private final ArrayList<Coin> coins = new ArrayList<>();
   private BufferedImage coinImage;
+  private Crash crash;
   //private final String[] iconPaths = { "src/main/java/org.example/img/gradeItem/F.png", "src/main/java/org.example/img/gradeItem/A+.png" };
   // 절대 경로로 변경
   private final String[] iconPaths = {
@@ -54,6 +57,13 @@ public class GamePanel extends JPanel {
 
     // Player 객체 생성 (초기 위치와 크기 설정)
     player = new Player(500, 500, 70, 70);
+
+    // Crash 객체 생성 -> 충돌 감지에 저장
+    crash = new Crash(this);
+
+
+    crash.addEntity(player);
+
     //플레이어 방향키로 이동하느느거!!!
     setFocusable(true);
     addKeyListener(new KeyAdapter() {
@@ -79,19 +89,11 @@ public class GamePanel extends JPanel {
         requestFocusInWindow();
       }
     });
+
+
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
 
-    try {
-      coinImage = ImageIO.read(new File("src/main/java/org/example/img/coin/coin.png"));
-      for (int i = 0; i < 5; i++) {
-        int x = random.nextInt(1080 - 20);
-        int y = random.nextInt(280);
-        coins.add(new Coin(x, y));
-      }
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Failed to load coin image", e);
-    }
 
     // 이미지 경로 확인 로그
     for (String path : iconPaths) {
@@ -104,37 +106,27 @@ public class GamePanel extends JPanel {
       }
     }
 
+    for (int i = 0; i < 5; i++) {
+      Coin1.createAndAddCoin(1080, 720);
+      crash.addEntity(Coin1.arraycoin.get(Coin1.arraycoin.size() - 1));
+    }
+
     // 타이머 설정 (30밀리초마다 업데이트)
     Timer timer = new Timer(30, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        updateIcons();
-        updateCoins();// 아이콘 위치 업데이트
+        updateIcons();// 아이콘 위치 업데이트
+        updateCoins();
+        crash.checkCollisions();
         repaint(); // 화면 다시 그리기
       }
     });
     timer.start(); // 타이머 시작
     requestFocusInWindow();
+
+
   }
 
-  private class Coin {
-
-    int x, y, speed;
-
-    public Coin(int x, int y) {
-      this.x = x;
-      this.y = y;
-      this.speed = 7;
-    }
-
-    public void fall() {
-      y += speed;
-      if (y > 720) {
-        y = -20;
-        x = random.nextInt(1080 - 40);
-      }
-    }
-  }
 
   // 떨어지는 아이콘을 나타내는 내부 클래스
   private class FallingIcon {
@@ -158,16 +150,16 @@ public class GamePanel extends JPanel {
         this.image = icon.getImage();
 
         // 이미지 로드 확인
-        if (this.image.getWidth(null) <= 0) {
+        /*if (this.image.getWidth(null) <= 0) {
           System.err.println("이미지 로드 실패 (파일은 존재하지만 이미지로 로드할 수 없음): " + iconPath);
         } else {
           System.out.println("이미지 로드 성공: " + iconPath);
-        }
-      } else {
+        }*/
+      } /*else {
         System.err.println("파일을 찾을 수 없음: " + iconPath);
         // 이미지를 찾을 수 없을 경우 기본 이미지 생성
         this.image = createDefaultImage();
-      }
+      }*/
     }
   }
 
@@ -200,10 +192,10 @@ public class GamePanel extends JPanel {
       g.drawImage(icon.image, icon.x, icon.y, iconSize, iconSize, this);
     }
 
-    for (Coin coin : coins) {
-      int coinSize = 20;
-      g.drawImage(coinImage, coin.x, coin.y, coinSize, coinSize, this);
+    for (Coin1 coin : Coin1.arraycoin) {
+      coin.draw(g);
     }
+
   }
 
   // 아이콘의 위치와 리스트를 업데이트하는 메서드
@@ -225,12 +217,13 @@ public class GamePanel extends JPanel {
       }
     }
   }
-
   private void updateCoins() {
-    for (Coin coin : coins) {
+    for (Coin1 coin : Coin1.arraycoin) {
       coin.fall();
     }
   }
+
+
 }
 
 

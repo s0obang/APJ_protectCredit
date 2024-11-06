@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 
 public class Player extends Entity {
 
+  private int points = 0;
   private int speed;
   private Image characterImage;
   private Image characterImageLeft;
@@ -32,7 +33,9 @@ public class Player extends Entity {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
   }
+
 
   public void move(int dx, int dy) {
     int newX = x + dx * speed;
@@ -68,5 +71,10 @@ public class Player extends Entity {
       g.setColor(Color.BLUE);
       g.fillRect(x, y, width, height);
     }
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+
   }
 }
