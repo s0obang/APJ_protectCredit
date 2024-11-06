@@ -29,18 +29,18 @@ public class StartPanel extends JPanel {
         cardPanel = new JPanel(cardLayout);
 
 
-        cardPanel.add(startGamePanel(), "start");
-        cardPanel.add(selectSign_(), "selectSign_");
-        cardPanel.add(signIn(), "signIn");
-        cardPanel.add(signUp(), "signUp");
-        cardPanel.add(intro(manager), "intro");
+        cardPanel.add(startGamePanel(manager), "start");
+        //cardPanel.add(selectSign_(), "selectSign_");
+        //cardPanel.add(signIn(), "signIn");
+        //cardPanel.add(signUp(), "signUp");
+        //cardPanel.add(intro(manager), "intro");
 
 
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
     }
 
-    private JPanel startGamePanel() {
+    private JPanel startGamePanel(GameManager manager) {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
         panel.setLayout(null); // bPanel 절대 위치 정하려고
 
@@ -84,11 +84,17 @@ public class StartPanel extends JPanel {
         JButton playButton = new JButton(buttonIcon2);
         playButton.setPreferredSize(new Dimension(75, 75));
 
-        playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "selectSign_"); // 버튼 클릭 시 지정된 패널로 전환
-            }
+//        playButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                cardLayout.show(cardPanel, "selectSign_"); // 버튼 클릭 시 지정된 패널로 전환
+//            }
+//        });
+
+        //테스트용으로 로그인 없앰
+        playButton.addActionListener(e -> {
+            cardLayout.show(cardPanel, "start");
+            manager.showScreen("game");
         });
 
 
