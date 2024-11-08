@@ -9,21 +9,21 @@ import javax.imageio.ImageIO;
 
 public class Player extends Entity {
 
-  private int points = 0;
+  private double points = 0;
   private int speed;
   private Image characterImage;
   private Image characterImageLeft;
   private Image characterImageRight;
   private boolean facingRight = true;
   private int boundaryWidth;  // 경계 너비
-  private int boundaryHeight;
+  private int boundaryHeight;  private double GPA; // 학점
 
   public Player(int x, int y, int width, int height) {
     super(x, y, width, height);
     this.speed = 15;
     this.boundaryWidth = 1080;
     this.boundaryHeight = 720;
-
+    this.GPA = 4.5; // 초기 학점 4.5
     try {
       characterImageLeft = ImageIO.read(
           new File("src/main/java/org/example/img/character/main_char_left.png"));
@@ -35,7 +35,6 @@ public class Player extends Entity {
     }
 
   }
-
 
   public void move(int dx, int dy) {
     int newX = x + dx * speed;
@@ -56,6 +55,15 @@ public class Player extends Entity {
       characterImage = characterImageRight;
       facingRight = true;
     }
+  }
+
+  public double getGPA() {
+    return GPA;
+  }
+
+  public void setGPA(double newGPA) {
+    // 최대 4.5, 최소 0점 유지
+    this.GPA = Math.max(0, Math.min(4.5, newGPA));
   }
 
   @Override

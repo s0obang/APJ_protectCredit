@@ -27,8 +27,12 @@ public abstract class Entity {
   }
 
   // 포인트 추가
-  public void upPoint(int point) {
+  public void upPoint(double point) {
     points += point;
+  }
+  // 포인트 감소
+  public void downPoint(double point) {
+    points -= point;
   }
 
   public int getPoints() {
@@ -43,7 +47,7 @@ public abstract class Entity {
 
 
   // 위치 가져오기 메서드
-  /*public int getX() {
+  public int getX() {
     return x;
   }
 
@@ -55,7 +59,7 @@ public abstract class Entity {
   public boolean isColliding(Entity other) {
     return x < other.x + other.width && x + width > other.x &&
         y < other.y + other.height && y + height > other.y;
-  }*/
+  }
 
   // 각 엔티티가 자신의 상태를 업데이트하는 메서드
   public abstract void update();

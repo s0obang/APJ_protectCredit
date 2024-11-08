@@ -4,6 +4,7 @@ import org.example.entity.Coin1;
 import org.example.entity.Icon;
 import org.example.entity.Entity;
 import org.example.object.Crash;
+import org.example.object.IconCrash;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import org.example.Manager.GameManager;
@@ -30,6 +31,7 @@ public class GamePanel extends JPanel {
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   private BufferedImage coinImage;
   private Crash crash;
+  private IconCrash iconCrash;
 
   public GamePanel(GameManager manager) {
 
@@ -50,8 +52,9 @@ public class GamePanel extends JPanel {
 
     // Crash 객체 생성 -> 충돌 감지에 저장
     crash = new Crash(this);
+    iconCrash = new IconCrash(this, player);
 
-
+    iconCrash.addEntity(player);
     crash.addEntity(player);
 
     //플레이어 방향키로 이동하느느거!!!
@@ -90,7 +93,7 @@ public class GamePanel extends JPanel {
 
     for (int i = 0; i < 5; i++) {
       Icon.createAndAddIcon(1080, 720);
-      //crash.addEntity(Coin1.arraycoin.get(Coin1.arraycoin.size() - 1));
+      iconCrash.addEntity(Icon.iconList.get(Icon.iconList.size() - 1));
     }
 
     // 타이머 설정 (30밀리초마다 업데이트)
@@ -100,6 +103,7 @@ public class GamePanel extends JPanel {
         updateIcons();// 아이콘 위치 업데이트
         updateCoins();
         crash.checkCollisions();
+        iconCrash.checkCollisions();
         repaint(); // 화면 다시 그리기
       }
     });

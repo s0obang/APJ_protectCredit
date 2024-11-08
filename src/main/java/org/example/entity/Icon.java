@@ -13,6 +13,7 @@ public abstract class Icon extends Entity {
     private final Random random = new Random();
     private int x, y, speed;
     public static ArrayList<Icon> iconList = new ArrayList<>(); // 아이콘 리스트
+    private int scoreEffect;  // 점수 증가 또는 감소 효과 (1이면 증가, -1이면 감소)
 
     public Icon(int x, int y, int width, int height) {
         super(x, y,width, height);
@@ -34,6 +35,13 @@ public abstract class Icon extends Entity {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+
+        // 점수 효과 설정 (이미지에 따라 다르게 처리)
+        if (iconPath.contains("A+") || iconPath.contains("Coffee")) {
+            scoreEffect = 1;  // A+, Coffee 아이콘은 점수 증가
+        } else if (iconPath.contains("F") || iconPath.contains("textBook")){
+            scoreEffect = -1;  // F, textBook 아이콘은 점수 감소
+        }
     }
 
     // 아이콘이 아래로 떨어지는 메서드
@@ -45,6 +53,11 @@ public abstract class Icon extends Entity {
         }
         System.out.println("Icon position: " + y);
 
+    }
+
+    // 아이콘의 점수 효과를 반환하는 메서드 (1은 점수 증가, -1은 점수 감소)
+    public int getScoreEffect() {
+        return scoreEffect;
     }
 
     // 아이콘을 그리는 메서드
