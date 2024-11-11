@@ -8,6 +8,7 @@ import org.example.panels.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.io.File;
 
 
 public class IconCrash {
@@ -15,14 +16,16 @@ public class IconCrash {
     private final ArrayList<Entity> entities;
     private Player player;
     private JTextField gradeText;
+    private JLabel gradeImageLabel;
 
     public IconCrash(GamePanel gamePanel, Player player) {
         entities = new ArrayList<>();
         this.gamePanel = gamePanel;
         this.player = player;
 
-        // 학점 표시 텍스트 필드 생성
+        // 학점 표시 텍스트 필드와 이미지 레이블 생성
         createGradeTextField();
+        createGradeImageLabel();
     }
 
     private void createGradeTextField() {
@@ -37,6 +40,13 @@ public class IconCrash {
         gradeText.setBounds(50, 50, 150, 30);
         gamePanel.setLayout(null);
         gamePanel.add(gradeText);
+    }
+
+    private void createGradeImageLabel() {
+        gradeImageLabel = new JLabel();
+        gradeImageLabel.setBounds(50, 90, 200, 30);  // bar 이미지의 위치와 크기에 맞게 조정
+        gamePanel.add(gradeImageLabel);
+        updateGradeImage(4.5); // 초기 학점 이미지를 설정
     }
 
     public void addEntity(Entity entity) {
@@ -70,9 +80,11 @@ public class IconCrash {
             player.setGPA(currentGPA - 0.5);
         }
 
-        // 학점 텍스트 필드 업데이트
-        updateGradeText(player.getGPA());
 
+        // 학점 텍스트 필드와 이미지 레이블 업데이트
+        double updatedGPA = player.getGPA();
+        updateGradeText(updatedGPA);
+        updateGradeImage(updatedGPA);
         // 아이콘 초기 위치로 리셋
         icon.resetPosition();
     }
@@ -82,4 +94,20 @@ public class IconCrash {
             gradeText.setText(String.format("학점 : %.1f점", GPA));
         }
     }
+
+     private void updateGradeImage(double GPA) {
+         String imagePath = String.format("src/main/java/org/example/img/gradeItem/%.1f.png", GPA);
+         try {
+             ImageIcon gradeIcon = new ImageIcon(imagePath);
+             // 이미지 크기 조정
+             Image image = gradeIcon.getImage();
+             Image resizedImage = image.getScaledInstance(200, 30, Image.SCALE_SMOOTH);
+             gradeIcon = new ImageIcon(resizedImage);
+
+             gradeImageLabel.setIcon(gradeIcon);
+         } catch (Exception e) {
+             System.err.println("이미지를 불러오는데 실패했습니다: " + imagePath);
+             e.printStackTrace();
+         }
+     }
 }
