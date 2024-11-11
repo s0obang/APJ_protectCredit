@@ -1,6 +1,6 @@
 package org.example.Manager;
 
-import org.example.entity.Coin1;
+import org.example.entity.Coin;
 import org.example.entity.Icon;
 
 public class IconManager {
@@ -12,7 +12,7 @@ public class IconManager {
   }
 
   public void updateCoins() {
-    for (Coin1 coin : Coin1.arraycoin) {
+    for (Coin coin : Coin.arraycoin) {
       coin.fall();
     }
   }

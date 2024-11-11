@@ -11,10 +11,10 @@ import org.example.Manager.GameInitializer;
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameTimer;
 import org.example.Manager.IconManager;
-import org.example.entity.Coin1;
+import org.example.entity.Coin;
 import org.example.entity.Icon;
 import org.example.entity.Player;
-import org.example.object.Crash;
+import org.example.object.CoinCrash;
 import org.example.object.IconCrash;
 
 
@@ -23,7 +23,7 @@ public class GamePanel extends JPanel {
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   private Player player; //이거 메인캐릭터임^^
   private BufferedImage coinImage;
-  private Crash crash;
+  public CoinCrash coincrash;
   private IconCrash iconCrash;
   private Timer timer;
   private IconManager iconManager;
@@ -34,10 +34,10 @@ public class GamePanel extends JPanel {
     player = new Player(500, 500, 100, 100);
 
     // Crash 객체 생성 -> 충돌 감지에 저장
-    crash = new Crash(this);
+    coincrash = new CoinCrash(this);
     iconCrash = new IconCrash(this, player);
     iconCrash.addEntity(player);
-    crash.addEntity(player);
+    coincrash.addEntity(player);
     iconManager = new IconManager();
 
     //플레이어 방향키로 이동하느느거!!!
@@ -51,11 +51,11 @@ public class GamePanel extends JPanel {
 
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
-    GameInitializer.initializeEntities(crash, iconCrash);
+    GameInitializer.initializeEntities(coincrash, iconCrash);
   }
 
   public void startGame() {
-    timer = new GameTimer(iconManager, crash, iconCrash, this);
+    timer = new GameTimer(iconManager, coincrash, iconCrash, this);
     timer.start();
 
   }
@@ -77,9 +77,13 @@ public class GamePanel extends JPanel {
     for (Icon icon : Icon.iconList) {
       icon.draw(g);
     }
-    for (Coin1 coin : Coin1.arraycoin) {
+    for (Coin coin : Coin.arraycoin) {
       coin.draw(g);
     }
+    // 좌측 상단에 띄울 코인 이미지 그리기
+    if (CoinCrash.getCoinImage() != null) {
+      g.drawImage(CoinCrash.getCoinImage(), 50, 90, 22, 22, null);
+    }
   }
-
 }
+
