@@ -3,6 +3,7 @@ package org.example.entity;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import javax.imageio.ImageIO;
 public abstract class Icon extends Entity {
 
   public static ArrayList<Icon> iconList = new ArrayList<>(); // 아이콘 리스트
-  private final Image iconimg;  // 아이콘 이미지
+  private final BufferedImage iconimg;  // 아이콘 이미지
   private final Random random = new Random();
   private int x, y, speed;
   private int scoreEffect;  // 점수 증가 또는 감소 효과 (1이면 증가, -1이면 감소)

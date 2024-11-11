@@ -3,22 +3,21 @@ package org.example.entity;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
-public abstract class Coin1 extends Entity {
+public abstract class Coin extends Entity {
 
-  public static ArrayList<Coin1> arraycoin = new ArrayList<>();
-  private final Image coinimg;
+  public static ArrayList<Coin> arraycoin = new ArrayList<>();
+  public Image coinimg;
   private final Random random = new Random();
   int x, y, speed;
-  private int boundaryWidth;  // 경계 너비
-  private int boundaryHeight;
 
-  public Coin1(int x, int y, int width, int height) {
+  public Coin(int x, int y, int width, int height) {
     super(x, y, width, height);
     this.speed = 7;
     this.x = random.nextInt(1080 - 20);
@@ -30,11 +29,10 @@ public abstract class Coin1 extends Entity {
       throw new RuntimeException(ex);
     }
 
-
   }
 
   public static void createAndAddCoin(int width, int height) {
-    Coin1 coin = new Coin1(width, height, 30, 30) {
+    Coin coin = new Coin(width, height, 30, 30) {
       @Override
       public void update() {
       }
@@ -68,7 +66,7 @@ public abstract class Coin1 extends Entity {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    for (Coin1 coin : arraycoin) {
+    for (Coin coin : arraycoin) {
       int coinSize = 30;
       g.drawImage(coinimg, coin.x, coin.y, coinSize, coinSize, null);
     }
@@ -79,6 +77,10 @@ public abstract class Coin1 extends Entity {
     // 코인 초기 위치로 리셋
     this.y = -20; // 화면 위쪽에서 다시 떨어지도록
     this.x = random.nextInt(1080 - 40); // 무작위 x 위치
+  }
+
+  public BufferedImage getCoinimg() {
+    return (BufferedImage) coinimg;
   }
 
 }

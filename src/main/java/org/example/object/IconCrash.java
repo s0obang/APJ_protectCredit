@@ -1,5 +1,4 @@
 package org.example.object;
-import org.example.entity.Coin1;
 import org.example.entity.Icon;
 import org.example.entity.Entity;
 import org.example.entity.Player;
@@ -8,7 +7,6 @@ import org.example.panels.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.io.File;
 
 
 public class IconCrash {
@@ -37,14 +35,14 @@ public class IconCrash {
         gradeText.setOpaque(false);
         gradeText.setBorder(null);
 
-        gradeText.setBounds(50, 50, 150, 30);
+        gradeText.setBounds(50, 20, 150, 30);
         gamePanel.setLayout(null);
         gamePanel.add(gradeText);
     }
 
     private void createGradeImageLabel() {
         gradeImageLabel = new JLabel();
-        gradeImageLabel.setBounds(50, 90, 200, 30);  // bar 이미지의 위치와 크기에 맞게 조정
+        gradeImageLabel.setBounds(50, 50, 200, 30);  // bar 이미지의 위치와 크기에 맞게 조정
         gamePanel.add(gradeImageLabel);
         updateGradeImage(4.5); // 초기 학점 이미지를 설정
     }
