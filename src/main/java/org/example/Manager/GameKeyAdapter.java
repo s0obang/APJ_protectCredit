@@ -16,10 +16,10 @@ public class GameKeyAdapter extends KeyAdapter {
   public void keyPressed(KeyEvent e) {
     int dx = 0, dy = 0;
     switch (e.getKeyCode()) {
-      case KeyEvent.VK_UP -> dy = -1;
-      case KeyEvent.VK_DOWN -> dy = 1;
-      case KeyEvent.VK_LEFT -> dx = -1;
-      case KeyEvent.VK_RIGHT -> dx = 1;
+      case KeyEvent.VK_UP -> dy = -3;
+      case KeyEvent.VK_DOWN -> dy = 3;
+      case KeyEvent.VK_LEFT -> dx = -3;
+      case KeyEvent.VK_RIGHT -> dx = 3;
     }
     player.move(dx, dy);
   }

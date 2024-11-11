@@ -16,20 +16,21 @@ public class Player extends Entity {
   private Image characterImageRight;
   private boolean facingRight = true;
   private int boundaryWidth;  // 경계 너비
-  private int boundaryHeight;  private double GPA; // 학점
+  private int boundaryHeight;
+  private double GPA; // 학점
 
   public Player(int x, int y, int width, int height) {
     super(x, y, width, height);
-    this.speed = 15;
+    this.speed = 10;
     this.boundaryWidth = 1080;
     this.boundaryHeight = 720;
-    this.GPA = 4.5; // 초기 학점 4.5
+    this.GPA = 4.5; //초기 학점 4.5
     try {
       characterImageLeft = ImageIO.read(
           new File("src/main/java/org/example/img/character/main_char_left.png"));
       characterImageRight = ImageIO.read(
           new File("src/main/java/org/example/img/character/main_char_right.png"));
-      characterImage = characterImageRight; // 초기 이미지는 오른쪽을 보는 이미지로 설정
+      characterImage = characterImageRight; // 초기 이미지는 오른쪽보게함
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -39,15 +40,14 @@ public class Player extends Entity {
   public void move(int dx, int dy) {
     int newX = x + dx * speed;
     int newY = y + dy * speed;
-
-    // 경계를 벗어나지 않도록 위치 제한
+    // 화면 안 벗어나게 제한 거는거
     if (newX >= 0 && newX + width <= boundaryWidth) {
       x = newX;
     }
     if (newY >= 0 && newY + height <= boundaryHeight) {
       y = newY;
     }
-    // 이동 방향에 따라 이미지 변경
+    //이동 방향에 따라 이미지 변경
     if (dx < 0) {
       characterImage = characterImageLeft;
       facingRight = false;

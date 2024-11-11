@@ -1,17 +1,14 @@
 package org.example.panels;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.example.Manager.GameInitializer;
 import org.example.Manager.GameKeyAdapter;
-import org.example.Manager.GameManager;
 import org.example.Manager.GameTimer;
 import org.example.Manager.IconManager;
 import org.example.entity.Coin1;
@@ -31,16 +28,10 @@ public class GamePanel extends JPanel {
   private Timer timer;
   private IconManager iconManager;
 
-  public GamePanel(GameManager manager) {
-
-    setLayout(new BorderLayout());
-    JButton endButton = new JButton("End Game (Game Over)");
-    endButton.addActionListener(e -> manager.showEndScreen(false)); // 게임 오버로 종료 화면으로 이동
-    JButton successButton = new JButton("End Game (Success)");
-    successButton.addActionListener(e -> manager.showEndScreen(true)); // 성공으로 종료 화면으로 이동
+  public GamePanel() {
 
     // Player 객체 생성 (초기 위치와 크기 설정)
-    player = new Player(500, 500, 70, 70);
+    player = new Player(500, 500, 100, 100);
 
     // Crash 객체 생성 -> 충돌 감지에 저장
     crash = new Crash(this);
@@ -66,7 +57,14 @@ public class GamePanel extends JPanel {
   public void startGame() {
     timer = new GameTimer(iconManager, crash, iconCrash, this);
     timer.start();
-    
+
+  }
+
+  public void stopGame() {
+    if (timer != null) {
+      timer.stop();
+      LOGGER.info("Game stopped temporarily.");
+    }
   }
 
   // 패널에 아이콘을 그리는 메서드
