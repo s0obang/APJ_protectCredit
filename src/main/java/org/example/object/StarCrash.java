@@ -33,7 +33,7 @@ public class StarCrash {
 
     // 충돌 발생 시 실행할 행동 정의
     private void handleCollision() {
-        gm.switchToPanelWithDelay("bonus", 1000);
+        gm.switchToPanelWithDelay("bonus", 500);
         star.setVisible(false); // star가 보이지 않게 설정
     }
 }

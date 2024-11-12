@@ -77,10 +77,24 @@ public class GameManager extends JFrame {
   public void startGameSequence() {
     showScreen("game");
     gamePanel.startGame();
-    switchToPanelWithDelay("levelup", 3000);
-    switchToPanelWithDelay("star", 6000);
+    // 30초 후에 levelupPanel로 전환
+    Timer levelUpTimer = new Timer(500, e -> {
+      switchToPanelWithDelay("levelup", 0);
+
+      // levelupPanel이 표시된 후 3초 뒤에 starPanel로 전환
+      Timer starTimer = new Timer(500, event -> {
+        switchToPanelWithDelay("star", 0);
+      });
+      starTimer.setRepeats(false); // 한 번만 실행되도록 설정
+      starTimer.start();
+    });
+    levelUpTimer.setRepeats(false); // 한 번만 실행되도록 설정
+    levelUpTimer.start();
+
     switchToPanelWithDelay("game", 40000);
   }
+
+
 
   // 화면 전환 메서드
   public void showScreen(String screenName) {
