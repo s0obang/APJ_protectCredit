@@ -5,10 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.example.object.UserStatus;
-import org.example.panels.EndPanel;
-import org.example.panels.FeverPanel;
-import org.example.panels.GamePanel;
-import org.example.panels.StartPanel;
+import org.example.panels.*;
 
 public class GameManager extends JFrame {
 
@@ -17,7 +14,9 @@ public class GameManager extends JFrame {
   private DatabaseManager dbManager;
   private LoginManager loginManager;
   private GamePanel gamePanel;
-  private FeverPanel feverPanel;
+  private StarPanel starPanel;
+  private LevelUpPanel levelupPanel;
+  private BounsPanel bonusPanel;
 
   private UserStatus userStatus;
 
@@ -37,11 +36,16 @@ public class GameManager extends JFrame {
     mainPanel = new JPanel(cardLayout);
     //이부분 수정했어엽 민선아
     gamePanel = new GamePanel();
-    feverPanel = new FeverPanel();
+    starPanel = new StarPanel();
+    levelupPanel = new LevelUpPanel();
+    bonusPanel = new BounsPanel();
+
     // 각 화면을 패널로 추가
     mainPanel.add(new StartPanel(this, loginManager), "start");
     mainPanel.add(gamePanel, "game");
-    mainPanel.add(feverPanel, "fever");
+    mainPanel.add(starPanel, "star");
+    mainPanel.add(levelupPanel, "levelup");
+    mainPanel.add(bonusPanel, "bonus");
 
     add(mainPanel);
     setVisible(true);
@@ -58,7 +62,7 @@ public class GameManager extends JFrame {
 
   public void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     Timer timer = new Timer(delayMillis, e -> {
-      if (nextPanelName.equals("fever")) {
+      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("bonus")) {
         gamePanel.stopGame(); // 게임 일시정지
       } else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
@@ -73,7 +77,8 @@ public class GameManager extends JFrame {
   public void startGameSequence() {
     showScreen("game");
     gamePanel.startGame();
-    switchToPanelWithDelay("fever", 30000);
+    switchToPanelWithDelay("levelup", 3000);
+    switchToPanelWithDelay("star", 6000);
     switchToPanelWithDelay("game", 40000);
   }
 
