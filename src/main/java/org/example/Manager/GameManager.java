@@ -16,7 +16,7 @@ public class GameManager extends JFrame {
   private GamePanel gamePanel;
   private StarPanel starPanel;
   private LevelUpPanel levelupPanel;
-  private BounsPanel bonusPanel;
+  public BounsPanel bonusPanel;
 
   private UserStatus userStatus;
 
@@ -36,9 +36,9 @@ public class GameManager extends JFrame {
     mainPanel = new JPanel(cardLayout);
     //이부분 수정했어엽 민선아
     gamePanel = new GamePanel();
-    starPanel = new StarPanel();
     levelupPanel = new LevelUpPanel();
     bonusPanel = new BounsPanel();
+    starPanel = new StarPanel(this);
 
     // 각 화면을 패널로 추가
     mainPanel.add(new StartPanel(this, loginManager), "start");

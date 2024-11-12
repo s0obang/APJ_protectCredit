@@ -11,6 +11,7 @@ public class Star extends Entity {
     private int targetX, targetY;
     private final int MOVE_SPEED = 7;
     private Random random;
+    private boolean visible = true; // 추가된 속성
 
     public Star(int initialX, int initialY, int width, int height) {
         super(initialX, initialY, width, height);
@@ -54,8 +55,15 @@ public class Star extends Entity {
         }
     }
 
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
     @Override
     public void draw(Graphics g) {
-        g.drawImage(starImage, x, y, width, height, null);
+        if (visible) {
+            // 이미지 그리기
+            g.drawImage(starImage, x, y, width, height, null);
+        }
     }
 }

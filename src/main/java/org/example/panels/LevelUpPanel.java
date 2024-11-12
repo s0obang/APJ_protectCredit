@@ -23,8 +23,8 @@ public class LevelUpPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.BLACK);
         g.drawImage(levelupchar, 180, 220, 300,300, null);
+        g.setColor(Color.BLACK);
         g.drawString("Congratulation!", 540,220);
     }
 }

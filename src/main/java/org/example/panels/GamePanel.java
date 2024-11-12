@@ -63,7 +63,7 @@ public class GamePanel extends JPanel {
   public void stopGame() {
     if (timer != null) {
       timer.stop();
-      LOGGER.info("Game stopped temporarily.");
+      //LOGGER.info("Game stopped temporarily.");
     }
   }
 
