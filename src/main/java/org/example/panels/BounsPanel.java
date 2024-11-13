@@ -2,24 +2,35 @@ package org.example.panels;
 
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameManager;
+import org.example.entity.Coin;
 import org.example.entity.Player;
+import org.example.entity.Star;
+import org.example.object.CoinCrash;
+import org.example.object.StarCrash;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BounsPanel extends JPanel {
     private GameManager gm;
-    private Image largecoin, medicoin, smallcoin;
+    private final Image largecoin, medicoin, smallcoin;
     private Player bonusplayer;
-    private JPanel screenbonus;
-    private Timer colorTimer;
+    private final JPanel screenbonus;
+    private final Timer colorTimer;
+    private Timer collisionTimer;  // 충돌 체크를 위한 타이머
+    private StarPanel starPanel;
+
     int centerX = 1080 / 2 - 15; // 패널 중앙 X 좌표
     int centerY = 720 / 2 - 15; // 패널 중앙 Y 좌표
 
-    public BounsPanel() {
+    public BounsPanel(GameManager gm) {
+        starPanel = new StarPanel(this.gm);
+        this.gm = gm;
         setLayout(null); // CardLayout 대신 절대 레이아웃 사용
 
         // screenbonus 패널 설정
@@ -51,11 +62,11 @@ public class BounsPanel extends JPanel {
                 Color.CYAN, Color.BLUE, new Color(128, 0, 128) // 보라색
         };
 
-            colorTimer = new Timer(300, e -> {
-                Color currentColor = screenbonus.getBackground();
-                int nextIndex = (java.util.Arrays.asList(rainbowColors).indexOf(currentColor) + 1) % rainbowColors.length;
-                screenbonus.setBackground(rainbowColors[nextIndex]);
-            });
+        colorTimer = new Timer(300, e -> {
+            Color currentColor = screenbonus.getBackground();
+            int nextIndex = (Arrays.asList(rainbowColors).indexOf(currentColor) + 1) % rainbowColors.length;
+            screenbonus.setBackground(rainbowColors[nextIndex]);
+        });
 
 
         this.add(screenbonus);// BounsPanel에 screenbonus 추가
@@ -82,9 +93,9 @@ public class BounsPanel extends JPanel {
             repaint(); // 위치 변경 반영
         });
         movementTimer.start(); // Timer 시작
-        //시간 지나면 게임 패널로 돌아가는 메서드 지피티한테 물어보기
-    }
 
+
+    }
     public void bonusColor() {
         colorTimer.start();
 
@@ -100,14 +111,20 @@ public class BounsPanel extends JPanel {
         transitionTimer.start();
     }
 
+
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.decode("#B0BABA"));
         g.fillRect(0, 0, getWidth(), getHeight());
         bonusplayer.draw(g);
+        drawCoin(g);
+
         // 하트 형태를 만들기 위해 코인 이미지를 배치
 
-        // 중앙 하트
+
+    }
+
+    public void drawCoin(Graphics g) {
         g.drawImage(largecoin, centerX, centerY + 90, 30, 30, this);
         g.drawImage(largecoin, centerX, centerY + 130, 30, 30, this);
         g.drawImage(largecoin, centerX + 60, centerY + 75, 30, 30, this);
@@ -194,11 +211,16 @@ public class BounsPanel extends JPanel {
         g.drawImage(smallcoin, centerX + 220 + 115, centerY - 240 + 95, 30, 30, this);
         g.drawImage(smallcoin, centerX + 220 - 115, centerY - 240 + 95, 30, 30, this);
         g.drawImage(smallcoin, centerX + 220, centerY - 240 + 220, 30, 30, this);
-
     }
 
     // bonusplayer의 이동과 그리기를 업데이트하는 메서드 (필요에 따라 추가)
     public void update() {
+    }
+
+    // 보너스 패널 초기화 메서드
+    public void initBonus() {
+        // 보너스 패널 초기화 로직 추가
+        // 필요한 초기화 작업 수행
     }
 }
 

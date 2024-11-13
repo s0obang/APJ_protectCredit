@@ -5,30 +5,29 @@ import org.example.Manager.GameManager;
 import org.example.entity.Player;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
+import org.example.panels.BounsPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class StarPanel extends JPanel {
-  private Player starplayer;
-  private Star star;
-  private GameManager gm;
-  private StarCrash starCrash;
-  private Timer timer;
+  private final Player starplayer;
+  private final Star star;
+  public StarCrash starCrash;
+  public GameManager gameManager;
 
-  public StarPanel(GameManager gm) {
-    this.gm = gm;  // GameManager 전달 받기
+  public StarPanel(GameManager ignoredGameManager) {
     starplayer = new Player(500, 500, 100, 100);
     star = new Star(300, 300, 60, 50);
 
     setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
 
-    // 스타 위치 업데이트
-    timer = new Timer(30, e -> {
+    // 스타 위치 업데이트와 충돌 타이머 설정
+    Timer timer = new Timer(30, e -> {
       star.moveTowardsTarget();
-      checkCollision();  // 충돌 체크 메서드 호출
       repaint();
+      checkCollision();  // 충돌을 체크하는 메서드 호출
     });
     timer.start();
 
@@ -42,7 +41,7 @@ public class StarPanel extends JPanel {
     setOpaque(true);
 
     // StarCrash 객체 생성 시 GameManager 전달
-    starCrash = new StarCrash(gm, starplayer, star);
+    starCrash = new StarCrash(this.gameManager, starplayer, star);
   }
 
   @Override
@@ -51,13 +50,20 @@ public class StarPanel extends JPanel {
     g.setColor(Color.decode("#B0BABA"));
     g.fillRect(0, 0, getWidth(), getHeight());
     starplayer.draw(g);
-    star.draw(g);
+    star.draw(g);  // 여기서 Star 객체의 visible 속성에 따라 그려짐
   }
 
   // 충돌 체크 메서드
   private void checkCollision() {
-    if (starCrash != null) {
-      starCrash.checkCollision();
+    starCrash.checkCollision();  // 충돌 발생 시 처리
+  }
+
+  // 충돌 후 bonusColor() 호출
+  public void handleBonusColor() {
+    // BonusPanel 객체 가져오기
+    BounsPanel bp = (BounsPanel) GameManager.getPanel("bonus");
+    if (bp != null) {
+      bp.bonusColor();  // Bonus 색상 처리
     }
   }
 }

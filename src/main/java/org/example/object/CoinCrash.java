@@ -3,6 +3,7 @@ package org.example.object;
 import org.example.entity.Coin;
 import org.example.entity.Entity;
 import org.example.entity.Player;
+import org.example.panels.BounsPanel;
 import org.example.panels.GamePanel;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ public class CoinCrash {
     ArrayList<Entity> entities;
     private JTextField curpointText;
     private static BufferedImage coinimg;
+    private BounsPanel bounsPanel;
 
     // 배열 생성
     public CoinCrash(GamePanel gamePanel) {
@@ -69,7 +71,8 @@ public class CoinCrash {
                         (e1).upPoint(1); // 플레이어 점수 증가
                         showcurpoints(e1.getPoints()); // 누적 금액 패널에 갱신
                         ((Coin) e2).resetPosition();// 코인을 초기 위치로 리셋
-                    } 
+
+                    }
                     // e1이 Coin1이고 e2가 Player일 경우
                     else if (e1 instanceof Coin && e2 instanceof Player) {
                         (e2).upPoint(1); // 플레이어 점수 증가
@@ -77,9 +80,10 @@ public class CoinCrash {
                         ((Coin) e1).resetPosition(); // 코인을 초기 위치로 리셋
                     }
                 }
-                }
             }
         }
+    }
+
     // Coin 이미지 반환 메서드
     public static BufferedImage getCoinImage() {
         return coinimg;

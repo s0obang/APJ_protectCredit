@@ -56,15 +56,15 @@ public class Star extends Entity {
         }
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
     @Override
     public void draw(Graphics g) {
         if (visible) {
             // 이미지 그리기
             g.drawImage(starImage, x, y, width, height, null);
         }
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

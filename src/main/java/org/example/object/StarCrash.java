@@ -3,41 +3,44 @@ package org.example.object;
 import org.example.Manager.GameManager;
 import org.example.entity.Player;
 import org.example.entity.Star;
-import org.example.panels.BounsPanel;
+import org.example.panels.StarPanel;
 
 import java.awt.*;
 
 public class StarCrash {
-
-    private GameManager gm;
+    private final GameManager gameManager;
     private Player player;
     private Star star;
-    private BounsPanel bp;
 
-    public StarCrash(GameManager gm, Player player, Star star) {
-        this.gm = gm;
+    public StarCrash(GameManager gameManager, Player player, Star star) {
+        this.gameManager = gameManager;
         this.player = player;
         this.star = star;
     }
 
-    // player와 star가 충돌하는지 확인하는 메서드
     public void checkCollision() {
-
-        // 두 객체의 bounding box를 사용하여 겹침을 확인합니다.
+        // Player와 Star의 경계값 가져오기
         Rectangle playerBounds = player.getBounds();
         Rectangle starBounds = star.getBounds();
 
-        // 두 사각형이 겹치는지 확인
+        // 두 객체의 경계값이 겹치는지 확인
         if (playerBounds.intersects(starBounds)) {
-            handleCollision();
+            handleCollision();  // 충돌 발생 시 처리
         }
     }
 
-    // 충돌 발생 시 실행할 행동 정의
     private void handleCollision() {
-        gm.switchToPanelWithDelay("bonus", 500);
-        bp = (BounsPanel) gm.getPanel("bonus");  // BounsPanel 객체를 가져옴
-        bp.bonusColor(); // bonusColor 메서드 호출로 screenbonus 설정
-        star.setVisible(false); // star가 보이지 않게 설정
+        // Star 이미지 숨기기
+        star.setVisible(false);  // Star를 숨김
+
+        // BonusPanel로 전환 (색상 처리와 관련된 작업은 StarPanel에서 하도록 함)
+        GameManager.switchToPanelWithDelay("bonus", 500);  // BonusPanel로 전환
+
+        // StarPanel에서 bonusColor()를 호출하도록 해야 합니다.
+        // 이 부분은 StarPanel에서 호출할 수 있도록 구조를 바꿔야 합니다.
+        StarPanel starPanel = (StarPanel) GameManager.getPanel("star");
+        if (starPanel != null) {
+            starPanel.handleBonusColor();  // StarPanel에서 bonusColor() 호출
+        }
     }
 }
