@@ -5,7 +5,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.example.object.UserStatus;
-import org.example.panels.*;
+import org.example.panels.EndPanel;
+import org.example.panels.GamePanel;
+import org.example.panels.StartPanel;
+import org.example.panels.StarPanel;
+import org.example.panels.LevelUpPanel;
+import org.example.panels.BounsPanel;
 
 public class GameManager extends JFrame {
 
@@ -39,7 +44,6 @@ public class GameManager extends JFrame {
     levelupPanel = new LevelUpPanel();
     bonusPanel = new BounsPanel();
     starPanel = new StarPanel(this);
-
     // 각 화면을 패널로 추가
     mainPanel.add(new StartPanel(this, loginManager), "start");
     mainPanel.add(gamePanel, "game");
@@ -62,7 +66,7 @@ public class GameManager extends JFrame {
 
   public void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     Timer timer = new Timer(delayMillis, e -> {
-      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("bonus")) {
+      if (nextPanelName.equals("fever")) {
         gamePanel.stopGame(); // 게임 일시정지
       } else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
@@ -82,7 +86,7 @@ public class GameManager extends JFrame {
       switchToPanelWithDelay("levelup", 0);
 
       // levelupPanel이 표시된 후 3초 뒤에 starPanel로 전환
-      Timer starTimer = new Timer(10000, event -> {
+      Timer starTimer = new Timer(1000, event -> {
         switchToPanelWithDelay("star", 0);
       });
       starTimer.setRepeats(false); // 한 번만 실행되도록 설정
@@ -93,8 +97,6 @@ public class GameManager extends JFrame {
 
     switchToPanelWithDelay("game", 40000);
   }
-
-
 
   // 화면 전환 메서드
   public void showScreen(String screenName) {
@@ -111,5 +113,21 @@ public class GameManager extends JFrame {
     return gamePanel;
   }
 
+  // getPanel 메서드 추가 -> 주영이 쓰는 패널에서 필요함.
+  public JPanel getPanel(String panelName) {
+    // mainPanel에 등록된 패널을 이름에 맞게 반환
+    switch (panelName) {
+      case "game":
+        return gamePanel;
+      case "star":
+        return starPanel;
+      case "levelup":
+        return levelupPanel;
+      case "bonus":
+        return bonusPanel;
+      default:
+        return null;  // 잘못된 이름이 들어오면 null 반환
+    }
+  }
 
 }

@@ -3,6 +3,7 @@ package org.example.object;
 import org.example.Manager.GameManager;
 import org.example.entity.Player;
 import org.example.entity.Star;
+import org.example.panels.BounsPanel;
 
 import java.awt.*;
 
@@ -11,6 +12,7 @@ public class StarCrash {
     private GameManager gm;
     private Player player;
     private Star star;
+    private BounsPanel bp;
 
     public StarCrash(GameManager gm, Player player, Star star) {
         this.gm = gm;
@@ -33,7 +35,9 @@ public class StarCrash {
 
     // 충돌 발생 시 실행할 행동 정의
     private void handleCollision() {
-        gm.switchToPanelWithDelay("bonus", 50000);
+        gm.switchToPanelWithDelay("bonus", 500);
+        bp = (BounsPanel) gm.getPanel("bonus");  // BounsPanel 객체를 가져옴
+        bp.bonusColor(); // bonusColor 메서드 호출로 screenbonus 설정
         star.setVisible(false); // star가 보이지 않게 설정
     }
 }

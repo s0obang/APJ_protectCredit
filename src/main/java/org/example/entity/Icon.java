@@ -17,6 +17,7 @@ public abstract class Icon extends Entity {
   private final Random random = new Random();
   private int x, y, speed;
   private int scoreEffect;  // 점수 증가 또는 감소 효과 (1이면 증가, -1이면 감소)
+  private int speedLevel = 1; // 속도 레벨 추적
 
   public Icon(int x, int y, int width, int height) {
     super(x, y, width, height);
@@ -66,6 +67,18 @@ public abstract class Icon extends Entity {
     }
     System.out.println("Icon position: " + y);
 
+  }
+
+  // 속도 레벨 증가 메서드
+  public void increaseSpeedLevel() {
+    speedLevel++;
+    speed = random.nextInt(3) + 2 + (int)Math.pow(speedLevel, 2); // 속도 증가
+  }
+
+  // 속도 레벨 리셋 메서드
+  public void resetSpeedLevel() {
+    speedLevel = 1;
+    speed = random.nextInt(3) + 2; // 초기 속도로 리셋
   }
 
   // 아이콘의 점수 효과를 반환하는 메서드 (1은 점수 증가, -1은 점수 감소)
