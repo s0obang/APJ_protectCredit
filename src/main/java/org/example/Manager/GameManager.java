@@ -4,6 +4,8 @@ import java.awt.CardLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import org.example.entity.Icon;
 import org.example.object.UserStatus;
 import org.example.panels.EndPanel;
 import org.example.panels.FeverPanel;
@@ -11,6 +13,8 @@ import org.example.panels.GamePanel;
 import org.example.panels.StartPanel;
 
 public class GameManager extends JFrame {
+  private int currentCycleCount = 0;
+  private final int maxCycleCount = 4;
 
   private CardLayout cardLayout;
   private JPanel mainPanel;
@@ -55,6 +59,24 @@ public class GameManager extends JFrame {
       }
     });
   }
+  private void startGameCycle() {
+    if (currentCycleCount < maxCycleCount - 1) { // maxCycleCount - 1번까지만 반복
+      switchToPanelWithDelay("fever", 30000);
+      switchToPanelWithDelay("game", 40000);
+      currentCycleCount++;
+
+      Timer timer = new Timer(40000, e -> startGameCycle());
+      timer.setRepeats(false);
+      timer.start();
+    } else {
+      // 마지막 사이클: "game"을 보여주고 end screen 표시
+      switchToPanelWithDelay("game", 30000); // 최종 game 화면
+      Timer timer = new Timer(30000, e -> showEndScreen(false));
+      timer.setRepeats(false);
+      timer.start();
+    }
+  }
+
 
   public void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     Timer timer = new Timer(delayMillis, e -> {
@@ -62,6 +84,10 @@ public class GameManager extends JFrame {
         gamePanel.stopGame(); // 게임 일시정지
       } else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
+        // 아이콘 속도 레벨 증가
+        for (Icon icon : Icon.iconList) {
+          icon.increaseSpeedLevel();
+        }
       }
       cardLayout.show(mainPanel, nextPanelName);
     });
@@ -73,8 +99,13 @@ public class GameManager extends JFrame {
   public void startGameSequence() {
     showScreen("game");
     gamePanel.startGame();
-    switchToPanelWithDelay("fever", 30000);
-    switchToPanelWithDelay("game", 40000);
+    startGameCycle();
+//    switchToPanelWithDelay("fever", 30000);
+//    switchToPanelWithDelay("game", 40000);
+//    // 아이콘 속도 레벨 증가
+//    for (Icon icon : Icon.iconList) {
+//      icon.increaseSpeedLevel();
+//    }
   }
 
   // 화면 전환 메서드
@@ -86,6 +117,10 @@ public class GameManager extends JFrame {
   public void showEndScreen(boolean isGameOver) {
     mainPanel.add(new EndPanel(this, isGameOver), "end");
     showScreen("end");
+    // 아이콘 속도 레벨 리셋
+    for (Icon icon : Icon.iconList) {
+      icon.resetSpeedLevel();
+    }
   }
 
   public GamePanel getGamePanel() {
