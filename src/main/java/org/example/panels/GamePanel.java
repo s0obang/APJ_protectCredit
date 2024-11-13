@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.example.Manager.GameInitializer;
@@ -21,15 +24,23 @@ import org.example.object.IconCrash;
 public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
+  public CoinCrash coincrash;
   private Player player; //이거 메인캐릭터임^^
   private BufferedImage coinImage;
-  public CoinCrash coincrash;
   private IconCrash iconCrash;
   private Timer timer;
   private IconManager iconManager;
+  private BufferedImage backgroundImage;
 
   public GamePanel() {
 
+    // 배경 이미지 로드
+    try {
+      backgroundImage = ImageIO.read(
+          new File("src/main/java/org/example/img/backgrounds/backgroundReal.jpg"));
+    } catch (IOException e) {
+      LOGGER.severe("Failed to load background image: " + e.getMessage());
+    }
     // Player 객체 생성 (초기 위치와 크기 설정)
     player = new Player(500, 500, 100, 100);
 
@@ -71,8 +82,13 @@ public class GamePanel extends JPanel {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.setColor(Color.LIGHT_GRAY);
-    g.fillRect(0, 0, getWidth(), getHeight());
+    // 배경 이미지 그리기
+    if (backgroundImage != null) {
+      g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+    } else {
+      g.setColor(Color.LIGHT_GRAY);
+      g.fillRect(0, 0, getWidth(), getHeight());
+    }
     player.draw(g);
     for (Icon icon : Icon.iconList) {
       icon.draw(g);
