@@ -1,5 +1,6 @@
 package org.example.panels;
 
+import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameManager;
 import org.example.entity.Player;
 
@@ -15,9 +16,10 @@ public class BounsPanel extends JPanel {
     private Player bonusplayer;
     private JPanel screenbonus;
     private Timer colorTimer;
+    int centerX = 1080 / 2 - 15; // 패널 중앙 X 좌표
+    int centerY = 720 / 2 - 15; // 패널 중앙 Y 좌표
 
     public BounsPanel() {
-        setBackground(Color.decode("#B0BABA"));
         setLayout(null); // CardLayout 대신 절대 레이아웃 사용
 
         // screenbonus 패널 설정
@@ -30,8 +32,6 @@ public class BounsPanel extends JPanel {
         screenbonusLabel.setFont(new Font("Neo둥근모", Font.BOLD, 30));
         screenbonusLabel.setBounds(450, 360 - 15, 300, 40);
         screenbonus.add(screenbonusLabel);
-
-        bonusplayer = new Player(540, 600, 100, 100);
 
         //코인들과 충돌함수를 CoinCrash에서 어떻게 해결할 수 있을지 지피티한테 물어보기
         //player의 위치와 points를 그대로 가져오는 방법도 지피티한테 물어보기 근데 이건
@@ -59,6 +59,29 @@ public class BounsPanel extends JPanel {
 
 
         this.add(screenbonus);// BounsPanel에 screenbonus 추가
+
+        // bonusplayer 생성
+        bonusplayer = new Player(540, 600, 100, 100);
+        setFocusable(true);
+
+        // GameKeyAdapter를 사용하여 key 이벤트 처리
+        addKeyListener(new GameKeyAdapter(bonusplayer));
+
+        addHierarchyListener(e -> {
+            if (isShowing()) {
+                requestFocusInWindow();
+            }
+        });
+
+        setPreferredSize(new Dimension(1080, 720));
+        setOpaque(true);
+
+        // Timer로 update 메서드를 주기적으로 호출
+        Timer movementTimer = new Timer(16, e -> {
+            bonusplayer.update(); // player 객체의 위치 업데이트
+            repaint(); // 위치 변경 반영
+        });
+        movementTimer.start(); // Timer 시작
         //시간 지나면 게임 패널로 돌아가는 메서드 지피티한테 물어보기
     }
 
@@ -79,9 +102,10 @@ public class BounsPanel extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.setColor(Color.decode("#B0BABA"));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        bonusplayer.draw(g);
         // 하트 형태를 만들기 위해 코인 이미지를 배치
-        int centerX = 1080 / 2 - 15; // 패널 중앙 X 좌표
-        int centerY = 720 / 2 - 15; // 패널 중앙 Y 좌표
 
         // 중앙 하트
         g.drawImage(largecoin, centerX, centerY + 90, 30, 30, this);
@@ -171,6 +195,10 @@ public class BounsPanel extends JPanel {
         g.drawImage(smallcoin, centerX + 220 - 115, centerY - 240 + 95, 30, 30, this);
         g.drawImage(smallcoin, centerX + 220, centerY - 240 + 220, 30, 30, this);
 
+    }
+
+    // bonusplayer의 이동과 그리기를 업데이트하는 메서드 (필요에 따라 추가)
+    public void update() {
     }
 }
 

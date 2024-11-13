@@ -24,7 +24,7 @@ public class StarPanel extends JPanel {
     setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
 
-    // Timer to update star position and repaint panel
+    // 스타 위치 업데이트
     timer = new Timer(30, e -> {
       star.moveTowardsTarget();
       checkCollision();  // 충돌 체크 메서드 호출
@@ -50,8 +50,6 @@ public class StarPanel extends JPanel {
     super.paintComponent(g);
     g.setColor(Color.decode("#B0BABA"));
     g.fillRect(0, 0, getWidth(), getHeight());
-
-    // Draw player and star
     starplayer.draw(g);
     star.draw(g);
   }
