@@ -3,6 +3,7 @@ package org.example.object;
 import org.example.entity.Coin;
 import org.example.entity.Entity;
 import org.example.entity.Player;
+import org.example.panels.BounsPanel;
 import org.example.panels.GamePanel;
 
 import javax.swing.*;
@@ -13,10 +14,9 @@ import java.util.ArrayList;
 public class CoinCrash {
     private final GamePanel gamePanel;
     ArrayList<Entity> entities;
-    private JTextField scoreText;
-    private Timer activeTimer;
     private JTextField curpointText;
     private static BufferedImage coinimg;
+    private BounsPanel bounsPanel;
 
     // 배열 생성
     public CoinCrash(GamePanel gamePanel) {
@@ -32,7 +32,7 @@ public class CoinCrash {
         curpointText.setOpaque(false); // 배경색 투명하게 만들기
         curpointText.setBorder(null); // 텍스트 필드 테두리 삭제
 
-        curpointText.setBounds(82, 87, 150, 30); // Top-left corner
+        curpointText.setBounds(82, 87, 150, 30);
         gamePanel.setLayout(null);
         gamePanel.add(curpointText); // 게임 패널에 추가
 
@@ -51,43 +51,6 @@ public class CoinCrash {
             this.coinimg = (BufferedImage) ((Coin) entity).coinimg;
         }
     }
-/*
-    // 만 원 추가 표시
-    public void pointText(int points) {
-        // 타이머가 실행 중인 경우 새로 생성하지 않고 종료
-        if (activeTimer != null && activeTimer.isRunning()) {
-            return;
-        }
-
-        scoreText = new JTextField("+10000");
-        Font labelFont = new Font("Neo둥근모", Font.PLAIN, 15);
-        scoreText.setFont(labelFont);
-        scoreText.setForeground(Color.decode("#5E5E5E"));
-        scoreText.setEditable(false);
-        scoreText.setOpaque(false); // 배경을 투명하게 설정
-        scoreText.setBorder(null); // 텍스트 상자 테두리 지우기
-
-        // 위치와 크기 설정
-        scoreText.setBounds(80, 100, 200, 30); // 위치와 크기 설정
-        scoreText.setVisible(true);
-
-        // 패널에 추가하고 다시 그리기 요청
-        gamePanel.setLayout(null); // 레이아웃 매니저 설정
-        gamePanel.add(scoreText);
-        gamePanel.add(curpointText);
-        gamePanel.repaint();
-
-        // 일정 시간 후 텍스트 필드 숨김
-        activeTimer = new Timer(300, e -> {
-            gamePanel.remove(scoreText);
-            scoreText.setVisible(false);
-            gamePanel.repaint();
-            activeTimer = null; // 타이머 종료 후 null로 설정
-        });
-        activeTimer.setRepeats(false);
-        activeTimer.start();
-
-    }*/
 
     // 누적 금액 패널에 띄우는 함수
     private void showcurpoints(int points) {
@@ -106,21 +69,21 @@ public class CoinCrash {
                 if (e1.getBounds().intersects(e2.getBounds())) {
                     if (e1 instanceof Player && e2 instanceof Coin) {
                         (e1).upPoint(1); // 플레이어 점수 증가
-                        //pointText(e1.getPoints()); // +10000 글자 패널에 띄우기
                         showcurpoints(e1.getPoints()); // 누적 금액 패널에 갱신
                         ((Coin) e2).resetPosition();// 코인을 초기 위치로 리셋
-                    } 
+
+                    }
                     // e1이 Coin1이고 e2가 Player일 경우
                     else if (e1 instanceof Coin && e2 instanceof Player) {
                         (e2).upPoint(1); // 플레이어 점수 증가
-                        //pointText(e2.getPoints());
                         showcurpoints(e1.getPoints());
                         ((Coin) e1).resetPosition(); // 코인을 초기 위치로 리셋
                     }
                 }
-                }
             }
         }
+    }
+
     // Coin 이미지 반환 메서드
     public static BufferedImage getCoinImage() {
         return coinimg;

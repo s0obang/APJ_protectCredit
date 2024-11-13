@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
-public abstract class Coin extends Entity {
+public class Coin extends Entity {
 
   public static ArrayList<Coin> arraycoin = new ArrayList<>();
-  public Image coinimg;
+  public static Image coinimg, bonuscoin;
   private final Random random = new Random();
   int x, y, speed;
 
-  public Coin(int x, int y, int width, int height) {
+  public Coin( int x, int y, int width, int height) {
     super(x, y, width, height);
     this.speed = 7;
     this.x = random.nextInt(1080 - 20);
@@ -32,7 +32,7 @@ public abstract class Coin extends Entity {
   }
 
   public static void createAndAddCoin(int width, int height) {
-    Coin coin = new Coin(width, height, 30, 30) {
+    Coin coin = new Coin( width, height, 30, 30) {
       @Override
       public void update() {
       }
@@ -61,6 +61,11 @@ public abstract class Coin extends Entity {
     return new Rectangle(x, y, width, height); // 코인 이미지의 크기에 맞게 수정
   }
 
+  @Override
+  public void update() {
+
+  }
+
   // 코인 생성 및 배열에 추가
 
   protected void paintComponent(Graphics g) {
@@ -84,5 +89,7 @@ public abstract class Coin extends Entity {
   }
 
 }
+
+
 
 

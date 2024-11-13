@@ -10,15 +10,16 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import org.example.Manager.GameInitializer;
-import org.example.Manager.GameKeyAdapter;
-import org.example.Manager.GameTimer;
-import org.example.Manager.IconManager;
+
+import org.example.Manager.*;
 import org.example.entity.Coin;
 import org.example.entity.Icon;
 import org.example.entity.Player;
+import org.example.entity.Star;
 import org.example.object.CoinCrash;
 import org.example.object.IconCrash;
+import org.example.object.StarCrash;
+import org.example.object.UserStatus;
 
 
 public class GamePanel extends JPanel {
@@ -30,6 +31,8 @@ public class GamePanel extends JPanel {
   private IconCrash iconCrash;
   private Timer timer;
   private IconManager iconManager;
+  private StarPanel starPanel;
+  private GameManager gameManager;
   private BufferedImage backgroundImage;
 
   public GamePanel() {
@@ -49,6 +52,7 @@ public class GamePanel extends JPanel {
     iconCrash = new IconCrash(this, player);
     iconCrash.addEntity(player);
     coincrash.addEntity(player);
+    starPanel = new StarPanel(gameManager);
     iconManager = new IconManager();
 
     //플레이어 방향키로 이동하느느거!!!
@@ -68,15 +72,15 @@ public class GamePanel extends JPanel {
   public void startGame() {
     timer = new GameTimer(iconManager, coincrash, iconCrash, this);
     timer.start();
-
   }
 
   public void stopGame() {
     if (timer != null) {
       timer.stop();
-      LOGGER.info("Game stopped temporarily.");
+      //LOGGER.info("Game stopped temporarily.");
     }
   }
+
 
   // 패널에 아이콘을 그리는 메서드
   @Override
