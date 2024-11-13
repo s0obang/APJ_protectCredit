@@ -30,10 +30,6 @@ public abstract class Entity {
   public void upPoint(double point) {
     points += point;
   }
-  // 포인트 감소
-  public void downPoint(double point) {
-    points -= point;
-  }
 
   public int getPoints() {
     return points;

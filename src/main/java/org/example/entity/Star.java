@@ -16,8 +16,7 @@ public class Star extends Entity {
     public Star(int initialX, int initialY, int width, int height) {
         super(initialX, initialY, width, height);
         random = new Random();
-
-        // Load star image
+        
         try {
             starImage = ImageIO.read(new File("src/main/java/org/example/img/star/star.png"));
         } catch (IOException e) {
@@ -31,7 +30,8 @@ public class Star extends Entity {
     public void update() {
 
     }
-
+ 
+    // star 이미지가 이동할 랜덤 좌표 정하는 메서드
     public void setNewTargetPosition() {
         if (getBounds().width > 0 && getBounds().height > 0) {
             targetX = random.nextInt(1080 - getBounds().width);
@@ -39,12 +39,13 @@ public class Star extends Entity {
         }
     }
 
+    //star가 움직이는 메서드
     public void moveTowardsTarget() {
         int dx = targetX - x;
         int dy = targetY - y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        // If close to target, set new target
+        // 목표 지점에 가까워지면 다른 랜덤한 위치를 목표 위치로 재설정
         if (distance < MOVE_SPEED) {
             x = targetX;
             y = targetY;

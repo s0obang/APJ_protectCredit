@@ -30,7 +30,7 @@ public class CoinCrash {
         curpointText.setOpaque(false); // 배경색 투명하게 만들기
         curpointText.setBorder(null); // 텍스트 필드 테두리 삭제
 
-        curpointText.setBounds(82, 87, 150, 30); // Top-left corner
+        curpointText.setBounds(82, 87, 150, 30);
         gamePanel.setLayout(null);
         gamePanel.add(curpointText); // 게임 패널에 추가
 
