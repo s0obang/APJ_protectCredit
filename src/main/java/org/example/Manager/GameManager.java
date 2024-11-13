@@ -16,8 +16,8 @@ import org.example.panels.LevelUpPanel;
 import org.example.panels.BounsPanel;
 
 public class GameManager extends JFrame {
-  private static int currentCycleCount = 0;
-  private static final int maxCycleCount = 4;
+  private int currentCycleCount = 0;
+  private final int maxCycleCount = 4;
 
   private static CardLayout cardLayout;
   private static JPanel mainPanel;
