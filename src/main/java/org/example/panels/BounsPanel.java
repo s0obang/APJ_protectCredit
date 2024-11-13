@@ -96,6 +96,7 @@ public class BounsPanel extends JPanel {
 
 
     }
+
     public void bonusColor() {
         colorTimer.start();
 

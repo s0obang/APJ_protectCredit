@@ -2,32 +2,32 @@ package org.example.panels;
 
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameManager;
+import org.example.Manager.GameTimer;
 import org.example.entity.Player;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
-import org.example.panels.BounsPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class StarPanel extends JPanel {
   private final Player starplayer;
-  private final Star star;
   public StarCrash starCrash;
-  public GameManager gameManager;
+  public static GameManager gameManager;
 
   public StarPanel(GameManager ignoredGameManager) {
     starplayer = new Player(500, 500, 100, 100);
-    star = new Star(300, 300, 60, 50);
 
     setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
 
     // 스타 위치 업데이트와 충돌 타이머 설정
-    Timer timer = new Timer(30, e -> {
-      star.moveTowardsTarget();
-      repaint();
-      checkCollision();  // 충돌을 체크하는 메서드 호출
+    Timer timer = new Timer(16, e -> {
+      if (GameManager.star != null) {
+        GameManager.star.moveTowardsTarget();
+        repaint();
+        checkCollision();
+      }// 충돌을 체크하는 메서드 호출
     });
     timer.start();
 
@@ -41,7 +41,11 @@ public class StarPanel extends JPanel {
     setOpaque(true);
 
     // StarCrash 객체 생성 시 GameManager 전달
-    starCrash = new StarCrash(this.gameManager, starplayer, star);
+    starCrash = new StarCrash(gameManager, starplayer, GameManager.star);
+  }
+
+  public void initializeStar(Star star) {
+    GameManager.star = star;
   }
 
   @Override
@@ -50,7 +54,9 @@ public class StarPanel extends JPanel {
     g.setColor(Color.decode("#B0BABA"));
     g.fillRect(0, 0, getWidth(), getHeight());
     starplayer.draw(g);
-    star.draw(g);  // 여기서 Star 객체의 visible 속성에 따라 그려짐
+    if (GameManager.star != null) {
+      GameManager.star.draw(g);  // GameManager.star이 null이 아닐 때만 그리기 // 여기서 Star 객체의 visible 속성에 따라 그려짐
+    }
   }
 
   // 충돌 체크 메서드

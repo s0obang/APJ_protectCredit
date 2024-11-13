@@ -21,7 +21,7 @@ public class StarCrash {
     public void checkCollision() {
         // Player와 Star의 경계값 가져오기
         Rectangle playerBounds = player.getBounds();
-        Rectangle starBounds = star.getBounds();
+        Rectangle starBounds = GameManager.star.getBounds();
 
         // 두 객체의 경계값이 겹치는지 확인
         if (playerBounds.intersects(starBounds)) {
@@ -31,7 +31,7 @@ public class StarCrash {
 
     private void handleCollision() {
         // Star 이미지 숨기기
-        star.setVisible(false);  // Star를 숨김
+        GameManager.star.setVisible(false);  // Star를 숨김
 
         // BonusPanel로 전환 (색상 처리와 관련된 작업은 StarPanel에서 하도록 함)
         GameManager.switchToPanelWithDelay("bonus", 500);  // BonusPanel로 전환

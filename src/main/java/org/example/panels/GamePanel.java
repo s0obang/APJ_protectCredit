@@ -70,9 +70,8 @@ public class GamePanel extends JPanel {
   }
 
   public void startGame() {
-    timer = new GameTimer(iconManager, coincrash, iconCrash, this, starPanel);
+    timer = new GameTimer(iconManager, coincrash, iconCrash, this);
     timer.start();
-
   }
 
   public void stopGame() {
@@ -81,6 +80,7 @@ public class GamePanel extends JPanel {
       //LOGGER.info("Game stopped temporarily.");
     }
   }
+
 
   // 패널에 아이콘을 그리는 메서드
   @Override

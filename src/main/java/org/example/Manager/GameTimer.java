@@ -10,14 +10,14 @@ import org.example.panels.StarPanel;
 
 public class GameTimer extends Timer {
 
-  public GameTimer(IconManager iconManager, CoinCrash crash, IconCrash iconCrash, GamePanel panel, StarPanel starPanel) {
+  public GameTimer(IconManager iconManager, CoinCrash crash, IconCrash iconCrash, GamePanel panel) {
     super(30, e -> {
       iconManager.updateIcons();
       iconManager.updateCoins();
       crash.checkCollisions();
       iconCrash.checkCollisions();
-      starPanel.starCrash.checkCollision();
       panel.repaint();
     });
   }
+
 }

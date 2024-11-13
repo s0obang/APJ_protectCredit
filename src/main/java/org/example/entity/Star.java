@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 public class Star extends Entity {
     public Image starImage;
     private int targetX, targetY;
-    private final int MOVE_SPEED = 7;
+    private final int MOVE_SPEED = 5;
     private Random random;
     private boolean visible = true; // 추가된 속성
 
@@ -66,5 +66,9 @@ public class Star extends Entity {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 }

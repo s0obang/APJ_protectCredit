@@ -1,12 +1,14 @@
 package org.example.Manager;
 
 import java.awt.CardLayout;
-import java.util.Objects;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.example.entity.Icon;
+import org.example.entity.Star;
 import org.example.object.UserStatus;
 import org.example.panels.EndPanel;
 import org.example.panels.GamePanel;
@@ -27,6 +29,7 @@ public class GameManager extends JFrame {
   private static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
   public static BounsPanel bonusPanel;
+  public static Star star;
 
   private UserStatus userStatus;
 
@@ -60,24 +63,29 @@ public class GameManager extends JFrame {
     setVisible(true);
 
     // 창 닫을 때 로그아웃
-    addWindowListener(new java.awt.event.WindowAdapter() {
+    addWindowListener(new WindowAdapter() {
       @Override
-      public void windowClosing(java.awt.event.WindowEvent e) {
+      public void windowClosing(WindowEvent e) {
         loginManager.logout();
         System.out.println("로그아웃 후 애플리케이션 종료.");
       }
     });
   }
+
   public void startGameCycle() {
 
     if (currentCycleCount < maxCycleCount - 1) {// maxCycleCount - 1번까지만 반복
       // 30초 후에 levelupPanel로 전환
-      Timer levelUpTimer = new Timer(1000, e -> {
+      Timer levelUpTimer = new Timer(5000, e -> {
         switchToPanelWithDelay("levelup", 0);
 
         // levelupPanel이 표시된 후 3초 뒤에 starPanel로 전환
-        Timer starTimer = new Timer(1000, event -> {
+        Timer starTimer = new Timer(5000, event -> {
           switchToPanelWithDelay("star", 0);
+          starPanel.initializeStar(star); // StarPanel에 Star 객체 전달
+          // StarPanel로 전환 시에 Star 객체를 생성하여 전달
+          star = new Star(0, 0, 60, 50); // Star 객체 초기화
+
         });
         starTimer.setRepeats(false); // 한 번만 실행되도록 설정
         starTimer.start();
@@ -102,9 +110,10 @@ public class GameManager extends JFrame {
 
   public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     Timer timer = new Timer(delayMillis, e -> {
-      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("bonus")) {
-        gamePanel.stopGame(); // 게임 일시정지
-      } else if (nextPanelName.equals("game")) {
+      if (nextPanelName.equals("levelup") || (nextPanelName.equals("star")) || nextPanelName.equals("bonus")) {
+        gamePanel.stopGame();// 게임 일시정지
+      }
+      else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
         // 아이콘 속도 레벨 증가
         for (Icon icon : Icon.iconList) {
