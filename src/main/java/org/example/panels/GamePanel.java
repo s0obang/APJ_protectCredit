@@ -26,7 +26,7 @@ public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   public CoinCrash coincrash;
-  private Player player; //이거 메인캐릭터임^^
+  public Player player; //이거 메인캐릭터임^^
   private BufferedImage coinImage;
   private IconCrash iconCrash;
   private Timer timer;
@@ -45,7 +45,7 @@ public class GamePanel extends JPanel {
       LOGGER.severe("Failed to load background image: " + e.getMessage());
     }
     // Player 객체 생성 (초기 위치와 크기 설정)
-    player = new Player(500, 500, 100, 100);
+    this.player = new Player(500, 500, 100, 100);
 
     // Crash 객체 생성 -> 충돌 감지에 저장
     coincrash = new CoinCrash(this);

@@ -1,42 +1,43 @@
 package org.example.object;
 
 import org.example.Manager.GameManager;
-import org.example.entity.Player;
-import org.example.entity.Star;
-import org.example.panels.BounsPanel;
+import org.example.panels.BonusPanel;
 import org.example.panels.StarPanel;
-
-import java.awt.*;
 
 public class StarCrash {
     private final GameManager gameManager;
-    private Player player;
-    private Star star;
+    private StarPanel starPanel;
 
-    public StarCrash(GameManager gameManager, Player player, Star star) {
+    public StarCrash(GameManager gameManager, StarPanel starPanel) {
         this.gameManager = gameManager;
-        this.player = player;
-        this.star = star;
+        this.starPanel = starPanel; // StarPanel을 받아서 초기화
     }
 
 
     public boolean checkCollision() {
-        // Player와 Star의 경계값 가져오기
-        Rectangle playerBounds = player.getBounds();
-        Rectangle starBounds = gameManager.star.getBounds();
-
-        // 두 객체의 경계값이 겹치는지 확인
-        if (playerBounds.intersects(starBounds)) {
-            handleCollision();  // 충돌 발생 시 처리
-            return true;  // 충돌이 발생한 경우
+        // starPanel이 null이 아닌지 확인한 후 getBounds() 호출
+        if (starPanel != null && starPanel.starplayer != null) {
+            return gameManager.star.getBounds().intersects(starPanel.starplayer.getBounds());
         }
-        return false;  // 충돌이 발생하지 않으면 false 반환
+        return false;  // starPanel 또는 starplayer가 null이면 충돌 검사하지 않음
     }
-
 
     public void handleCollision() {
         // Star 이미지 숨기기
-        GameManager.star.setVisible(false);  // Star를 숨김
-        GameManager.switchToPanelWithDelay("bonus", 0);
+        gameManager.star.setVisible(false);
+
+        // GameManager에서 BonusPanel을 가져와서 bonusColor() 호출
+        BonusPanel bonusPanel = (BonusPanel) GameManager.getPanel("bonus");  // "bonus" 패널을 가져옵니다.
+        if (bonusPanel != null) {
+            bonusPanel.bonusColor();  // bonusColor() 호출
+        }
+    }
+
+    public GameManager getGameManager() {
+        return gameManager;
+    }
+
+    public void setStarPanel(StarPanel starPanel) {
+        this.starPanel = starPanel;
     }
 }

@@ -3,7 +3,7 @@ package org.example.object;
 import org.example.entity.Coin;
 import org.example.entity.Entity;
 import org.example.entity.Player;
-import org.example.panels.BounsPanel;
+import org.example.panels.BonusPanel;
 import org.example.panels.GamePanel;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class CoinCrash {
     ArrayList<Entity> entities;
     private JTextField curpointText;
     private static BufferedImage coinimg;
-    private BounsPanel bounsPanel;
+    private BonusPanel bonusPanel;
 
     // 배열 생성
     public CoinCrash(GamePanel gamePanel) {
