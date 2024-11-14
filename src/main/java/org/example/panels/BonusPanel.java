@@ -1,71 +1,130 @@
 package org.example.panels;
 
+import org.example.entity.Player;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class BonusPanel extends JPanel {
-    private JPanel screenbonus;
-    private Timer colorTimer;
-    private boolean isColorTimerRunning = false;
+    private Player bonusplayer;
+    private final Image largecoin, medicoin, smallcoin;
+
+
+    int centerX = 1080 / 2 - 15; // 패널 중앙 X 좌표
+    int centerY = 720 / 2 - 15; // 패널 중앙 Y 좌표
 
     public BonusPanel() {
         // 화면 구성 초기화
-        this.setLayout(new BorderLayout());
+        setLayout(null); // 절대 레이아웃 사용
+        bonusplayer = new Player(500, 500, 100, 100);
 
-        // screenbonus 패널 초기화
-        screenbonus = new JPanel();
-        screenbonus.setPreferredSize(new Dimension(400, 300));  // 화면 크기 설정
-        this.add(screenbonus, BorderLayout.CENTER);
-
-        // colorTimer 초기화
-        colorTimer = new Timer(300, new ActionListener() {
-            private int colorIndex = 0;
-            private Color[] rainbowColors = {
-                    Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN,
-                    Color.CYAN, Color.BLUE, new Color(128, 0, 128) // 보라색
-            };
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 배경 색상을 순차적으로 변경
-                screenbonus.setBackground(rainbowColors[colorIndex]);
-                colorIndex = (colorIndex + 1) % rainbowColors.length;
-            }
-        });
-    }
-
-    // bonusColor 메서드 - 무지개 색상을 적용하고 3초 후에 화면을 전환
-    public void bonusColor() {
-        // 이미 실행 중인 경우 타이머 초기화
-        if (isColorTimerRunning) {
-            colorTimer.stop();
+        try {
+            largecoin = ImageIO.read(new File("src/main/java/org/example/img/coin/coin.png"));
+            medicoin = ImageIO.read(new File("src/main/java/org/example/img/coin/medicoin.png"));
+            smallcoin = ImageIO.read(new File("src/main/java/org/example/img/coin/smallcoin.png"));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
-
-        // screenbonus 패널을 화면에 추가하고 보이도록 설정
-        screenbonus.setVisible(true);
-        this.revalidate();
-        this.repaint();
-        isColorTimerRunning = true;
-
-        // 무지개 색상 변경 시작
-        colorTimer.start();
-
-        // 3초 후에 screenbonus를 숨기고 색상 타이머를 중지
-        Timer transitionTimer = new Timer(3000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                colorTimer.stop(); // 색상 전환 타이머 중지
-                isColorTimerRunning = false;
-
-                // 화면에서 screenbonus 패널 숨기기
-                screenbonus.setVisible(false);
-                revalidate();
-                repaint();
-            }
-        });
-        transitionTimer.setRepeats(false); // 1회만 실행
-        transitionTimer.start();
     }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.decode("#B0BABA"));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        // 보너스 플레이어 및 코인 그리기
+        bonusplayer.draw(g);
+
+        g.drawImage(largecoin, centerX, centerY + 90, 30, 30, this);
+        g.drawImage(largecoin, centerX, centerY + 130, 30, 30, this);
+        g.drawImage(largecoin, centerX + 60, centerY + 75, 30, 30, this);
+        g.drawImage(largecoin, centerX - 60, centerY + 75, 30, 30, this);
+        g.drawImage(largecoin, centerX + 60, centerY + 115, 30, 30, this);
+        g.drawImage(largecoin, centerX - 60, centerY + 115, 30, 30, this);
+        g.drawImage(largecoin, centerX - 30, centerY + 150, 30, 30, this);
+        g.drawImage(largecoin, centerX + 30, centerY + 150, 30, 30, this);
+        g.drawImage(largecoin, centerX, centerY + 170, 30, 30, this);
+        g.drawImage(medicoin, centerX - 30, centerY + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 30, centerY + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 90, centerY + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX - 90, centerY + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 90, centerY + 95, 30, 30, this);
+        g.drawImage(medicoin, centerX - 30, centerY + 100, 30, 30, this);
+        g.drawImage(medicoin, centerX + 30, centerY + 100, 30, 30, this);
+        g.drawImage(medicoin, centerX - 90, centerY + 95, 30, 30, this);
+        g.drawImage(medicoin, centerX + 90, centerY + 130, 30, 30, this);
+        g.drawImage(medicoin, centerX - 90, centerY + 130, 30, 30, this);
+        g.drawImage(medicoin, centerX + 60, centerY + 160, 30, 30, this);
+        g.drawImage(medicoin, centerX - 60, centerY + 160, 30, 30, this);
+        g.drawImage(medicoin, centerX - 30, centerY + 190, 30, 30, this);
+        g.drawImage(medicoin, centerX + 30, centerY + 190, 30, 30, this);
+        g.drawImage(smallcoin, centerX - 60, centerY + 30, 30,30,this);
+        g.drawImage(smallcoin, centerX + 60, centerY+ 30, 30,30,this);
+        g.drawImage(smallcoin, centerX + 115, centerY + 95, 30,30,this);
+        g.drawImage(smallcoin, centerX - 115, centerY + 95, 30,30,this);
+        g.drawImage(smallcoin, centerX, centerY + 220, 30,30,this);
+        //좌측 상단 하트
+        g.drawImage(largecoin, centerX - 220, centerY - 240 + 90, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220, centerY - 240 + 130, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220 + 60, centerY - 240 + 75, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220 - 60, centerY - 240 + 75, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220 + 60, centerY - 240 + 115, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220 - 60, centerY - 240 + 115, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220 - 30, centerY - 240 + 150, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220 + 30, centerY - 240 + 150, 30, 30, this);
+        g.drawImage(largecoin, centerX - 220, centerY - 240 + 170, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 30, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 30, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 90, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 90, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 90, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 30, centerY - 240 + 100, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 30, centerY - 240 + 100, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 90, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 90, centerY - 240 + 130, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 90, centerY - 240 + 130, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 60, centerY - 240 + 160, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 60, centerY - 240 + 160, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 - 30, centerY - 240 + 190, 30, 30, this);
+        g.drawImage(medicoin, centerX - 220 + 30, centerY - 240 + 190, 30, 30, this);
+        g.drawImage(smallcoin, centerX - 220 - 60, centerY - 240 + 30, 30, 30, this);
+        g.drawImage(smallcoin, centerX - 220 + 60, centerY - 240 + 30, 30, 30, this);
+        g.drawImage(smallcoin, centerX - 220 + 115, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(smallcoin, centerX - 220 - 115, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(smallcoin, centerX - 220, centerY - 240 + 220, 30, 30, this);
+        //우측 상단 하트
+        g.drawImage(largecoin, centerX + 220, centerY - 240 + 90, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220, centerY - 240 + 130, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220 + 60, centerY - 240 + 75, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220 - 60, centerY - 240 + 75, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220 + 60, centerY - 240 + 115, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220 - 60, centerY - 240 + 115, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220 - 30, centerY - 240 + 150, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220 + 30, centerY - 240 + 150, 30, 30, this);
+        g.drawImage(largecoin, centerX + 220, centerY - 240 + 170, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 30, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 30, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 90, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 90, centerY - 240 + 60, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 90, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 30, centerY - 240 + 100, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 30, centerY - 240 + 100, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 90, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 90, centerY - 240 + 130, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 90, centerY - 240 + 130, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 60, centerY - 240 + 160, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 60, centerY - 240 + 160, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 - 30, centerY - 240 + 190, 30, 30, this);
+        g.drawImage(medicoin, centerX + 220 + 30, centerY - 240 + 190, 30, 30, this);
+        g.drawImage(smallcoin, centerX + 220 - 60, centerY - 240 + 30, 30, 30, this);
+        g.drawImage(smallcoin, centerX + 220 + 60, centerY - 240 + 30, 30, 30, this);
+        g.drawImage(smallcoin, centerX + 220 + 115, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(smallcoin, centerX + 220 - 115, centerY - 240 + 95, 30, 30, this);
+        g.drawImage(smallcoin, centerX + 220, centerY - 240 + 220, 30, 30, this);
+
+    }
+
 }

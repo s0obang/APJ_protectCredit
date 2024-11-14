@@ -25,12 +25,6 @@ public class StarCrash {
     public void handleCollision() {
         // Star 이미지 숨기기
         gameManager.star.setVisible(false);
-
-        // GameManager에서 BonusPanel을 가져와서 bonusColor() 호출
-        BonusPanel bonusPanel = (BonusPanel) GameManager.getPanel("bonus");  // "bonus" 패널을 가져옵니다.
-        if (bonusPanel != null) {
-            bonusPanel.bonusColor();  // bonusColor() 호출
-        }
     }
 
     public GameManager getGameManager() {

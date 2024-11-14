@@ -8,15 +8,11 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.example.entity.Icon;
+import org.example.entity.Player;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
 import org.example.object.UserStatus;
-import org.example.panels.EndPanel;
-import org.example.panels.GamePanel;
-import org.example.panels.StartPanel;
-import org.example.panels.StarPanel;
-import org.example.panels.LevelUpPanel;
-import org.example.panels.BonusPanel;
+import org.example.panels.*;
 
 public class GameManager extends JFrame {
   private int currentCycleCount = 0;
@@ -30,6 +26,7 @@ public class GameManager extends JFrame {
   private static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
   public static BonusPanel bonusPanel;
+  public static RainbowPanel rainbowPanel;
   public static Star star;
   public StarCrash starCrash;
 
@@ -62,12 +59,14 @@ public class GameManager extends JFrame {
     bonusPanel = new BonusPanel();
     starPanel = new StarPanel(this);
     starCrash = new StarCrash(this, starPanel);
+    rainbowPanel = new RainbowPanel();
     // 각 화면을 패널로 추가
     mainPanel.add(new StartPanel(this, loginManager), "start");
     mainPanel.add(gamePanel, "game");
     mainPanel.add(starPanel, "star");
     mainPanel.add(levelupPanel, "levelup");
     mainPanel.add(bonusPanel, "bonus");
+    mainPanel.add(rainbowPanel, "rainbow");
 
     add(mainPanel);
     setVisible(true);
@@ -94,7 +93,7 @@ public class GameManager extends JFrame {
       return;
     }
 
-    // levelUpTimer 설정: 3초 후 levelup 패널로 전환
+    // levelUpTimer 설정: 3초 후 levelup 패널로 전환 -> 한 학년 당 게임의 시간
     if (levelUpTimer != null) levelUpTimer.stop();
     levelUpTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("levelup", 0);
@@ -104,7 +103,7 @@ public class GameManager extends JFrame {
     levelUpTimer.start();
   }
 
-  //star 패널로 이동
+  //star 패널로 이동 -> 레벨업 패널이 올라와있는 시간
   public void startStarPhase() {
     if (starTimer != null) starTimer.stop();
     starTimer = new Timer(3000, e -> {
@@ -133,17 +132,19 @@ public class GameManager extends JFrame {
   }
 
 
-  //일반적으로 충돌할 경우
+  //일반적으로 충돌할 경우 -> 보너스 패널로 이동
   private void startBonusPhase() {
     if (bonusTimer != null) bonusTimer.stop();
     bonusTimer = new Timer(1000, e -> {
       switchToPanelWithDelay("bonus", 0);
       starCrash.handleCollision();
+      bonusPanel = new BonusPanel();
 
-      // 5초 후 보너스 패널에서 게임 패널로 복귀
+      // 10초 후 보너스 패널에서 게임 패널로 복귀
       if (returnToGameTimer != null) returnToGameTimer.stop();
-      returnToGameTimer = new Timer(5000, e2 -> {
+      returnToGameTimer = new Timer(10000, e2 -> {
         switchToPanelWithDelay("game", 0);
+        //gamePanel.player = new Player(500, 500, 100, 100);
         currentCycleCount++;
         startLevelUpPhase(); // 다음 사이클 시작
       });
@@ -161,7 +162,7 @@ public class GameManager extends JFrame {
       switchToPanelWithDelay("bonus", 0);
       starCrash.handleCollision();
 
-      // 마지막 사이클: 5초 후 보너스 패널에서 게임 종료
+      // 마지막 사이클 -> 보너스 패널 10초 후 엔딩으로 이동
       if (returnToGameTimer != null) returnToGameTimer.stop();
       returnToGameTimer = new Timer(5000, e2 -> endGameCycle());
       returnToGameTimer.setRepeats(false);
@@ -171,10 +172,12 @@ public class GameManager extends JFrame {
     bonusTimer.start();
   }
 
+  //충돌이 없는 경우 (보너스 실패) -> 다음 학년으로 넘어가기
   private void startNoCollisionPhase() {
     if (noCollisionTimer != null) noCollisionTimer.stop();
+    //스타와 함께 있었던 시간
     noCollisionTimer = new Timer(5000, e -> {
-      star.setVisible(false);
+      starCrash.handleCollision();
       switchToPanelWithDelay("game", 0);
       currentCycleCount++;
       startLevelUpPhase(); // 다음 사이클 시작
