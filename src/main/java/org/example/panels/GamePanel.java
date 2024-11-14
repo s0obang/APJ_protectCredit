@@ -26,7 +26,7 @@ public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   public CoinCrash coincrash;
-  private Player player; //이거 메인캐릭터임^^
+  public Player player; //이거 메인캐릭터임^^
   private BufferedImage coinImage;
   private IconCrash iconCrash;
   private Timer timer;

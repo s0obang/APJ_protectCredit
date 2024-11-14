@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 public class Star extends Entity {
     public Image starImage;
     private int targetX, targetY;
-    private final int MOVE_SPEED = 5;
+    private final int MOVE_SPEED = 4;
     private Random random;
     private boolean visible = true; // 추가된 속성
 
@@ -22,7 +22,7 @@ public class Star extends Entity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        setVisible(true);
         setNewTargetPosition();
     }
 
@@ -62,6 +62,11 @@ public class Star extends Entity {
             // 이미지 그리기
             g.drawImage(starImage, x, y, width, height, null);
         }
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);  // 아이콘 충돌 영역 정의
     }
 
     public void setVisible(boolean visible) {

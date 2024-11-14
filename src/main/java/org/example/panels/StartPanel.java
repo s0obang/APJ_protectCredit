@@ -103,8 +103,8 @@ public class StartPanel extends JPanel {
     playButton.addActionListener(e -> {
       cardLayout.show(cardPanel, "start");
       manager.showScreen("game");
-      //manager.getGamePanel().startGame();
       manager.startGameSequence();// 아이콘 떨어짐 동작 시작
+      manager.getGamePanel().startGame();
     });
 
 //        playButton.addActionListener(new ActionListener() {
