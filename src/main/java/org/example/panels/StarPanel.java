@@ -2,7 +2,6 @@ package org.example.panels;
 
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameManager;
-import org.example.Manager.GameTimer;
 import org.example.entity.Player;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
@@ -26,7 +25,8 @@ public class StarPanel extends JPanel {
       if (GameManager.star != null) {
         GameManager.star.moveTowardsTarget();
         repaint();
-        checkCollision();
+          // 충돌이 발생하면 후속 처리
+          if (checkCollision()) handleBonusColor();
       }// 충돌을 체크하는 메서드 호출
     });
     timer.start();
@@ -41,7 +41,7 @@ public class StarPanel extends JPanel {
     setOpaque(true);
 
     // StarCrash 객체 생성 시 GameManager 전달
-    starCrash = new StarCrash(gameManager, starplayer, GameManager.star);
+    this.starCrash = new StarCrash(gameManager, starplayer, GameManager.star);
   }
 
   public void initializeStar(Star star) {
@@ -60,8 +60,9 @@ public class StarPanel extends JPanel {
   }
 
   // 충돌 체크 메서드
-  private void checkCollision() {
-    starCrash.checkCollision();  // 충돌 발생 시 처리
+  public boolean checkCollision() {
+    // 충돌 체크 후 true 반환
+    return starCrash.checkCollision();
   }
 
   // 충돌 후 bonusColor() 호출

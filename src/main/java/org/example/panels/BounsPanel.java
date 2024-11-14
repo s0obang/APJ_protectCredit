@@ -22,8 +22,7 @@ public class BounsPanel extends JPanel {
     private Player bonusplayer;
     private final JPanel screenbonus;
     private final Timer colorTimer;
-    private Timer collisionTimer;  // 충돌 체크를 위한 타이머
-    private StarPanel starPanel;
+    private final StarPanel starPanel;
 
     int centerX = 1080 / 2 - 15; // 패널 중앙 X 좌표
     int centerY = 720 / 2 - 15; // 패널 중앙 Y 좌표
@@ -43,10 +42,6 @@ public class BounsPanel extends JPanel {
         screenbonusLabel.setFont(new Font("Neo둥근모", Font.BOLD, 30));
         screenbonusLabel.setBounds(450, 360 - 15, 300, 40);
         screenbonus.add(screenbonusLabel);
-
-        //코인들과 충돌함수를 CoinCrash에서 어떻게 해결할 수 있을지 지피티한테 물어보기
-        //player의 위치와 points를 그대로 가져오는 방법도 지피티한테 물어보기 근데 이건
-        //참조변수를 써서 가져오면 될 것 같기도 함
 
         try {
             largecoin = ImageIO.read(new File("src/main/java/org/example/img/coin/coin.png"));
@@ -97,6 +92,7 @@ public class BounsPanel extends JPanel {
 
     }
 
+    //따로 함수를 쓰지 않고 바로 이 메서드를 호출하는 방향으로 가보자...
     public void bonusColor() {
         colorTimer.start();
 
@@ -105,8 +101,8 @@ public class BounsPanel extends JPanel {
             colorTimer.stop(); // 색상 전환 타이머 중지
 
             // screenbonus 패널을 삭제
-            BounsPanel.this.remove(screenbonus); // 화면에서 삭제
-            BounsPanel.this.repaint(); // 화면 갱신
+            this.remove(screenbonus); // 화면에서 삭제
+            this.repaint(); // 화면 갱신
         });
         transitionTimer.setRepeats(false); // 한 번만 실행
         transitionTimer.start();
@@ -214,14 +210,5 @@ public class BounsPanel extends JPanel {
         g.drawImage(smallcoin, centerX + 220, centerY - 240 + 220, 30, 30, this);
     }
 
-    // bonusplayer의 이동과 그리기를 업데이트하는 메서드 (필요에 따라 추가)
-    public void update() {
-    }
-
-    // 보너스 패널 초기화 메서드
-    public void initBonus() {
-        // 보너스 패널 초기화 로직 추가
-        // 필요한 초기화 작업 수행
-    }
 }
 

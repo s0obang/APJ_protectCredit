@@ -76,23 +76,38 @@ public class GameManager extends JFrame {
 
     if (currentCycleCount < maxCycleCount - 1) {// maxCycleCount - 1번까지만 반복
       // 30초 후에 levelupPanel로 전환
-      Timer levelUpTimer = new Timer(5000, e -> {
-        switchToPanelWithDelay("levelup", 0);
+      Timer gameTimer = new Timer(0, e1 -> {
+        switchToPanelWithDelay("game", 0);
 
-        // levelupPanel이 표시된 후 3초 뒤에 starPanel로 전환
-        Timer starTimer = new Timer(5000, event -> {
-          switchToPanelWithDelay("star", 0);
-          starPanel.initializeStar(star); // StarPanel에 Star 객체 전달
-          // StarPanel로 전환 시에 Star 객체를 생성하여 전달
-          star = new Star(0, 0, 60, 50); // Star 객체 초기화
+        Timer levelUpTimer = new Timer(5000, e2 -> {
+          switchToPanelWithDelay("levelup", 0);
 
+          // levelupPanel이 표시된 후 3초 뒤에 starPanel로 전환
+          Timer starTimer = new Timer(7000, e3 -> {
+            switchToPanelWithDelay("star", 0);
+
+            starPanel.initializeStar(star); // StarPanel에 Star 객체 전달
+            // StarPanel로 전환 시에 Star 객체를 생성하여 전달
+            star = new Star(0, 0, 60, 50); // Star 객체 초기화
+
+            //만약 스타와 플레이어 충돌 발생 -> 보너스 타이머
+            if(starPanel.checkCollision()) {
+              new Timer(0, e4 -> {
+                  switchToPanelWithDelay("bonus", 0);
+                  bonusPanel.bonusColor();
+              });
+            }
+            //아무런 충돌이 없다면 그냥 넘어가기
+          });
+          starTimer.setRepeats(false); // 한 번만 실행되도록 설정
+          starTimer.start();
         });
-        starTimer.setRepeats(false); // 한 번만 실행되도록 설정
-        starTimer.start();
+        levelUpTimer.setRepeats(false); // 한 번만 실행되도록 설정
+        levelUpTimer.start();
       });
-      levelUpTimer.setRepeats(false); // 한 번만 실행되도록 설정
-      levelUpTimer.start();
-      //switchToPanelWithDelay("game", 4000);
+      gameTimer.setRepeats(false); // 한 번만 실행되도록 설정
+      gameTimer.start();
+
       currentCycleCount++;
 
       Timer timer = new Timer(40000, e -> startGameCycle());
@@ -112,8 +127,7 @@ public class GameManager extends JFrame {
     Timer timer = new Timer(delayMillis, e -> {
       if (nextPanelName.equals("levelup") || (nextPanelName.equals("star")) || nextPanelName.equals("bonus")) {
         gamePanel.stopGame();// 게임 일시정지
-      }
-      else if (nextPanelName.equals("game")) {
+      } else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
         // 아이콘 속도 레벨 증가
         for (Icon icon : Icon.iconList) {
@@ -126,10 +140,10 @@ public class GameManager extends JFrame {
     timer.start();
   }
 
-  //이 부분이 핵심인데요~ manager에서 처음부터 약간 몇초 몇초를 설계해야할거같아요
+ //이 부분이 핵심인데요~ manager에서 처음부터 약간 몇초 몇초를 설계해야할거같아요
   public void startGameSequence() {
     showScreen("game");
-    gamePanel.startGame();
+    //gamePanel.startGame();
     startGameCycle();
 //    switchToPanelWithDelay("fever", 30000);
 //    switchToPanelWithDelay("game", 40000);
@@ -138,6 +152,7 @@ public class GameManager extends JFrame {
 //      icon.increaseSpeedLevel();
 //    }
   }
+
 
   // 화면 전환 메서드
   public void showScreen(String screenName) {
@@ -174,5 +189,5 @@ public class GameManager extends JFrame {
         return null;  // 잘못된 이름이 들어오면 null 반환
     }
   }
-
 }
+
