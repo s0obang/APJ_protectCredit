@@ -10,6 +10,8 @@ import javax.swing.Timer;
 import org.example.entity.Icon;
 import org.example.entity.Star;
 import org.example.object.UserStatus;
+
+import org.example.entity.GameResult;
 import org.example.panels.EndPanel;
 import org.example.panels.GamePanel;
 import org.example.panels.StartPanel;
@@ -25,6 +27,7 @@ public class GameManager extends JFrame {
   private static JPanel mainPanel;
   private DatabaseManager dbManager;
   private LoginManager loginManager;
+  private EndPanel endPanel;
   private static GamePanel gamePanel;
   private static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
@@ -47,17 +50,20 @@ public class GameManager extends JFrame {
 
     cardLayout = new CardLayout();
     mainPanel = new JPanel(cardLayout);
+
     //이부분 수정했어엽 민선아
     gamePanel = new GamePanel();
     levelupPanel = new LevelUpPanel();
     bonusPanel = new BounsPanel(this);
     starPanel = new StarPanel(this);
+    endPanel = new EndPanel(this);
     // 각 화면을 패널로 추가
-    mainPanel.add(new StartPanel(this, loginManager), "start");
+    mainPanel.add(new StartPanel(this), "start");
     mainPanel.add(gamePanel, "game");
     mainPanel.add(starPanel, "star");
     mainPanel.add(levelupPanel, "levelup");
     mainPanel.add(bonusPanel, "bonus");
+    mainPanel.add(endPanel, "end");
 
     add(mainPanel);
     setVisible(true);
@@ -101,7 +107,11 @@ public class GameManager extends JFrame {
     } else {
       // 마지막 사이클: "game"을 보여주고 end screen 표시
       switchToPanelWithDelay("game", 30000); // 최종 game 화면
-      Timer timer = new Timer(30000, e -> showEndScreen(false));
+      // endPanel로 전환
+      GameResult result = new GameResult();
+      result.setPoints(userStatus.getUserPoints());
+      result.setGraduated(userStatus.isGraduated());
+      Timer timer = new Timer(30000, e -> showEndScreen(result));
       timer.setRepeats(false);
       timer.start();
     }
@@ -144,9 +154,9 @@ public class GameManager extends JFrame {
     cardLayout.show(mainPanel, screenName);
   }
 
-  // 게임 종료 패널은 따로(boolean 값 필요!!)
-  public void showEndScreen(boolean isGameOver) {
-    mainPanel.add(new EndPanel(this, isGameOver), "end");
+  // 게임 종료 패널은 따로(객체 필요!!)
+  public void showEndScreen(GameResult gameResult) {
+    endPanel.showEndPanel(gameResult);
     showScreen("end");
     // 아이콘 속도 레벨 리셋
     for (Icon icon : Icon.iconList) {
