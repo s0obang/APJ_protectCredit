@@ -71,6 +71,16 @@ public class Player extends Entity {
   }
 
   @Override
+  public void upPoint(double amount) {
+    this.points += amount;
+  }
+
+  @Override
+  public int getPoints() {
+    return (int)points;  // double을 int로 변환하여 반환
+  }
+
+  @Override
   public void update() {
     // 플레이어의 상태 업데이트 로직 (예: 이동 로직)
   }

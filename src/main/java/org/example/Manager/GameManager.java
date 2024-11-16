@@ -226,9 +226,30 @@ public class GameManager extends JFrame {
     noCollisionTimer.start();
   }
 
+  private void updateUserStatus() {
+    // GamePanel로부터 현재 점수 가져오기
+    Player player = gamePanel.getPlayer();
+    double currentScore = player.getGPA();
+    int currentPoints = player.getPoints();
+
+    // UserStatus 업데이트
+    userStatus.setUserGrade(currentCycleCount + 1); // 1학년부터 시작
+    userStatus.setUserScore(currentScore);
+    userStatus.setUserPoints(currentPoints);
+
+    // 졸업 여부 결정
+    if (currentCycleCount >= maxCycleCount - 1) { // 4학년까지 완료
+      userStatus.setGraduated(currentScore > 0); // 점수가 0보다 크면 졸업
+    } else {
+      userStatus.setGraduated(false); // 4학년 이전에는 졸업 불가
+    }
+  }
+
   //이건 엔드 패널로 이동시키는 거 추가하면 될 듯
   private void endGameCycle() {
     if (timer != null) timer.stop();
+    // 최종 상태 업데이트
+    updateUserStatus();
     // endPanel로 전환
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());
