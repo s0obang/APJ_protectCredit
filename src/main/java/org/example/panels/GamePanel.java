@@ -81,6 +81,9 @@ public class GamePanel extends JPanel {
     }
   }
 
+  public Player getPlayer() {
+    return player;
+  }
 
   // 패널에 아이콘을 그리는 메서드
   @Override

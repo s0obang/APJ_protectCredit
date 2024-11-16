@@ -86,6 +86,18 @@ public class GameManager extends JFrame {
     });
   }
 
+  //이 부분이 핵심인데요~ manager에서 처음부터 약간 몇초 몇초를 설계해야할거같아요
+  public void startGameSequence() {
+    showScreen("game");
+    startGameCycle();
+//    switchToPanelWithDelay("fever", 30000);
+//    switchToPanelWithDelay("game", 40000);
+//    // 아이콘 속도 레벨 증가
+//    for (Icon icon : Icon.iconList) {
+//      icon.increaseSpeedLevel();
+//    }
+  }
+
   public void startGameCycle() {
     currentCycleCount = 0;
     startLevelUpPhase();
@@ -191,11 +203,32 @@ public class GameManager extends JFrame {
     noCollisionTimer.start();
   }
 
+  private void updateUserStatus() {
+    // GamePanel로부터 현재 점수 가져오기
+    Player player = gamePanel.getPlayer();
+    double currentScore = player.getGPA();
+    int currentPoints = player.getPoints();
+
+    // UserStatus 업데이트
+    userStatus.setUserGrade(currentCycleCount + 1); // 1학년부터 시작
+    userStatus.setUserScore(currentScore);
+    userStatus.setUserPoints(currentPoints);
+
+    // 졸업 여부 결정
+    if (currentCycleCount >= maxCycleCount - 1) { // 4학년까지 완료
+      userStatus.setGraduated(currentScore > 0); // 점수가 0보다 크면 졸업
+    } else {
+      userStatus.setGraduated(false); // 4학년 이전에는 졸업 불가
+    }
+  }
+
   //이건 엔드 패널로 이동시키는 거 추가하면 될 듯
   private void endGameCycle() {
     // 게임 종료 처리
     switchToPanelWithDelay("game", 30000);
     if (timer != null) timer.stop();
+    // 최종 상태 업데이트
+    updateUserStatus();
     // endPanel로 전환
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());
@@ -224,19 +257,6 @@ public class GameManager extends JFrame {
     timer.setRepeats(false); // 한 번만 실행되게 함
     timer.start();
   }
-
- //이 부분이 핵심인데요~ manager에서 처음부터 약간 몇초 몇초를 설계해야할거같아요
-  public void startGameSequence() {
-    showScreen("game");
-    startGameCycle();
-//    switchToPanelWithDelay("fever", 30000);
-//    switchToPanelWithDelay("game", 40000);
-//    // 아이콘 속도 레벨 증가
-//    for (Icon icon : Icon.iconList) {
-//      icon.increaseSpeedLevel();
-//    }
-  }
-
 
   // 화면 전환 메서드
   public void showScreen(String screenName) {

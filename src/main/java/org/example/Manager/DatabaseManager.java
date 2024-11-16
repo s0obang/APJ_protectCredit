@@ -8,9 +8,9 @@ import java.sql.*;
 // DB 연결 및 테이블 생성,
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private String url = "jdbc:mysql://localhost:3306/DB이름"; // 로컬 DB 주소
-    private String user = ""; // DB user
-    private String password = ""; // DE password
+    private String url = "jdbc:mysql://localhost:3306/graduation"; // 로컬 DB 주소
+    private String user = "root"; // DB user
+    private String password = "1234"; // DE password
 
     private DatabaseManager() {
         createUserTable();
