@@ -18,6 +18,7 @@ public class Player extends Entity {
   private int boundaryWidth;  // 경계 너비
   private int boundaryHeight;
   private double GPA; // 학점
+  private int dx = 0, dy =0;
 
   public Player(int x, int y, int width, int height) {
     super(x, y, width, height);
@@ -25,6 +26,7 @@ public class Player extends Entity {
     this.boundaryWidth = 1080;
     this.boundaryHeight = 720;
     this.GPA = 4.5; //초기 학점 4.5
+
     try {
       characterImageLeft = ImageIO.read(
           new File("src/main/java/org/example/img/character/main_char_left.png"));
@@ -38,6 +40,8 @@ public class Player extends Entity {
   }
 
   public void move(int dx, int dy) {
+    this.dx = dx;
+    this.dy = dy;
     int newX = x + dx * speed;
     int newY = y + dy * speed;
     // 화면 안 벗어나게 제한 거는거
@@ -56,6 +60,8 @@ public class Player extends Entity {
       facingRight = true;
     }
   }
+
+
 
   public double getGPA() {
     return GPA;
@@ -81,8 +87,5 @@ public class Player extends Entity {
     }
   }
 
-  @Override
-  protected void paintComponent(Graphics g) {
 
-  }
 }

@@ -16,7 +16,6 @@ public class CoinCrash {
     ArrayList<Entity> entities;
     private JTextField curpointText;
     private static BufferedImage coinimg;
-    private BonusPanel bonusPanel;
 
     // 배열 생성
     public CoinCrash(GamePanel gamePanel) {

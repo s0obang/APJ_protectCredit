@@ -65,7 +65,7 @@ public abstract class Icon extends Entity {
       y = -20;
       x = random.nextInt(1080 - 40);  // 새로운 x 위치
     }
-    System.out.println("Icon position: " + y);
+    //System.out.println("Icon position: " + y);
 
   }
 

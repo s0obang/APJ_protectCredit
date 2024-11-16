@@ -71,6 +71,7 @@ public class GamePanel extends JPanel {
 
   public void startGame() {
     timer = new GameTimer(iconManager, coincrash, iconCrash, this);
+    this.repaint();
     timer.start();
   }
 
@@ -106,3 +107,4 @@ public class GamePanel extends JPanel {
     }
   }
 }
+

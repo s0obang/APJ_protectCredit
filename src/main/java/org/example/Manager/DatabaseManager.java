@@ -5,7 +5,6 @@ import org.example.entity.User;
 
 import java.sql.*;
 
-// DB 연결 및 테이블 생성,
 public class DatabaseManager {
     private static DatabaseManager instance;
     private String url = "jdbc:mysql://localhost:3306/DB이름"; // 로컬 DB 주소

@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 public class Coin extends Entity {
 
   public static ArrayList<Coin> arraycoin = new ArrayList<>();
-  public static Image coinimg, bonuscoin;
+  public static Image coinimg;
   private final Random random = new Random();
   int x, y, speed;
 
@@ -29,6 +29,16 @@ public class Coin extends Entity {
       throw new RuntimeException(ex);
     }
 
+  }
+
+  // 속도 레벨 증가 메서드
+  public void increaseSpeedLevel() {
+    speed++;
+  }
+
+  // 속도 레벨 리셋 메서드
+  public void resetSpeedLevel() {
+    speed = 7;
   }
 
   public static void createAndAddCoin(int width, int height) {
