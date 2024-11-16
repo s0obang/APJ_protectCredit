@@ -35,6 +35,7 @@ public class CoinCrash {
         gamePanel.setLayout(null);
         gamePanel.add(curpointText); // 게임 패널에 추가
 
+
         // gamePanel에 CoinCrash 인스턴스 설정
         setCoinCrash();
     }
@@ -52,13 +53,15 @@ public class CoinCrash {
     }
 
     // 누적 금액 패널에 띄우는 함수
-    private void showcurpoints(int points) {
+    private void showCurPoints(int points) {
         curpointText.setText(points + "만 원");
         gamePanel.repaint();
     }
 
+
     // 충돌 관련
     public void checkCollisions() {
+        System.out.println("Checking collisions...");
         for (int i = 0; i < entities.size(); i++) {
             for (int j = i + 1; j < entities.size(); j++) {
                 Entity e1 = entities.get(i);
@@ -68,14 +71,14 @@ public class CoinCrash {
                 if (e1.getBounds().intersects(e2.getBounds())) {
                     if (e1 instanceof Player && e2 instanceof Coin) {
                         (e1).upPoint(1); // 플레이어 점수 증가
-                        showcurpoints(e1.getPoints()); // 누적 금액 패널에 갱신
+                        showCurPoints(e1.getPoints()); // 누적 금액 패널에 갱신
                         ((Coin) e2).resetPosition();// 코인을 초기 위치로 리셋
 
                     }
                     // e1이 Coin1이고 e2가 Player일 경우
                     else if (e1 instanceof Coin && e2 instanceof Player) {
                         (e2).upPoint(1); // 플레이어 점수 증가
-                        showcurpoints(e1.getPoints());
+                        showCurPoints(e1.getPoints());
                         ((Coin) e1).resetPosition(); // 코인을 초기 위치로 리셋
                     }
                 }

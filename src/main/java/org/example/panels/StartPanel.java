@@ -1,17 +1,33 @@
 package org.example.panels;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import org.example.Manager.BackgroundPanel;
 import org.example.Manager.DatabaseManager;
 import org.example.Manager.GameManager;
 import org.example.Manager.LoginManager;
-import org.example.entity.GameResult;
 import org.example.entity.User;
 
 public class StartPanel extends JPanel {
@@ -20,28 +36,27 @@ public class StartPanel extends JPanel {
     private JPanel cardPanel; // 패널들을 담을 메인 패널
     private DatabaseManager dbManager = DatabaseManager.getInstance();
     private LoginManager loginManager;
+    private GamePanel gamePanel;
 
 
     public StartPanel(GameManager manager) {
-        this.loginManager = loginManager;
 
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-
-        cardPanel.add(startGamePanel(manager), "main");
-        cardPanel.add(selectSign_(), "selectSign_");
-        cardPanel.add(signIn(), "signIn");
-        cardPanel.add(signUp(), "signUp");
-        cardPanel.add(intro(manager), "intro");
-
+        cardPanel.add(startGamePanel(manager), "start");
+        //cardPanel.add(selectSign_(), "selectSign_");
+        //cardPanel.add(signIn(), "signIn");
+        //cardPanel.add(signUp(), "signUp");
+        //cardPanel.add(intro(manager), "intro");
 
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
     }
 
     private JPanel startGamePanel(GameManager manager) {
-        JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
+        JPanel panel = new BackgroundPanel(
+                "src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
         panel.setLayout(null); // bPanel 절대 위치 정하려고
 
         JPanel bPanel = new JPanel(new GridBagLayout()); // 버튼 감싸는 패널
@@ -77,27 +92,36 @@ public class StartPanel extends JPanel {
         gbc.insets = new Insets(5, 0, 0, 0);
         bPanel.add(historyLabel, gbc);
 
-
         ImageIcon buttonIcon2 = new ImageIcon("src/main/java/org/example/img/intro/playButton.png");
         Image img2 = buttonIcon2.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
         buttonIcon2 = new ImageIcon(img2);
         JButton playButton = new JButton(buttonIcon2);
         playButton.setPreferredSize(new Dimension(75, 75));
+
+        // 게임 시작 버튼 클릭 시 아이콘 떨어짐 기능 활성화
+        playButton.addActionListener(e -> {
+            cardLayout.show(cardPanel, "start");
+            manager.showScreen("game");
+            manager.startGameSequence();// 아이콘 떨어짐 동작 시작
+            manager.getGamePanel().startGame();
+        });
+
+//        playButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                cardLayout.show(cardPanel, "selectSign_"); // 버튼 클릭 시 지정된 패널로 전환
+//            }
+//        });
+
+        //테스트용으로 로그인 없앰
+        playButton.addActionListener(e -> {
+            cardLayout.show(cardPanel, "start");
+            manager.showScreen("game");
+        });
+
         playButton.setBorderPainted(false);
         playButton.setFocusPainted(false);
         playButton.setContentAreaFilled(false);
-        playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 로그인 되어있으면 바로 게임 시작
-                if (LoginManager.getLoggedInUser() != null) {
-                    cardLayout.show(cardPanel, "intro");
-                } else {
-                    cardLayout.show(cardPanel, "selectSign_");
-                }
-
-            }
-        });
 
         JLabel playLabel = new JLabel("play!");
         playLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -113,10 +137,10 @@ public class StartPanel extends JPanel {
         gbc.insets = new Insets(5, 120, 0, 0);
         bPanel.add(playLabel, gbc);
 
-
         bPanel.setBounds(395, 570, 290, 135);
 
-        CharacterPanel characterPanel = new CharacterPanel("src/main/java/org/example/img/character/main_char_left.png");
+        CharacterPanel characterPanel = new CharacterPanel(
+                "src/main/java/org/example/img/character/main_char_left.png");
         characterPanel.setBounds(360, 75, 410, 435);
 
         panel.add(bPanel);
@@ -141,7 +165,7 @@ public class StartPanel extends JPanel {
         signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "signIn");
+                cardLayout.show(cardPanel, "signIn"); // 버튼 클릭 시 지정된 패널로 전환
             }
         });
 
@@ -157,7 +181,7 @@ public class StartPanel extends JPanel {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "signUp");
+                cardLayout.show(cardPanel, "signUp"); // 버튼 클릭 시 지정된 패널로 전환
             }
         });
 
@@ -170,7 +194,8 @@ public class StartPanel extends JPanel {
     private JPanel signIn() {
         Font labelFont = new Font("Neo둥근모", Font.PLAIN, 34);
 
-        JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/signInBackground.png");
+        JPanel panel = new BackgroundPanel(
+                "src/main/java/org/example/img/backgrounds/signInBackground.png");
         panel.setLayout(null);
 
         JTextField nickname = new JTextField(15);
@@ -199,16 +224,14 @@ public class StartPanel extends JPanel {
                 String nick = nickname.getText();
                 String pass = new String(password.getPassword());
 
+                //User user = new User(nick, pass);
                 boolean isSuccess = dbManager.signIn(dbManager, nick, pass);
 
                 if (isSuccess) {
-                    User user = new User(nick, pass);
-                    LoginManager.saveLoggedInUser(user);
-                    nickname.setText("");
-                    password.setText("");
                     cardLayout.show(cardPanel, "intro");
                 } else {
-                    JOptionPane.showMessageDialog(panel, "로그인 실패. 닉네임이나 비밀번호를 확인하세요.", "오류", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(panel, "로그인 실패. 닉네임이나 비밀번호를 확인하세요.", "오류",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -222,7 +245,8 @@ public class StartPanel extends JPanel {
     private JPanel signUp() {
         Font labelFont = new Font("Neo둥근모", Font.PLAIN, 34);
 
-        JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/signUpBackground.png");
+        JPanel panel = new BackgroundPanel(
+                "src/main/java/org/example/img/backgrounds/signUpBackground.png");
         panel.setLayout(null);
 
         JTextField nickname = new JTextField(15);
@@ -257,11 +281,6 @@ public class StartPanel extends JPanel {
                 String pass = new String(password.getPassword());
                 String passCheck = new String(passwordCheck.getPassword());
 
-                if (nick.isEmpty() || pass.isEmpty() || passCheck.isEmpty()) {
-                    JOptionPane.showMessageDialog(panel, "모든 필드를 채워주세요.", "오류", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
                 if (!pass.equals(passCheck)) {
                     JOptionPane.showMessageDialog(panel, "비밀번호가 일치하지 않습니다.", "오류", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -271,13 +290,11 @@ public class StartPanel extends JPanel {
                 boolean isSuccess = dbManager.signUp(nick, pass);
 
                 if (isSuccess) {
-                    JOptionPane.showMessageDialog(panel, "회원가입 성공.", "회원가입", JOptionPane.PLAIN_MESSAGE);
-                    nickname.setText("");
-                    password.setText("");
-                    passwordCheck.setText("");
-                    cardLayout.show(cardPanel, "main");
+                    loginManager.saveLoggedInUser(newUser);
+                    cardLayout.show(cardPanel, "start");
                 } else {
-                    JOptionPane.showMessageDialog(panel, "회원가입 실패. 다시 시도해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(panel, "회원가입 실패. 다시 시도해주세요.", "오류",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -302,7 +319,6 @@ public class StartPanel extends JPanel {
         intro1.setLayout(null);
         intro2.setLayout(null);
         intro3.setLayout(null);
-
 
         ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/playButton.png");
         Image img = buttonIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
@@ -330,14 +346,9 @@ public class StartPanel extends JPanel {
         playButton.setFocusPainted(false);
         playButton.setContentAreaFilled(false);
         playButton.addActionListener(e -> {
-                    cardLayout.show(cardPanel, "main"); // 이거 왜 안 되냐
-                    introCardLayout.show(panel, "intro1"); //처음으로 돌려놓기
-
-
-                    //manager.getGamePanel().startGame();
-                    manager.startGameSequence();// 아이콘 떨어짐 동작 시작
-                    manager.getGamePanel().startGame(); // 아이콘 떨어짐 동작 시작
-                }); // GameScreen으로 이동
+            cardLayout.show(cardPanel, "start");
+            manager.showScreen("game");
+        }); // GameScreen으로 이동
 
         intro3.add(playButton);
 
@@ -350,6 +361,7 @@ public class StartPanel extends JPanel {
 
     //첫 화면에 캐릭터 도동하고 싶어서 이미지 따로 빼놓음
     static class CharacterPanel extends JPanel {
+
         private Image characterImage;
 
         public CharacterPanel(String imagePath) {

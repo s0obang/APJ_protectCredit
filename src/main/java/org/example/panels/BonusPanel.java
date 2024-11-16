@@ -1,18 +1,31 @@
 package org.example.panels;
 
 import org.example.Manager.GameKeyAdapter;
+import org.example.Manager.GameManager;
+import org.example.entity.Coin;
 import org.example.entity.Player;
+import org.example.object.CoinCrash;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BonusPanel extends JPanel {
     private Player bonusplayer;
-    private Image largecoin, medicoin, smallcoin;
+    private CoinCrash coinCrash;
+    int dx = 0, dy = 0;
 
+    private List<Coin> largeCoins;
+    private List<Coin> mediCoins;
+    private List<Coin> smallCoins;
+    // 코인 이미지와 좌표 리스트
+    private List<int[]> largeCoinPositions; // largecoin 좌표
+    private List<int[]> medicoinPositions; // medicoin 좌표
+    private List<int[]> smallcoinPositions; // smallcoin 좌표
 
     int centerX = 1080 / 2 - 15; // 패널 중앙 X 좌표
     int centerY = 720 / 2 - 15; // 패널 중앙 Y 좌표
@@ -20,6 +33,9 @@ public class BonusPanel extends JPanel {
     public BonusPanel() {
         // 화면 구성 초기화
         setLayout(null); // 절대 레이아웃 사용
+        largeCoins = new ArrayList<>();
+        mediCoins = new ArrayList<>();
+        smallCoins = new ArrayList<>();
         bonusplayer = new Player(500, 500, 100, 100);
 
         setFocusable(true);
@@ -30,12 +46,68 @@ public class BonusPanel extends JPanel {
             }
         });
 
-        try {
-            largecoin = ImageIO.read(new File("src/main/java/org/example/img/coin/coin.png"));
-            medicoin = ImageIO.read(new File("src/main/java/org/example/img/coin/medicoin.png"));
-            smallcoin = ImageIO.read(new File("src/main/java/org/example/img/coin/smallcoin.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        // largecoin 위치 설정
+        largeCoinPositions = List.of(
+                new int[]{centerX, centerY + 90}, new int[]{centerX, centerY + 130}, new int[]{centerX + 60, centerY + 75}, new int[]{centerX - 60, centerY + 75}
+                , new int[]{centerX + 60, centerY + 115}, new int[]{centerX - 60, centerY + 115}, new int[]{centerX + 30, centerY + 150}, new int[]{centerX - 30, centerY + 150}
+                , new int[]{centerX - 220, centerY - 240 + 90}, new int[]{centerX - 220, centerY - 240 + 130}, new int[]{centerX - 220 + 60, centerY - 240 + 75}, new int[]{centerX - 220 - 60, centerY - 240 + 75}
+                , new int[]{centerX - 220 - 60, centerY - 240 + 115}, new int[]{centerX - 220 + 60, centerY - 240 + 115}, new int[]{centerX - 220 + 30, centerY - 240 + 150}, new int[]{centerX - 220 - 30, centerY - 240 + 150}
+                , new int[]{centerX - 220, centerY - 240 + 170}, new int[]{centerX + 220, centerY - 240 + 90}, new int[]{centerX + 220, centerY - 240 + 130}, new int[]{centerX + 220 - 60, centerY - 240 + 75}
+                , new int[]{centerX + 220 + 60, centerY - 240 + 75}, new int[]{centerX + 220 - 60, centerY - 240 + 115}, new int[]{centerX + 220 + 60, centerY - 240 + 115}, new int[]{centerX + 220 + 30, centerY - 240 + 150}
+                , new int[]{centerX + 220 - 30, centerY - 240 + 150}, new int[]{centerX + 220, centerY - 240 + 170}, new int[]{centerX, centerY + 170}
+        );
+
+        // medicoin 위치 설정
+        medicoinPositions = List.of(
+                new int[]{centerX + 220 - 60, centerY - 240 + 160}, new int[]{centerX + 220 + 60, centerY - 240 + 160}, new int[]{centerX + 30, centerY + 190}, new int[]{centerX - 30, centerY + 190}
+                , new int[]{centerX + 220 - 90, centerY - 240 + 130}, new int[]{centerX + 220 + 90, centerY - 240 + 130}, new int[]{centerX + 60, centerY + 160}, new int[]{centerX - 60, centerY + 160}
+                , new int[]{centerX + 220 - 90, centerY - 240 + 95}, new int[]{centerX + 220 + 90, centerY - 240 + 95}, new int[]{centerX - 90, centerY + 130}, new int[]{centerX + 90, centerY + 130}
+                , new int[]{centerX + 220 + 30, centerY - 240 + 100}, new int[]{centerX + 220 - 30, centerY - 240 + 100}, new int[]{centerX + 30, centerY + 100}, new int[]{centerX - 30, centerY + 100}
+                , new int[]{centerX + 220 - 90, centerY - 240 + 60}, new int[]{centerX + 220 + 90, centerY - 240 + 60}, new int[]{centerX - 90, centerY + 95}, new int[]{centerX + 90, centerY + 95}
+                , new int[]{centerX + 220 + 30, centerY - 240 + 60}, new int[]{centerX + 220 - 30, centerY - 240 + 60}, new int[]{centerX - 90, centerY + 60}, new int[]{centerX + 90, centerY + 60}
+                , new int[]{centerX - 220 + 30, centerY - 240 + 190}, new int[]{centerX - 220 - 30, centerY - 240 + 190}, new int[]{centerX + 30, centerY + 60}, new int[]{centerX - 30, centerY + 60}
+                , new int[]{centerX - 220 - 60, centerY - 240 + 160}, new int[]{centerX - 220 + 60, centerY - 240 + 160}
+                , new int[]{centerX - 220 - 90, centerY - 240 + 130}, new int[]{centerX - 220 + 90, centerY - 240 + 130}
+                , new int[]{centerX - 220 - 90, centerY - 240 + 95}, new int[]{centerX - 220 + 90, centerY - 240 + 95}
+                , new int[]{centerX - 220 + 30, centerY - 240 + 100}, new int[]{centerX - 220 - 30, centerY - 240 + 100}
+                , new int[]{centerX - 220 - 90, centerY - 240 + 60}, new int[]{centerX - 220 + 90, centerY - 240 + 60}
+                , new int[]{centerX - 220 + 30, centerY - 240 + 60}, new int[]{centerX - 220 - 30, centerY - 240 + 60}
+                , new int[]{centerX + 220 + 30, centerY - 240 + 190}, new int[]{centerX + 220 - 30, centerY - 240 + 190}
+        );
+        // smallcoin 위치 설정
+        smallcoinPositions = List.of(
+                new int[]{centerX + 60, centerY+ 30}, new int[]{centerX + 115, centerY + 95}, new int[]{centerX - 115, centerY + 95}
+                , new int[]{centerX, centerY + 220}, new int[]{centerX - 220, centerY - 240 + 220, 30}
+                , new int[]{centerX - 220 - 60, centerY - 240 + 30}, new int[]{centerX - 220 + 60, centerY - 240 + 30}
+                , new int[]{centerX - 220 + 115, centerY - 240 + 95}, new int[]{centerX - 220 - 115, centerY - 240 + 95}
+                , new int[]{centerX + 220 - 60, centerY - 240 + 30}, new int[]{centerX + 220 + 60, centerY - 240 + 30}
+                , new int[]{centerX + 220 + 115, centerY - 240 + 95}, new int[]{centerX + 220 - 115, centerY - 240 + 95}
+                , new int[]{centerX + 220, centerY - 240 + 220}, new int[]{centerX - 60, centerY + 30}
+        );
+
+
+        // 코인 엔티티 추가
+        addCoins();
+    }
+
+    // 각 코인 리스트에 맞는 코인 객체 추가
+    public void addCoins() {
+        // largecoins 추가
+        for (int[] pos : largeCoinPositions) {
+            Coin largeCoin = new Coin(pos[0], pos[1], 15,15);
+            largeCoins.add(largeCoin);
+        }
+
+        // medicoin 추가
+        for (int[] pos : medicoinPositions) {
+            Coin medicCoin = new Coin(pos[0], pos[1], 15,15);
+            mediCoins.add(medicCoin);
+        }
+
+        // smallcoins 추가
+        for (int[] pos : smallcoinPositions) {
+            Coin smallCoin = new Coin(pos[0], pos[1], 15,15);
+            smallCoins.add(smallCoin);
         }
     }
 
@@ -46,94 +118,18 @@ public class BonusPanel extends JPanel {
         g.fillRect(0, 0, getWidth(), getHeight());
         // 보너스 플레이어 및 코인 그리기
         bonusplayer.draw(g);
+        repaint();
 
-        g.drawImage(largecoin, centerX, centerY + 90, 30, 30, null);
-        g.drawImage(largecoin, centerX, centerY + 130, 30, 30, null);
-        g.drawImage(largecoin, centerX + 60, centerY + 75, 30, 30, null);
-        g.drawImage(largecoin, centerX - 60, centerY + 75, 30, 30, null);
-        g.drawImage(largecoin, centerX + 60, centerY + 115, 30, 30, null);
-        g.drawImage(largecoin, centerX - 60, centerY + 115, 30, 30, null);
-        g.drawImage(largecoin, centerX - 30, centerY + 150, 30, 30, null);
-        g.drawImage(largecoin, centerX + 30, centerY + 150, 30, 30, null);
-        g.drawImage(largecoin, centerX, centerY + 170, 30, 30, null);
-        g.drawImage(medicoin, centerX - 30, centerY + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 30, centerY + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 90, centerY + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX - 90, centerY + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 90, centerY + 95, 30, 30, null);
-        g.drawImage(medicoin, centerX - 30, centerY + 100, 30, 30, null);
-        g.drawImage(medicoin, centerX + 30, centerY + 100, 30, 30, null);
-        g.drawImage(medicoin, centerX - 90, centerY + 95, 30, 30, null);
-        g.drawImage(medicoin, centerX + 90, centerY + 130, 30, 30, null);
-        g.drawImage(medicoin, centerX - 90, centerY + 130, 30, 30, null);
-        g.drawImage(medicoin, centerX + 60, centerY + 160, 30, 30, null);
-        g.drawImage(medicoin, centerX - 60, centerY + 160, 30, 30, null);
-        g.drawImage(medicoin, centerX - 30, centerY + 190, 30, 30, null);
-        g.drawImage(medicoin, centerX + 30, centerY + 190, 30, 30, null);
-        g.drawImage(smallcoin, centerX - 60, centerY + 30, 30,30,null);
-        g.drawImage(smallcoin, centerX + 60, centerY+ 30, 30,30,null);
-        g.drawImage(smallcoin, centerX + 115, centerY + 95, 30,30,null);
-        g.drawImage(smallcoin, centerX - 115, centerY + 95, 30,30,null);
-        g.drawImage(smallcoin, centerX, centerY + 220, 30,30,null);
-        //좌측 상단 하트
-        g.drawImage(largecoin, centerX - 220, centerY - 240 + 90, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220, centerY - 240 + 130, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220 + 60, centerY - 240 + 75, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220 - 60, centerY - 240 + 75, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220 + 60, centerY - 240 + 115, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220 - 60, centerY - 240 + 115, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220 - 30, centerY - 240 + 150, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220 + 30, centerY - 240 + 150, 30, 30, null);
-        g.drawImage(largecoin, centerX - 220, centerY - 240 + 170, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 30, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 30, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 90, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 90, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 90, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 30, centerY - 240 + 100, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 30, centerY - 240 + 100, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 90, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 90, centerY - 240 + 130, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 90, centerY - 240 + 130, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 60, centerY - 240 + 160, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 60, centerY - 240 + 160, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 - 30, centerY - 240 + 190, 30, 30, null);
-        g.drawImage(medicoin, centerX - 220 + 30, centerY - 240 + 190, 30, 30, null);
-        g.drawImage(smallcoin, centerX - 220 - 60, centerY - 240 + 30, 30, 30, null);
-        g.drawImage(smallcoin, centerX - 220 + 60, centerY - 240 + 30, 30, 30, null);
-        g.drawImage(smallcoin, centerX - 220 + 115, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(smallcoin, centerX - 220 - 115, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(smallcoin, centerX - 220, centerY - 240 + 220, 30, 30, null);
-        //우측 상단 하트
-        g.drawImage(largecoin, centerX + 220, centerY - 240 + 90, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220, centerY - 240 + 130, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220 + 60, centerY - 240 + 75, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220 - 60, centerY - 240 + 75, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220 + 60, centerY - 240 + 115, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220 - 60, centerY - 240 + 115, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220 - 30, centerY - 240 + 150, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220 + 30, centerY - 240 + 150, 30, 30, null);
-        g.drawImage(largecoin, centerX + 220, centerY - 240 + 170, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 30, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 30, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 90, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 90, centerY - 240 + 60, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 90, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 30, centerY - 240 + 100, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 30, centerY - 240 + 100, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 90, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 90, centerY - 240 + 130, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 90, centerY - 240 + 130, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 60, centerY - 240 + 160, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 60, centerY - 240 + 160, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 - 30, centerY - 240 + 190, 30, 30, null);
-        g.drawImage(medicoin, centerX + 220 + 30, centerY - 240 + 190, 30, 30, null);
-        g.drawImage(smallcoin, centerX + 220 - 60, centerY - 240 + 30, 30, 30, null);
-        g.drawImage(smallcoin, centerX + 220 + 60, centerY - 240 + 30, 30, 30, null);
-        g.drawImage(smallcoin, centerX + 220 + 115, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(smallcoin, centerX + 220 - 115, centerY - 240 + 95, 30, 30, null);
-        g.drawImage(smallcoin, centerX + 220, centerY - 240 + 220, 30, 30, null);
-
+        // 각 코인들을 화면에 그리기
+        for (Coin coin : largeCoins) {
+            coin.draw(g);
+        }
+        for (Coin coin : mediCoins) {
+            coin.draw(g);
+        }
+        for (Coin coin : smallCoins) {
+            coin.draw(g);
+        }
     }
 
 }

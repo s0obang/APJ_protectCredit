@@ -228,14 +228,12 @@ public class GameManager extends JFrame {
 
   //이건 엔드 패널로 이동시키는 거 추가하면 될 듯
   private void endGameCycle() {
-    // 게임 종료 처리
-    switchToPanelWithDelay("game", 30000);
     if (timer != null) timer.stop();
     // endPanel로 전환
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());
     result.setGraduated(userStatus.isGraduated());
-    timer = new Timer(3000, e -> showEndScreen(result));
+    timer = new Timer(2000, e -> showEndScreen(result));
     timer.setRepeats(false);
     timer.start();
   }
@@ -269,16 +267,9 @@ public class GameManager extends JFrame {
     timer.start();
   }
 
- //이 부분이 핵심인데요~ manager에서 처음부터 약간 몇초 몇초를 설계해야할거같아요
   public void startGameSequence() {
     showScreen("game");
     startGameCycle();
-//    switchToPanelWithDelay("fever", 30000);
-//    switchToPanelWithDelay("game", 40000);
-//    // 아이콘 속도 레벨 증가
-//    for (Icon icon : Icon.iconList) {
-//      icon.increaseSpeedLevel();
-//    }
   }
 
 

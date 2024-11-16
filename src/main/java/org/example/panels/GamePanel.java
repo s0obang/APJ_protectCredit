@@ -105,6 +105,8 @@ public class GamePanel extends JPanel {
     if (CoinCrash.getCoinImage() != null) {
       g.drawImage(CoinCrash.getCoinImage(), 50, 90, 22, 22, null);
     }
+
+    repaint();
   }
 }
 

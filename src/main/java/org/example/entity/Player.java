@@ -1,8 +1,6 @@
 package org.example.entity;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -86,6 +84,10 @@ public class Player extends Entity {
       g.fillRect(x, y, width, height);
     }
   }
-
+  @Override
+  public Rectangle getBounds() {
+    System.out.println("Player bounds: x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
+    return new Rectangle(x, y, width, height);
+  }
 
 }

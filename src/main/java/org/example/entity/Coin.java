@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class Coin extends Entity {
 
@@ -28,7 +29,6 @@ public class Coin extends Entity {
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
-
   }
 
   // 속도 레벨 증가 메서드
@@ -71,6 +71,7 @@ public class Coin extends Entity {
     return new Rectangle(x, y, width, height); // 코인 이미지의 크기에 맞게 수정
   }
 
+
   @Override
   public void update() {
 
@@ -97,7 +98,6 @@ public class Coin extends Entity {
   public BufferedImage getCoinimg() {
     return (BufferedImage) coinimg;
   }
-
 }
 
 

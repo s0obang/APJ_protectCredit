@@ -23,6 +23,8 @@ public class StarPanel extends JPanel {
     this.starCrash = new StarCrash(gameManager, this);
 
     starplayer = new Player(500, 200, 100, 100);
+
+    setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
     addHierarchyListener(e -> {
       if (isShowing()) {
