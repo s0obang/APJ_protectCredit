@@ -9,7 +9,7 @@ public class GameInitializer {
 
   public static void initializeEntities(CoinCrash crash, IconCrash iconCrash) {
     for (int i = 0; i < 5; i++) {
-      Coin.createAndAddCoin(1080, 720);
+      Coin.createAndAddCoin(1080, 720, 30, 30);
       crash.addEntity(Coin.arraycoin.get(Coin.arraycoin.size() - 1));
     }
     for (int i = 0; i < 5; i++) {

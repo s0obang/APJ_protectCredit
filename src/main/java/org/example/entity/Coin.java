@@ -14,20 +14,24 @@ import javax.swing.*;
 public class Coin extends Entity {
 
   public static ArrayList<Coin> arraycoin = new ArrayList<>();
-  public static Image coinimg;
-  private final Random random = new Random();
+  public Image coinimg;
+  private static final Random random = new Random();
   int x, y, speed;
 
-  public Coin( int x, int y, int width, int height) {
+  public Coin( int x, int y, int width, int height, Image coinimg) {
     super(x, y, width, height);
     this.speed = 7;
-    this.x = random.nextInt(1080 - 20);
-    this.y = random.nextInt(180);
+    this.x = x;
+    this.y = y;
+    this.coinimg = coinimg;
 
+  }
+
+  public static Image loadImage(String imageName) {
     try {
-      coinimg = ImageIO.read(new File("src/main/java/org/example/img/coin/coin.png"));
+      return ImageIO.read(new File("src/main/java/org/example/img/coin/" + imageName));
     } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      throw new RuntimeException("이미지 로드 실패: " + imageName, ex);
     }
   }
 
@@ -41,8 +45,8 @@ public class Coin extends Entity {
     speed = 7;
   }
 
-  public static void createAndAddCoin(int width, int height) {
-    Coin coin = new Coin( width, height, 30, 30) {
+  public static void createAndAddCoin(int x, int y, int width, int height) {
+    Coin coin = new Coin( random.nextInt(x - 60), random.nextInt(y),width, height, Coin.loadImage("coin.png")) {
       @Override
       public void update() {
       }
@@ -56,7 +60,7 @@ public class Coin extends Entity {
     y += speed;
     if (y > 720) {
       y = -20;
-      x = random.nextInt(1080 - 40);
+      x = random.nextInt(1080 - 60);
     }
   }
 
