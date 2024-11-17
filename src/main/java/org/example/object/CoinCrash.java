@@ -79,13 +79,14 @@ public class CoinCrash {
                     // e1이 Coin1이고 e2가 Player일 경우
                     else if (e1 instanceof Coin && e2 instanceof Player) {
                         (e2).upPoint(1); // 플레이어 점수 증가
-                        showCurPoints(e1.getPoints());
+                        showCurPoints(e2.getPoints());
                         ((Coin) e1).resetPosition(); // 코인을 초기 위치로 리셋
                     }
                 }
             }
         }
     }
+
 
     // Coin 이미지 반환 메서드
     public static BufferedImage getCoinImage() {

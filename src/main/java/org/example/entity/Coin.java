@@ -95,9 +95,6 @@ public class Coin extends Entity {
     this.x = random.nextInt(1080 - 40); // 무작위 x 위치
   }
 
-  public BufferedImage getCoinimg() {
-    return (BufferedImage) coinimg;
-  }
 }
 
 
