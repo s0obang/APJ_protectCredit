@@ -1,8 +1,6 @@
 package org.example.entity;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -18,6 +16,7 @@ public class Player extends Entity {
   private int boundaryWidth;  // 경계 너비
   private int boundaryHeight;
   private double GPA; // 학점
+  private int dx = 0, dy =0;
 
   public Player(int x, int y, int width, int height) {
     super(x, y, width, height);
@@ -25,6 +24,7 @@ public class Player extends Entity {
     this.boundaryWidth = 1080;
     this.boundaryHeight = 720;
     this.GPA = 4.5; //초기 학점 4.5
+
     try {
       characterImageLeft = ImageIO.read(
           new File("src/main/java/org/example/img/character/main_char_left.png"));
@@ -38,6 +38,8 @@ public class Player extends Entity {
   }
 
   public void move(int dx, int dy) {
+    this.dx = dx;
+    this.dy = dy;
     int newX = x + dx * speed;
     int newY = y + dy * speed;
     // 화면 안 벗어나게 제한 거는거
@@ -56,6 +58,8 @@ public class Player extends Entity {
       facingRight = true;
     }
   }
+
+
 
   public double getGPA() {
     return GPA;
@@ -90,9 +94,10 @@ public class Player extends Entity {
       g.fillRect(x, y, width, height);
     }
   }
-
   @Override
-  protected void paintComponent(Graphics g) {
-
+  public Rectangle getBounds() {
+    System.out.println("Player bounds: x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
+    return new Rectangle(x, y, width, height);
   }
+
 }

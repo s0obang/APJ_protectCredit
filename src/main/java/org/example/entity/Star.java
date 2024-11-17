@@ -1,6 +1,7 @@
 package org.example.entity;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -76,4 +77,5 @@ public class Star extends Entity {
     public boolean isVisible() {
         return visible;
     }
+
 }

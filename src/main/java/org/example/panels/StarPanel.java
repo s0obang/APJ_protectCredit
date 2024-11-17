@@ -10,39 +10,39 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StarPanel extends JPanel {
-  public final Player starplayer;
+  public Player starplayer;
   public StarCrash starCrash;
   public static GameManager gameManager;
+  private Timer timer;
+
 
   public StarPanel(GameManager gameManager) {
-    this.gameManager = gameManager;
-    this.starplayer = new Player(500, 500, 100, 100);
+    StarPanel.gameManager = gameManager;
 
     // StarCrash 객체 생성: GameManager와 StarPanel을 참조
     this.starCrash = new StarCrash(gameManager, this);
 
+    starplayer = new Player(500, 200, 100, 100);
+
     setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
-
-    // 스타 위치 업데이트와 충돌 타이머 설정
-    Timer timer = new Timer(20, e -> {
-      if (GameManager.star != null) {
-        GameManager.star.moveTowardsTarget();
-        repaint();
-
-        // 충돌 체크 및 후속 처리
-        if (starCrash.checkCollision()) {
-          starCrash.handleCollision();
-        }
-      }
-    });
-    timer.start();
-
     addHierarchyListener(e -> {
       if (isShowing()) {
         requestFocusInWindow();
       }
     });
+
+    // 스타 위치 업데이트와 충돌 타이머 설정
+    if(timer != null) timer.stop();
+    timer = new Timer(20, e -> {
+      if (GameManager.star != null) {
+        GameManager.star.moveTowardsTarget();
+        repaint();
+
+        if(starCrash.isCollision || GameManager.overStarTime) starCrash.handleCollision();
+      }
+    });
+    timer.start();
 
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);

@@ -71,6 +71,9 @@ public class GamePanel extends JPanel {
 
   public void startGame() {
     timer = new GameTimer(iconManager, coincrash, iconCrash, this);
+    this.repaint();
+    player.x = 500;
+    player.y = 500;
     timer.start();
   }
 
@@ -107,5 +110,7 @@ public class GamePanel extends JPanel {
     if (CoinCrash.getCoinImage() != null) {
       g.drawImage(CoinCrash.getCoinImage(), 50, 90, 22, 22, null);
     }
+
   }
 }
+

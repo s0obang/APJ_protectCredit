@@ -330,14 +330,14 @@ public class StartPanel extends JPanel {
         playButton.setFocusPainted(false);
         playButton.setContentAreaFilled(false);
         playButton.addActionListener(e -> {
-                    cardLayout.show(cardPanel, "main"); // 이거 왜 안 되냐
-                    introCardLayout.show(panel, "intro1"); //처음으로 돌려놓기
+            cardLayout.show(cardPanel, "main"); // 이거 왜 안 되냐
+            introCardLayout.show(panel, "intro1"); //처음으로 돌려놓기
 
 
-                    //manager.getGamePanel().startGame();
-                    manager.startGameSequence();// 아이콘 떨어짐 동작 시작
-                    manager.getGamePanel().startGame(); // 아이콘 떨어짐 동작 시작
-                }); // GameScreen으로 이동
+            //manager.getGamePanel().startGame();
+            manager.startGameSequence();// 아이콘 떨어짐 동작 시작
+            manager.getGamePanel().startGame(); // 아이콘 떨어짐 동작 시작
+        }); // GameScreen으로 이동
 
         intro3.add(playButton);
 

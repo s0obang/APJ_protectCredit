@@ -2,7 +2,6 @@ package org.example.Manager;
 
 import org.example.entity.User;
 
-
 public class LoginManager {
     private static DatabaseManager dbManager;
     private static User loggedInUser;
