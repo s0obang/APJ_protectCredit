@@ -10,41 +10,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CoinCrash {
     private final GamePanel gamePanel;
+    private BonusPanel bonusPanel;
     ArrayList<Entity> entities;
-    private JTextField curpointText;
     private static BufferedImage coinimg;
 
     // 배열 생성
-    public CoinCrash(GamePanel gamePanel) {
+    public CoinCrash(GamePanel gamePanel, BonusPanel bonusPanel) {
         entities = new ArrayList<>();
         this.gamePanel = gamePanel;
+        this.bonusPanel = bonusPanel;
 
-        // 누적 금액 표시하는 텍스트 필드 생성
-        curpointText = new JTextField("0원"); // Initial points display
-        Font scoreFont = new Font("Neo둥근모", Font.BOLD, 15);
-        curpointText.setFont(scoreFont);
-        curpointText.setForeground(Color.black);
-        curpointText.setEditable(false);
-        curpointText.setOpaque(false); // 배경색 투명하게 만들기
-        curpointText.setBorder(null); // 텍스트 필드 테두리 삭제
-
-        curpointText.setBounds(82, 87, 150, 30);
-        gamePanel.setLayout(null);
-        gamePanel.add(curpointText); // 게임 패널에 추가
-
-
-        // gamePanel에 CoinCrash 인스턴스 설정
-        setCoinCrash();
     }
 
-    // CoinCrash 인스턴스를 GamePanel에 설정하는 메서드
-    private void setCoinCrash() {
-        gamePanel.coincrash = this; // GamePanel의 coinCrash에 현재 CoinCrash 설정
-    }
     //배열에 entity 저장
     public void addEntity(Entity entity) {
         entities.add(entity);
@@ -55,7 +35,7 @@ public class CoinCrash {
 
     // 누적 금액 패널에 띄우는 함수
     private void showCurPoints(int points) {
-        curpointText.setText(points + "만 원");
+        gamePanel.curpointText.setText(points + "만 원");
         gamePanel.repaint();
     }
 
@@ -71,6 +51,7 @@ public class CoinCrash {
                 // 충돌 감지 및 처리
                 if (e1.getBounds().intersects(e2.getBounds())) {
                     if (e1 instanceof Player && e2 instanceof Coin) {
+                        System.out.println("Player collided with Coin");
                         (e1).upPoint(1); // 플레이어 점수 증가
                         showCurPoints(e1.getPoints()); // 누적 금액 패널에 갱신
                         ((Coin) e2).resetPosition();// 코인을 초기 위치로 리셋
@@ -85,6 +66,16 @@ public class CoinCrash {
                 }
             }
         }
+    }
+
+    // 충돌 검사 메서드
+    public void checkBonusCollisions() {
+        if(!bonusPanel.isCoinsInitialized) Coin.resetBonusCoins();
+
+        // Player와 LargeCoin, MediCoin, SmallCoin 간의 충돌 확인 후 해당 코인 제거
+        Coin.largeCoins.removeIf(coin -> bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds()));
+        Coin.mediCoins.removeIf(coin -> bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds()));
+        Coin.smallCoins.removeIf(coin -> bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds()));
     }
 
 

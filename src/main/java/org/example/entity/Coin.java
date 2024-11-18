@@ -3,14 +3,12 @@ package org.example.entity;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class Coin extends Entity {
 
@@ -18,6 +16,10 @@ public class Coin extends Entity {
   public Image coinimg;
   private static final Random random = new Random();
   int x, y, speed;
+  // 코인 이미지와 좌표 리스트
+  public static List<Coin> largeCoins;
+  public static List<Coin> mediCoins;
+  public static List<Coin> smallCoins;
 
   public Coin(int x, int y, int width, int height, Image coinimg) {
     super(x, y, width, height);
@@ -47,7 +49,7 @@ public class Coin extends Entity {
   }
 
   public static void createAndAddCoin(int x, int y, int width, int height) {
-    Coin coin = new Coin( random.nextInt(x - 60), random.nextInt(y),width, height, Coin.loadImage("coin.png")) {
+    Coin coin = new Coin(random.nextInt(x - 60), random.nextInt(y),width, height, Coin.loadImage("coin.png")) {
       @Override
       public void update() {
       }
@@ -147,6 +149,13 @@ public class Coin extends Entity {
     // 코인 초기 위치로 리셋
     this.y = -20; // 화면 위쪽에서 다시 떨어지도록
     this.x = random.nextInt(1080 - 40); // 무작위 x 위치
+  }
+
+  public static void resetBonusCoins() {
+    // 코인 리스트 초기화
+    largeCoins = Coin.createCoins(Coin.largeCoinPositions, "coin.png");
+    mediCoins = Coin.createCoins(Coin.medicoinPositions, "medicoin.png");
+    smallCoins = Coin.createCoins(Coin.smallcoinPositions, "smallcoin.png");
   }
 
 }

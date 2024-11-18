@@ -1,42 +1,35 @@
 package org.example.panels;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 
 import org.example.Manager.*;
 import org.example.entity.Coin;
 import org.example.entity.Icon;
 import org.example.entity.Player;
-import org.example.entity.Star;
 import org.example.object.CoinCrash;
 import org.example.object.IconCrash;
-import org.example.object.StarCrash;
-import org.example.object.UserStatus;
 
 
 public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
-  public CoinCrash coincrash;
+  public CoinCrash coinCrash;
   public Player player; //이거 메인캐릭터임^^
-  private BufferedImage coinImage;
   private IconCrash iconCrash;
   private Timer timer;
   private IconManager iconManager;
-  private StarPanel starPanel;
-  private GameManager gameManager;
   private BufferedImage backgroundImage;
+  private BonusPanel bonusPanel;
+  public JTextField curpointText;
 
-  public GamePanel() {
-
+  public GamePanel(BonusPanel bonusPanel) {
+    this.bonusPanel = bonusPanel;
     // 배경 이미지 로드
     try {
       backgroundImage = ImageIO.read(
@@ -46,13 +39,25 @@ public class GamePanel extends JPanel {
     }
     // Player 객체 생성 (초기 위치와 크기 설정)
     player = new Player(500, 500, 100, 100);
+    // 누적 금액 표시하는 텍스트 필드 생성
+
+    curpointText = new JTextField("0원"); // Initial points display
+    Font scoreFont = new Font("Neo둥근모", Font.BOLD, 15);
+    curpointText.setFont(scoreFont);
+    curpointText.setForeground(Color.black);
+    curpointText.setEditable(false);
+    curpointText.setOpaque(false); // 배경색 투명하게 만들기
+    curpointText.setBorder(null); // 텍스트 필드 테두리 삭제
+
+    curpointText.setBounds(82, 87, 150, 30);
+    this.setLayout(null);
+    this.add(curpointText); // 게임 패널에 추가
 
     // Crash 객체 생성 -> 충돌 감지에 저장
-    coincrash = new CoinCrash(this);
+    coinCrash = new CoinCrash(this, bonusPanel);
     iconCrash = new IconCrash(this, player);
     iconCrash.addEntity(player);
-    coincrash.addEntity(player);
-    starPanel = new StarPanel(gameManager);
+    coinCrash.addEntity(player);
     iconManager = new IconManager();
 
     //플레이어 방향키로 이동하느느거!!!
@@ -66,12 +71,13 @@ public class GamePanel extends JPanel {
 
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
-    GameInitializer.initializeEntities(coincrash, iconCrash);
+    GameInitializer.initializeEntities(coinCrash, iconCrash);
   }
 
   public void startGame() {
-    timer = new GameTimer(iconManager, coincrash, iconCrash, this);
-    this.repaint();
+    timer = new GameTimer(iconManager, coinCrash, iconCrash, this);
+    //this.repaint();
+    timer.start();
     player.x = 500;
     player.y = 500;
     timer.start();

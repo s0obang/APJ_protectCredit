@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.example.entity.*;
+import org.example.object.CoinCrash;
 import org.example.object.StarCrash;
 import org.example.object.UserStatus;
 import org.example.panels.*;
@@ -26,6 +27,7 @@ public class GameManager extends JFrame {
   private static LevelUpPanel levelupPanel;
   public static BonusPanel bonusPanel;
   public static RainbowPanel rainbowPanel;
+  public CoinCrash coinCrash;
   public static Star star;
   public StarCrash starCrash;
   public static boolean overStarTime = false;
@@ -49,9 +51,10 @@ public class GameManager extends JFrame {
     cardLayout = new CardLayout();
     mainPanel = new JPanel(cardLayout);
     //이부분 수정했어엽 민선아
-    gamePanel = new GamePanel();
+    gamePanel = new GamePanel(bonusPanel);
     levelupPanel = new LevelUpPanel();
-    bonusPanel = new BonusPanel();
+    bonusPanel = new BonusPanel(gamePanel);
+    coinCrash = new CoinCrash(gamePanel, bonusPanel);
     starPanel = new StarPanel(this);
     starCrash = new StarCrash(this, starPanel);
     rainbowPanel = new RainbowPanel();

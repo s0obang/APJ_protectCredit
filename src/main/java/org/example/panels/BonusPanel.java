@@ -3,24 +3,23 @@ package org.example.panels;
 import org.example.Manager.GameKeyAdapter;
 import org.example.entity.Coin;
 import org.example.entity.Player;
+import org.example.object.CoinCrash;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BonusPanel extends JPanel {
+    public GamePanel gamePanel;
+    public CoinCrash coinCrash;
     public Player bonusplayer;
-    // 코인 이미지와 좌표 리스트
-    public List<Coin> largeCoins;
-    public List<Coin> mediCoins;
-    public List<Coin> smallCoins;
-    private boolean isCoinsInitialized = false; // 코인 초기화 여부 플래그
+    public boolean isCoinsInitialized = false; // 코인 초기화 여부 플래그
     private Timer timer;
 
     private static Image coinimg;
 
-    public BonusPanel() {
+    public BonusPanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+        coinCrash = new CoinCrash(gamePanel,this);
         // 화면 구성 초기화
         setLayout(null); // 절대 레이아웃 사용
         setPreferredSize(new Dimension(1080, 720)); // 패널 크기 설정
@@ -31,7 +30,7 @@ public class BonusPanel extends JPanel {
         addKeyListener(new GameKeyAdapter(bonusplayer));
         addHierarchyListener(e -> {
             if (isShowing()) {
-                resetCoins(); // 패널이 표시될 때마다 코인 초기화
+                Coin.resetBonusCoins(); // 패널이 표시될 때마다 코인 초기화
                 isCoinsInitialized = true; // 초기화 플래그 설정
                 requestFocusInWindow();
             }
@@ -41,27 +40,10 @@ public class BonusPanel extends JPanel {
 
         // 타이머 설정
         timer = new Timer(30, e -> {
-            checkBonusCollisions();  // CoinCrash의 checkBonusCollisions 호출
+            coinCrash.checkBonusCollisions();  // CoinCrash의 checkBonusCollisions 호출
             repaint(); // 화면 갱신 -> player 움직임
         });
         timer.start(); // Start the timer
-    }
-
-    private void resetCoins() {
-        // 코인 리스트 초기화
-        largeCoins = Coin.createCoins(Coin.largeCoinPositions, "coin.png");
-        mediCoins = Coin.createCoins(Coin.medicoinPositions, "medicoin.png");
-        smallCoins = Coin.createCoins(Coin.smallcoinPositions, "smallcoin.png");
-    }
-
-    // 충돌 검사 메서드
-    private void checkBonusCollisions() {
-        if(isCoinsInitialized == false) resetCoins();
-
-        // Player와 LargeCoin, MediCoin, SmallCoin 간의 충돌 확인 후 해당 코인 제거
-        largeCoins.removeIf(coin -> bonusplayer.getBounds().intersects(coin.getBounds()));
-        mediCoins.removeIf(coin -> bonusplayer.getBounds().intersects(coin.getBounds()));
-        smallCoins.removeIf(coin -> bonusplayer.getBounds().intersects(coin.getBounds()));
     }
 
     @Override
@@ -73,13 +55,13 @@ public class BonusPanel extends JPanel {
         bonusplayer.draw(g);
 
         // 각 코인들을 화면에 그리기
-        for (Coin coin : largeCoins) {
+        for (Coin coin : Coin.largeCoins) {
             coin.draw(g);
         }
-        for (Coin coin : mediCoins) {
+        for (Coin coin : Coin.mediCoins) {
             coin.draw(g);
         }
-        for (Coin coin : smallCoins) {
+        for (Coin coin : Coin.smallCoins) {
             coin.draw(g);
         }
     }
