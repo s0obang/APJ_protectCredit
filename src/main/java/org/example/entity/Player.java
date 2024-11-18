@@ -96,7 +96,6 @@ public class Player extends Entity {
   }
   @Override
   public Rectangle getBounds() {
-    System.out.println("Player bounds: x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
     return new Rectangle(x, y, width, height);
   }
 

@@ -159,6 +159,8 @@ public class GameManager extends JFrame {
     if (rainbowTimer != null) rainbowTimer.stop();
     if (bonusTimer != null) bonusTimer.stop();
     if (returnToGameTimer != null) returnToGameTimer.stop();
+    bonusPanel.bonusplayer.x = 500;
+    bonusPanel.bonusplayer.y = 100;
 
     rainbowTimer = new Timer(0, e -> {
       System.out.println("Switching to RainbowPanel");
