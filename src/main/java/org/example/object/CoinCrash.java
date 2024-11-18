@@ -1,27 +1,29 @@
 package org.example.object;
 
+import org.example.Manager.PointsManager;
 import org.example.entity.Coin;
 import org.example.entity.Entity;
 import org.example.entity.Player;
 import org.example.panels.BonusPanel;
 import org.example.panels.GamePanel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class CoinCrash {
+    private PointsManager pointsManager;
     private final GamePanel gamePanel;
     private BonusPanel bonusPanel;
     ArrayList<Entity> entities;
     private static BufferedImage coinimg;
 
     // 배열 생성
-    public CoinCrash(GamePanel gamePanel, BonusPanel bonusPanel) {
+    public CoinCrash(GamePanel gamePanel, BonusPanel bonusPanel, PointsManager pointsManager) {
         entities = new ArrayList<>();
         this.gamePanel = gamePanel;
         this.bonusPanel = bonusPanel;
+        this.pointsManager = pointsManager;
 
     }
 
@@ -33,49 +35,77 @@ public class CoinCrash {
         }
     }
 
-    // 누적 금액 패널에 띄우는 함수
-    private void showCurPoints(int points) {
-        gamePanel.curpointText.setText(points + "만 원");
-        gamePanel.repaint();
+    // 충돌 처리 메서드
+    private void handleCollision(Entity e1, Entity e2, boolean isBonus) {
+        if (e1 instanceof Player && e2 instanceof Coin) {
+            pointsManager.increasePoints(1);
+            if (isBonus) {
+                bonusPanel.updateCurpointText();
+            } else {
+                gamePanel.updateCurpointText();
+            }
+            ((Coin) e2).resetPosition();
+        } else if (e1 instanceof Coin && e2 instanceof Player) {
+            pointsManager.increasePoints(1);
+            if (isBonus) {
+                bonusPanel.updateCurpointText();
+            } else {
+                gamePanel.updateCurpointText();
+            }
+            ((Coin) e1).resetPosition();
+        }
     }
 
-
-    // 충돌 관련
+    // 일반 게임 패널에서의 충돌 처리
     public void checkCollisions() {
-        System.out.println("Checking collisions...");
         for (int i = 0; i < entities.size(); i++) {
             for (int j = i + 1; j < entities.size(); j++) {
                 Entity e1 = entities.get(i);
                 Entity e2 = entities.get(j);
 
-                // 충돌 감지 및 처리
+                // 충돌 감지
                 if (e1.getBounds().intersects(e2.getBounds())) {
-                    if (e1 instanceof Player && e2 instanceof Coin) {
-                        System.out.println("Player collided with Coin");
-                        (e1).upPoint(1); // 플레이어 점수 증가
-                        showCurPoints(e1.getPoints()); // 누적 금액 패널에 갱신
-                        ((Coin) e2).resetPosition();// 코인을 초기 위치로 리셋
-
-                    }
-                    // e1이 Coin1이고 e2가 Player일 경우
-                    else if (e1 instanceof Coin && e2 instanceof Player) {
-                        (e2).upPoint(1); // 플레이어 점수 증가
-                        showCurPoints(e2.getPoints());
-                        ((Coin) e1).resetPosition(); // 코인을 초기 위치로 리셋
-                    }
+                    handleCollision(e1, e2, false); // Bonus가 아님
                 }
             }
         }
     }
 
-    // 충돌 검사 메서드
+    // 보너스 패널에서의 충돌 처리
     public void checkBonusCollisions() {
-        if(!bonusPanel.isCoinsInitialized) Coin.resetBonusCoins();
+        if (!bonusPanel.isCoinsInitialized) {
+            Coin.resetBonusCoins(); // 코인 초기화
+        }
 
-        // Player와 LargeCoin, MediCoin, SmallCoin 간의 충돌 확인 후 해당 코인 제거
-        Coin.largeCoins.removeIf(coin -> bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds()));
-        Coin.mediCoins.removeIf(coin -> bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds()));
-        Coin.smallCoins.removeIf(coin -> bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds()));
+        // LargeCoins 충돌 확인
+        Coin.largeCoins.removeIf(coin -> {
+            if (bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds())) {
+                pointsManager.increasePoints(1);
+                bonusPanel.updateCurpointText();
+                return true;  // 충돌 후 제거
+            }
+            return false; // 충돌 없으면 유지
+        });
+
+        // MediCoins 충돌 확인
+        Coin.mediCoins.removeIf(coin -> {
+            if (bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds())) {
+                pointsManager.increasePoints(1);
+                bonusPanel.updateCurpointText();
+                return true;  // 충돌 후 제거
+            }
+            return false; // 충돌 없으면 유지
+        });
+
+        // SmallCoins 충돌 확인
+        Coin.smallCoins.removeIf(coin -> {
+            if (bonusPanel.bonusplayer.getBounds().intersects(coin.getBounds())) {
+                pointsManager.increasePoints(1);
+                bonusPanel.updateCurpointText();
+                return true;  // 충돌 후 제거
+            }
+            return false; // 충돌 없으면 유지
+        });
     }
 
 

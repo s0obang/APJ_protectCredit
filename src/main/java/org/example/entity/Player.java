@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 
 public class Player extends Entity {
 
-  private double points = 0;
   private int speed;
   private Image characterImage;
   private Image characterImageLeft;
@@ -68,16 +67,6 @@ public class Player extends Entity {
   public void setGPA(double newGPA) {
     // 최대 4.5, 최소 0점 유지
     this.GPA = Math.max(0, Math.min(4.5, newGPA));
-  }
-
-  @Override
-  public void upPoint(double amount) {
-    this.points += amount;
-  }
-
-  @Override
-  public int getPoints() {
-    return (int)points;  // double을 int로 변환하여 반환
   }
 
   @Override

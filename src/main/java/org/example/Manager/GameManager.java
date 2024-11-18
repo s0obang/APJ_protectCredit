@@ -22,6 +22,7 @@ public class GameManager extends JFrame {
   private DatabaseManager dbManager;
   private LoginManager loginManager;
   private EndPanel endPanel;
+  private PointsManager pointsManager;
   private static GamePanel gamePanel;
   private static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
@@ -50,11 +51,13 @@ public class GameManager extends JFrame {
 
     cardLayout = new CardLayout();
     mainPanel = new JPanel(cardLayout);
+    pointsManager = new PointsManager();
+    gamePanel = new GamePanel(pointsManager);
+    bonusPanel = new BonusPanel(pointsManager);
+
     //이부분 수정했어엽 민선아
-    gamePanel = new GamePanel(bonusPanel);
     levelupPanel = new LevelUpPanel();
-    bonusPanel = new BonusPanel(gamePanel);
-    coinCrash = new CoinCrash(gamePanel, bonusPanel);
+    coinCrash = new CoinCrash(gamePanel, bonusPanel, pointsManager);
     starPanel = new StarPanel(this);
     starCrash = new StarCrash(this, starPanel);
     rainbowPanel = new RainbowPanel();
@@ -129,7 +132,6 @@ public class GameManager extends JFrame {
           if (starCrash.distance < starCrash.collisionDistance) {
             System.out.println("충돌 발생!");
             ((Timer) event.getSource()).stop();  // Timer 종료
-            System.out.println("Collision detected! Starting bonus phase...");
 
             if (currentCycleCount == maxCycleCount - 1) {
               System.out.println("충돌 발생!");
@@ -158,26 +160,24 @@ public class GameManager extends JFrame {
 
   //일반적으로 충돌할 경우 -> 보너스 패널로 이동
   private void startBonusPhase() {
-    System.out.println("Starting Bonus Phase...");
     if (rainbowTimer != null) rainbowTimer.stop();
     if (bonusTimer != null) bonusTimer.stop();
     if (returnToGameTimer != null) returnToGameTimer.stop();
+    bonusPanel.isCoinsInitialized = false;
     bonusPanel.bonusplayer.x = 500;
     bonusPanel.bonusplayer.y = 100;
 
     rainbowTimer = new Timer(0, e -> {
-      System.out.println("Switching to RainbowPanel");
       switchToPanelWithDelay("rainbow", 0);
 
     bonusTimer = new Timer(3000, e2 -> {
-      System.out.println("Switching to BonusPanel");
       switchToPanelWithDelay("bonus", 0);
+      bonusPanel.updateCurpointText(); // 포인트 동기화
 
       // 10초 후 보너스 패널에서 게임 패널로 복귀
     returnToGameTimer = new Timer(10000, e3 -> {
-      System.out.println("Returning to GamePanel");
       switchToPanelWithDelay("game", 0);
-      //gamePanel.player = new Player(500, 500, 100, 100);
+      gamePanel.updateCurpointText();
       currentCycleCount++;
       startLevelUpPhase(); // 다음 사이클 시작
   });
@@ -197,12 +197,14 @@ public class GameManager extends JFrame {
     if(rainbowTimer != null) rainbowTimer.stop();
     if (bonusTimer != null) bonusTimer.stop();
     if (returnToGameTimer != null) returnToGameTimer.stop();
+    bonusPanel.isCoinsInitialized = false;
 
     rainbowTimer = new Timer(0, e1 -> {
       switchToPanelWithDelay("rainbow", 0);
 
     bonusTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("bonus", 0);
+      bonusPanel.updateCurpointText();
 
       // 마지막 사이클 -> 보너스 패널 10초 후 엔딩으로 이동
       returnToGameTimer = new Timer(5000, e2 -> endGameCycle()
@@ -224,6 +226,8 @@ public class GameManager extends JFrame {
     noCollisionTimer = new Timer(2000, e -> {
       starCrash.handleCollision();
       switchToPanelWithDelay("game", 0);
+      gamePanel.updateCurpointText();
+      // GamePanel로 돌아올 때 BonusPanel 포인트를 동기화
       currentCycleCount++;
       startLevelUpPhase(); // 다음 사이클 시작
     });
@@ -235,7 +239,7 @@ public class GameManager extends JFrame {
     // GamePanel로부터 현재 점수 가져오기
     Player player = gamePanel.getPlayer();
     double currentScore = player.getGPA();
-    int currentPoints = player.getPoints();
+    int currentPoints = pointsManager.getPoints();
 
     // UserStatus 업데이트
     userStatus.setUserGrade(currentCycleCount + 1); // 1학년부터 시작
@@ -263,8 +267,6 @@ public class GameManager extends JFrame {
     timer.setRepeats(false);
     timer.start();
   }
-
-
 
   public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");

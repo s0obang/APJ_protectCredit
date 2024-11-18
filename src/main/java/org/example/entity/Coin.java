@@ -49,7 +49,7 @@ public class Coin extends Entity {
   }
 
   public static void createAndAddCoin(int x, int y, int width, int height) {
-    Coin coin = new Coin(random.nextInt(x - 60), random.nextInt(y),width, height, Coin.loadImage("coin.png")) {
+    Coin coin = new Coin(random.nextInt(x - 60), random.nextInt(y-600),width, height, Coin.loadImage("coin.png")) {
       @Override
       public void update() {
       }

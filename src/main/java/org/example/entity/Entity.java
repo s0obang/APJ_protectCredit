@@ -26,14 +26,6 @@ public abstract class Entity {
     return new Rectangle(x, y, width, height);
   }
 
-  // 포인트 추가
-  public void upPoint(double point) {
-    points += point;
-  }
-
-  public int getPoints() {
-    return points;
-  }
 
   // 위치 설정 메서드
   public void setPosition(int x, int y) {
