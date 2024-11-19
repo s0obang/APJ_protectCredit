@@ -143,6 +143,7 @@ public class GameManager extends JFrame {
         } else {
           // 5초가 지나면 Timer를 종료하고 충돌이 없으면 다음 단계로 진행
           ((Timer) event.getSource()).stop();
+          starCrash.handleCollision();
           overStarTime = true;
           startNoCollisionPhase();
         }
@@ -237,9 +238,9 @@ public class GameManager extends JFrame {
   private void startNoCollisionPhase() {
     if (noCollisionTimer != null) noCollisionTimer.stop();
     if(bonusPanel.timer != null) bonusPanel.timer.stop();
+    overStarTime = false;
     //스타와 함께 있었던 시간
     noCollisionTimer = new Timer(2000, e -> {
-      starCrash.handleCollision();
       switchToPanelWithDelay("game", 0);
       gamePanel.updateCurpointText();
       // GamePanel로 돌아올 때 BonusPanel 포인트를 동기화

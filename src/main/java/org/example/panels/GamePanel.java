@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.example.Manager.*;
+import org.example.entity.Blanket;
 import org.example.entity.Coin;
 import org.example.entity.Icon;
 import org.example.entity.Player;
@@ -21,6 +22,7 @@ public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   private PointsManager pointsManager;
+  private Blanket blanket;
   public CoinCrash coinCrash;
   public Player player; //이거 메인캐릭터임^^
   private IconCrash iconCrash;
@@ -28,9 +30,12 @@ public class GamePanel extends JPanel {
   private IconManager iconManager;
   private BufferedImage backgroundImage;
   private JTextField curpointText; // GamePanel의 JTextField
+  private boolean blanketDisplayed; // Blanket 표시 여부
 
   public GamePanel(PointsManager pointsManager) {
     this.pointsManager = pointsManager; // PointsManager 객체 생성
+    blanketDisplayed = false;
+    blanket = new Blanket();
 
     // 배경 이미지 로드
     try {
@@ -84,7 +89,18 @@ public class GamePanel extends JPanel {
 
   public void updateCurpointText() {
     curpointText.setText(pointsManager.getPoints() + "만 원");
-    repaint();
+
+    // Blanket 표시 여부 업데이트
+    if (pointsManager.getPoints() >= 1) {
+      if (!blanketDisplayed && pointsManager.getPoints() % 2 ==0) {
+        blanket.doubleincrementCount();
+        blanketDisplayed = true; // Blanket을 표시 상태로 전환
+      } else if (pointsManager.getPoints() % 10 == 0) {
+        blanket.incrementCount(); // 10 단위 추가 시 카운터 증가
+      }
+    }
+
+    repaint(); // 패널 다시 그리기
   }
 
   public void startGame() {
@@ -126,6 +142,14 @@ public class GamePanel extends JPanel {
     // 좌측 상단에 띄울 코인 이미지 그리기
     if (CoinCrash.getCoinImage() != null) {
       g.drawImage(CoinCrash.getCoinImage(), 50, 90, 30, 30, null);
+    }
+
+    // Blanket 이미지와 카운터 그리기
+    if (blanketDisplayed) {
+      g.drawImage(blanket.itemblanket, 165, 95, 45, 35, null); // Blanket 이미지
+      g.setFont(new Font("Neo둥근모", Font.BOLD, 20));
+      g.setColor(Color.BLACK);
+      g.drawString("x" + blanket.getCount(), 213, 114); // Blanket 옆에 카운트 텍스트
     }
   }
 }

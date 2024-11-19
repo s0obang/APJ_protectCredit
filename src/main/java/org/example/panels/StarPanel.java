@@ -39,7 +39,7 @@ public class StarPanel extends JPanel {
         GameManager.star.moveTowardsTarget();
         repaint();
 
-        if(starCrash.isCollision || GameManager.overStarTime) starCrash.handleCollision();
+        if(starCrash.isCollision) starCrash.handleCollision();
       }
     });
     timer.start();
@@ -48,6 +48,7 @@ public class StarPanel extends JPanel {
     setOpaque(true);
   }
 
+  // 스타 초기화 메서드
   public void initializeStar(Star star) {
     GameManager.star = star;
   }

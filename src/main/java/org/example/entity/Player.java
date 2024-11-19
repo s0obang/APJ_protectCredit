@@ -15,6 +15,7 @@ public class Player extends Entity {
   private int boundaryWidth;  // 경계 너비
   private int boundaryHeight;
   private double GPA; // 학점
+  private Blanket blanket;
   private int dx = 0, dy =0;
 
   public Player(int x, int y, int width, int height) {
@@ -23,6 +24,7 @@ public class Player extends Entity {
     this.boundaryWidth = 1080;
     this.boundaryHeight = 720;
     this.GPA = 4.5; //초기 학점 4.5
+    blanket = new Blanket();
 
     try {
       characterImageLeft = ImageIO.read(
@@ -58,6 +60,9 @@ public class Player extends Entity {
     }
   }
 
+  public void changeImage() {
+    characterImage = blanket.blanket;
+  }
 
 
   public double getGPA() {
