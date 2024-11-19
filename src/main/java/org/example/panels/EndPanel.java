@@ -3,10 +3,8 @@ package org.example.panels;
 import javax.swing.*;
 
 import lombok.Setter;
-import org.example.Manager.BackgroundPanel;
-import org.example.Manager.DatabaseManager;
-import org.example.Manager.GameManager;
-import org.example.Manager.LoginManager;
+import org.example.Manager.*;
+import org.example.entity.Blanket;
 import org.example.entity.GameResult;
 
 import java.awt.*;
@@ -18,12 +16,16 @@ public class EndPanel extends JPanel {
     private JPanel cardPanel; // 패널들을 담을 메인 패널
     private JPanel graduationCardPanel; // graduationPanel의 내부 CardLayout 패널
     private GameResult gameResult;
+    private PointsManager pointsManager;
+    private Blanket blanket;
     private JTextField score;
     private JTextField ranking;
     private GameManager manager;
 
     public EndPanel(GameManager manager) {
         this.manager = manager;
+        pointsManager = new PointsManager();
+        blanket = new Blanket();
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
@@ -70,6 +72,8 @@ public class EndPanel extends JPanel {
         playAgainButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                pointsManager.resetPoints(); //코인 초기화
+                blanket.resetBlanket(); //이불 초기화
                 manager.startGameSequence();// 아이콘 떨어짐 동작 시작
                 manager.getGamePanel().startGame(); // 아이콘 떨어짐 동작 시작
             }

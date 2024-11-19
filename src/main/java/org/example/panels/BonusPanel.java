@@ -1,37 +1,42 @@
 package org.example.panels;
 
 import org.example.Manager.GameKeyAdapter;
+import org.example.Manager.PointsManager;
 import org.example.entity.Coin;
 import org.example.entity.Player;
+import org.example.object.CoinCrash;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BonusPanel extends JPanel {
+    private PointsManager pointsManager; // PointsManager 추가
+    private JTextField curpointText; // BonusPanel의 JTextField
+    public CoinCrash coinCrash;
     public Player bonusplayer;
-    // 코인 이미지와 좌표 리스트
-    public List<Coin> largeCoins;
-    public List<Coin> mediCoins;
-    public List<Coin> smallCoins;
-    private List<int[]> largeCoinPositions; // largecoin 좌표
-    private List<int[]> medicoinPositions; // medicoin 좌표
-    private List<int[]> smallcoinPositions; // smallcoin 좌표
-    private Timer timer;
+    public boolean isCoinsInitialized = false; // 코인 초기화 여부 플래그
+    public Timer timer, countTimer;
+    private JLabel timerLabel; // 타이머 표시용 JLabel 추가
+    public int remainingTime = 10; // 남은 시간 (10초)
 
-    private static Image coinimg;
 
-    public BonusPanel() {
-        // 화면 구성 초기화
-        setLayout(null); // 절대 레이아웃 사용
+
+    public BonusPanel(PointsManager pointsManager) {
+        this.pointsManager = pointsManager;
+        coinCrash = new CoinCrash(null,this, pointsManager);
+        // 텍스트 필드 초기화
+        curpointText = createPointsTextField();
+        setLayout(null);
+        this.add(curpointText);
+
+        // 타이머 표시용 JLabel 초기화
+        timerLabel = new JLabel("남은 시간: " + remainingTime + "초", SwingConstants.CENTER);
+        timerLabel.setFont(new Font("Neo둥근모", Font.BOLD, 20));
+        timerLabel.setBounds(40, 40, 200, 50);
+        timerLabel.setForeground(Color.BLACK);
+        this.add(timerLabel);
+
         setPreferredSize(new Dimension(1080, 720)); // 패널 크기 설정
-        largeCoins = new ArrayList<>();
-        mediCoins = new ArrayList<>();
-        smallCoins = new ArrayList<>();
         bonusplayer = new Player(500, 100, 100, 100);
 
         //플레이어 방향키로 이동하느느거!!!
@@ -43,95 +48,55 @@ public class BonusPanel extends JPanel {
             }
         });
 
-        // 패널 크기 설정 후, 반드시 레이아웃을 재계산하도록 재호출
-        revalidate();
-        repaint();
-
 
         setOpaque(true);
 
-        // largecoin 위치 설정
-        largeCoinPositions = List.of(
-                new int[]{525, 345 + 90}, new int[]{525, 345 + 130}, new int[]{525 + 60, 345 + 75}, new int[]{525 - 60, 345 + 75}
-                , new int[]{525 + 60, 345 + 115}, new int[]{525 - 60, 345 + 115}, new int[]{525 + 30, 345 + 150}, new int[]{525 - 30, 345 + 150}
-                , new int[]{525 - 220, 345 - 240 + 90}, new int[]{525 - 220, 345 - 240 + 130}, new int[]{525 - 220 + 60, 345 - 240 + 75}, new int[]{525 - 220 - 60, 345 - 240 + 75}
-                , new int[]{525 - 220 - 60, 345 - 240 + 115}, new int[]{525 - 220 + 60, 345 - 240 + 115}, new int[]{525 - 220 + 30, 345 - 240 + 150}, new int[]{525 - 220 - 30, 345 - 240 + 150}
-                , new int[]{525 - 220, 345 - 240 + 170}, new int[]{525 + 220, 345 - 240 + 90}, new int[]{525 + 220, 345 - 240 + 130}, new int[]{525 + 220 - 60, 345 - 240 + 75}
-                , new int[]{525 + 220 + 60, 345 - 240 + 75}, new int[]{525 + 220 - 60, 345 - 240 + 115}, new int[]{525 + 220 + 60, 345 - 240 + 115}, new int[]{525 + 220 + 30, 345 - 240 + 150}
-                , new int[]{525 + 220 - 30, 345 - 240 + 150}, new int[]{525 + 220, 345 - 240 + 170}, new int[]{525, 345 + 170}
-        );
-
-        // medicoin 위치 설정
-        medicoinPositions = List.of(
-                new int[]{525 + 220 - 60, 345 - 240 + 160}, new int[]{525 + 220 + 60, 345 - 240 + 160}, new int[]{525 + 30, 345 + 190}, new int[]{525 - 30, 345 + 190}
-                , new int[]{525 + 220 - 90, 345 - 240 + 130}, new int[]{525 + 220 + 90, 345 - 240 + 130}, new int[]{525 + 60, 345 + 160}, new int[]{525 - 60, 345 + 160}
-                , new int[]{525 + 220 - 90, 345 - 240 + 95}, new int[]{525 + 220 + 90, 345 - 240 + 95}, new int[]{525 - 90, 345 + 130}, new int[]{525 + 90, 345 + 130}
-                , new int[]{525 + 220 + 30, 345 - 240 + 100}, new int[]{525 + 220 - 30, 345 - 240 + 100}, new int[]{525 + 30, 345 + 100}, new int[]{525 - 30, 345 + 100}
-                , new int[]{525 + 220 - 90, 345 - 240 + 60}, new int[]{525 + 220 + 90, 345 - 240 + 60}, new int[]{525 - 90, 345 + 95}, new int[]{525 + 90, 345 + 95}
-                , new int[]{525 + 220 + 30, 345 - 240 + 60}, new int[]{525 + 220 - 30, 345 - 240 + 60}, new int[]{525 - 90, 345 + 60}, new int[]{525 + 90, 345 + 60}
-                , new int[]{525 - 220 + 30, 345 - 240 + 190}, new int[]{525 - 220 - 30, 345 - 240 + 190}, new int[]{525 + 30, 345 + 60}, new int[]{525 - 30, 345 + 60}
-                , new int[]{525 - 220 - 60, 345 - 240 + 160}, new int[]{525 - 220 + 60, 345 - 240 + 160}
-                , new int[]{525 - 220 - 90, 345 - 240 + 130}, new int[]{525 - 220 + 90, 345 - 240 + 130}
-                , new int[]{525 - 220 - 90, 345 - 240 + 95}, new int[]{525 - 220 + 90, 345 - 240 + 95}
-                , new int[]{525 - 220 + 30, 345 - 240 + 100}, new int[]{525 - 220 - 30, 345 - 240 + 100}
-                , new int[]{525 - 220 - 90, 345 - 240 + 60}, new int[]{525 - 220 + 90, 345 - 240 + 60}
-                , new int[]{525 - 220 + 30, 345 - 240 + 60}, new int[]{525 - 220 - 30, 345 - 240 + 60}
-                , new int[]{525 + 220 + 30, 345 - 240 + 190}, new int[]{525 + 220 - 30, 345 - 240 + 190}
-        );
-        // smallcoin 위치 설정
-        smallcoinPositions = List.of(
-                new int[]{525 + 60, 345+ 30}, new int[]{525 + 115, 345 + 95}, new int[]{525 - 115, 345 + 95}
-                , new int[]{525, 345 + 220}, new int[]{525 - 220, 345 - 240 + 220}
-                , new int[]{525 - 220 - 60, 345 - 240 + 30}, new int[]{525 - 220 + 60, 345 - 240 + 30}
-                , new int[]{525 - 220 + 115, 345 - 240 + 95}, new int[]{525 - 220 - 115, 345 - 240 + 95}
-                , new int[]{525 + 220 - 60, 345 - 240 + 30}, new int[]{525 + 220 + 60, 345 - 240 + 30}
-                , new int[]{525 + 220 + 115, 345 - 240 + 95}, new int[]{525 + 220 - 115, 345 - 240 + 95}
-                , new int[]{525 + 220, 345 - 240 + 220}, new int[]{525 - 60, 345 + 30}
-        );
-
-
-        // 코인 엔티티 추가
-        addCoins();
+        // 타이머 설정
+        countTimer = new Timer(1000, e -> { // 1초마다 실행
+            if (remainingTime > 0) {
+                remainingTime--; // 남은 시간 감소
+                timerLabel.setText("남은 시간 : " + remainingTime + "초"); // 타이머 갱신
+            } else {
+                ((Timer) e.getSource()).stop(); // 타이머 종료
+            }
+            repaint();
+        });
 
         // 타이머 설정
         timer = new Timer(30, e -> {
-            checkCollisions();  // CoinCrash의 checkBonusCollisions 호출
-            repaint(); // 화면 갱신 -> player 움직임
+            if(!isCoinsInitialized) {
+                Coin.resetBonusCoins(); // 패널이 표시될 때마다 코인 초기화
+                isCoinsInitialized = true; // 초기화 플래그 설정
+                coinCrash.checkBonusCollisions();  // CoinCrash의 checkBonusCollisions 호출
+                repaint(); // 화면 갱신 -> player 움직임
+            }
+            coinCrash.checkBonusCollisions();
+            repaint();
         });
         timer.start(); // Start the timer
+
     }
 
-    // 충돌 검사 메서드
-    private void checkCollisions() {
-        // Player와 LargeCoin, MediCoin, SmallCoin 간의 충돌 확인 후 해당 코인 제거
-        largeCoins.removeIf(coin -> bonusplayer.getBounds().intersects(coin.getBounds()));
-        mediCoins.removeIf(coin -> bonusplayer.getBounds().intersects(coin.getBounds()));
-        smallCoins.removeIf(coin -> bonusplayer.getBounds().intersects(coin.getBounds()));
+    private JTextField createPointsTextField() {
+        JTextField textField = new JTextField(pointsManager.getPoints() + "원");
+        textField.setFont(new Font("Neo둥근모", Font.BOLD, 20));
+        textField.setForeground(Color.black);
+        textField.setEditable(false);
+        textField.setOpaque(false);
+        textField.setFocusable(false);
+        textField.setBorder(null);
+        textField.setBounds(85, 93, 150, 30);
+        return textField;
     }
 
-    // 각 코인 리스트에 맞는 코인 객체 추가
-    public void addCoins() {
-        largeCoins.clear();
-        mediCoins.clear();
-        smallCoins.clear();
 
-        // largecoins 추가
-        for (int[] pos : largeCoinPositions) {
-            Coin largeCoin = new Coin(pos[0], pos[1], 30,30, Coin.loadImage("coin.png"));
-            largeCoins.add(largeCoin);
-        }
+    public void updateCurpointText() {
+        curpointText.setText(pointsManager.getPoints() + "만 원");
+        repaint();
+    }
 
-        // medicoin 추가
-        for (int[] pos : medicoinPositions) {
-            Coin medicCoin = new Coin(pos[0], pos[1], 30,30, Coin.loadImage("medicoin.png"));
-            mediCoins.add(medicCoin);
-        }
-
-        // smallcoins 추가
-        for (int[] pos : smallcoinPositions) {
-            Coin smallCoin = new Coin(pos[0], pos[1], 30,30, Coin.loadImage("smallcoin.png"));
-            smallCoins.add(smallCoin);
-        }
+    public void updateTime() {
+        timerLabel.setText("남은 시간 : " + remainingTime + "초");
     }
 
     @Override
@@ -143,14 +108,19 @@ public class BonusPanel extends JPanel {
         bonusplayer.draw(g);
 
         // 각 코인들을 화면에 그리기
-        for (Coin coin : largeCoins) {
+        for (Coin coin : Coin.largeCoins) {
             coin.draw(g);
         }
-        for (Coin coin : mediCoins) {
+        for (Coin coin : Coin.mediCoins) {
             coin.draw(g);
         }
-        for (Coin coin : smallCoins) {
+        for (Coin coin : Coin.smallCoins) {
             coin.draw(g);
+        }
+
+        // 좌측 상단에 띄울 코인 이미지 그리기
+        if (CoinCrash.getCoinImage() != null) {
+            g.drawImage(CoinCrash.getCoinImage(), 50, 90, 30, 30, null);
         }
     }
 

@@ -12,7 +12,6 @@ import lombok.Setter;
 
 public class Player extends Entity {
 
-  private double points = 0;
   private int speed;
   private Image characterImage;
   private Image characterImageLeft;
@@ -21,7 +20,9 @@ public class Player extends Entity {
   private int boundaryWidth;  // 경계 너비
   private int boundaryHeight;
   private double GPA; // 학점
-  private int dx = 0, dy = 0;
+  private Blanket blanket;
+  private boolean blanketActive = false;
+  private int dx = 0, dy =0;
   @Setter
   @Getter
   private boolean movable = true;
@@ -32,6 +33,7 @@ public class Player extends Entity {
     this.boundaryWidth = 1080;
     this.boundaryHeight = 720;
     this.GPA = 4.5; //초기 학점 4.5
+    blanket = new Blanket();
 
     try {
       characterImageLeft = ImageIO.read(
@@ -67,6 +69,19 @@ public class Player extends Entity {
     }
   }
 
+  public void changeImage() {
+    characterImage = blanket.blanket;
+    blanketActive = true;  // Blanket 활성화 상태로 설정
+  }
+
+  public void changeOriginImage() {
+    characterImage = characterImageRight;
+    blanketActive = false;  // Blanket 비활성화 상태로 설정
+  }
+
+  public boolean isBlanketActive() {
+    return blanketActive;  // Blanket 상태 반환
+  }
 
   public double getGPA() {
     return GPA;
@@ -75,16 +90,6 @@ public class Player extends Entity {
   public void setGPA(double newGPA) {
     // 최대 4.5, 최소 0점 유지
     this.GPA = Math.max(0, Math.min(4.5, newGPA));
-  }
-
-  @Override
-  public void upPoint(double amount) {
-    this.points += amount;
-  }
-
-  @Override
-  public int getPoints() {
-    return (int) points;  // double을 int로 변환하여 반환
   }
 
   @Override
@@ -104,7 +109,6 @@ public class Player extends Entity {
 
   @Override
   public Rectangle getBounds() {
-    
     return new Rectangle(x, y, width, height);
   }
 
