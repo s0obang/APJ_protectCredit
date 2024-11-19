@@ -73,6 +73,7 @@ public class CoinCrash {
 
     // 보너스 패널에서의 충돌 처리
     public void checkBonusCollisions() {
+
         if (!bonusPanel.isCoinsInitialized) {
             Coin.resetBonusCoins(); // 코인 초기화
         }

@@ -19,6 +19,10 @@ public class GameKeyAdapter extends KeyAdapter {
       return;
     }
 
+    if (player.isBlanketActive()) {
+      return;  // Blanket 상태일 때는 이동을 비활성화
+    }
+
     int dx = 0, dy = 0;
     switch (e.getKeyCode()) {
       case KeyEvent.VK_UP -> dy = -2;

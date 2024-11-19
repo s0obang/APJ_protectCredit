@@ -21,6 +21,7 @@ public class Player extends Entity {
   private int boundaryHeight;
   private double GPA; // 학점
   private Blanket blanket;
+  private boolean blanketActive = false;
   private int dx = 0, dy =0;
   @Setter
   @Getter
@@ -70,6 +71,16 @@ public class Player extends Entity {
 
   public void changeImage() {
     characterImage = blanket.blanket;
+    blanketActive = true;  // Blanket 활성화 상태로 설정
+  }
+
+  public void changeOriginImage() {
+    characterImage = characterImageRight;
+    blanketActive = false;  // Blanket 비활성화 상태로 설정
+  }
+
+  public boolean isBlanketActive() {
+    return blanketActive;  // Blanket 상태 반환
   }
 
   public double getGPA() {

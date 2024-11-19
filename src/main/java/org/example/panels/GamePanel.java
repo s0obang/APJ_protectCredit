@@ -1,6 +1,8 @@
 package org.example.panels;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +80,36 @@ public class GamePanel extends JPanel {
       }
     });
 
+    // F키 이벤트 추가
+    addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (blanket.getCount() > 0) {
+          if (e.getKeyCode() == KeyEvent.VK_F && !blanket.isPressedF) {
+            // F키가 눌리면 Blanket 카운트 감소하고 Player 이미지 변경
+            blanket.decrementCount(); // blanket의 카운트 감소
+            blanket.isPressedF = true;
+            player.changeImage(); // player 이미지 변경
+
+            // 기존 타이머가 있으면 취소
+            if (blanket.timer != null) {
+              blanket.timer.stop(); // 중첩 방지
+            }
+
+            // 새로운 타이머를 설정
+            blanket.timer = new Timer(5000, ev -> {
+              player.changeOriginImage(); // 원래 이미지로 복원
+              blanket.isPressedF = false; // 상태 초기화
+              blanket.timer = null; // 타이머 초기화
+            });
+            blanket.timer.setRepeats(false); // 한 번만 실행
+            blanket.timer.start();
+          }
+        }
+      }
+    });
+
+
     professorManager = new ProfessorManager(
         this.getPlayer(),
         () -> {
@@ -141,6 +173,9 @@ public class GamePanel extends JPanel {
 
   public Player getPlayer() {
     return player;
+  }
+
+  public void changeImage() {
   }
 
 
