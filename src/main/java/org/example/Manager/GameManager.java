@@ -144,7 +144,6 @@ public class GameManager extends JFrame {
           // 5초가 지나면 Timer를 종료하고 충돌이 없으면 다음 단계로 진행
           ((Timer) event.getSource()).stop();
           overStarTime = true;
-          System.out.println("No collision detected. Moving to next phase.");
           startNoCollisionPhase();
         }
       });
@@ -163,6 +162,9 @@ public class GameManager extends JFrame {
     if (rainbowTimer != null) rainbowTimer.stop();
     if (bonusTimer != null) bonusTimer.stop();
     if (returnToGameTimer != null) returnToGameTimer.stop();
+    if(bonusPanel.timer != null) bonusPanel.timer.stop();
+
+    bonusPanel.remainingTime = 10;
     bonusPanel.isCoinsInitialized = false;
     bonusPanel.bonusplayer.x = 500;
     bonusPanel.bonusplayer.y = 100;
@@ -172,11 +174,15 @@ public class GameManager extends JFrame {
 
     bonusTimer = new Timer(3000, e2 -> {
       switchToPanelWithDelay("bonus", 0);
+      bonusPanel.updateTime();
       bonusPanel.updateCurpointText(); // 포인트 동기화
+      bonusPanel.timer.start();
+      bonusPanel.countTimer.start();
 
       // 10초 후 보너스 패널에서 게임 패널로 복귀
-    returnToGameTimer = new Timer(10000, e3 -> {
+    returnToGameTimer = new Timer(13000, e3 -> {
       switchToPanelWithDelay("game", 0);
+      if(bonusPanel.timer != null) bonusPanel.timer.stop();
       gamePanel.updateCurpointText();
       currentCycleCount++;
       startLevelUpPhase(); // 다음 사이클 시작
@@ -197,6 +203,8 @@ public class GameManager extends JFrame {
     if(rainbowTimer != null) rainbowTimer.stop();
     if (bonusTimer != null) bonusTimer.stop();
     if (returnToGameTimer != null) returnToGameTimer.stop();
+
+    bonusPanel.remainingTime = 10;
     bonusPanel.isCoinsInitialized = false;
 
     rainbowTimer = new Timer(0, e1 -> {
@@ -204,10 +212,16 @@ public class GameManager extends JFrame {
 
     bonusTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("bonus", 0);
+      bonusPanel.updateTime();
       bonusPanel.updateCurpointText();
+      bonusPanel.timer.start();
+      bonusPanel.countTimer.start();
 
       // 마지막 사이클 -> 보너스 패널 10초 후 엔딩으로 이동
-      returnToGameTimer = new Timer(5000, e2 -> endGameCycle()
+      returnToGameTimer = new Timer(13000, e2 -> {
+        endGameCycle();
+        if(bonusPanel.timer != null) bonusPanel.timer.stop();
+      }
     );
       returnToGameTimer.setRepeats(false);
       returnToGameTimer.start();
@@ -222,6 +236,7 @@ public class GameManager extends JFrame {
   //충돌이 없는 경우 (보너스 실패) -> 다음 학년으로 넘어가기
   private void startNoCollisionPhase() {
     if (noCollisionTimer != null) noCollisionTimer.stop();
+    if(bonusPanel.timer != null) bonusPanel.timer.stop();
     //스타와 함께 있었던 시간
     noCollisionTimer = new Timer(2000, e -> {
       starCrash.handleCollision();

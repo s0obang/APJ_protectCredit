@@ -15,7 +15,10 @@ public class BonusPanel extends JPanel {
     public CoinCrash coinCrash;
     public Player bonusplayer;
     public boolean isCoinsInitialized = false; // 코인 초기화 여부 플래그
-    private Timer timer;
+    public Timer timer, countTimer;
+    private JLabel timerLabel; // 타이머 표시용 JLabel 추가
+    public int remainingTime = 10; // 남은 시간 (10초)
+
 
 
     public BonusPanel(PointsManager pointsManager) {
@@ -25,6 +28,13 @@ public class BonusPanel extends JPanel {
         curpointText = createPointsTextField();
         setLayout(null);
         this.add(curpointText);
+
+        // 타이머 표시용 JLabel 초기화
+        timerLabel = new JLabel("남은 시간: " + remainingTime + "초", SwingConstants.CENTER);
+        timerLabel.setFont(new Font("Neo둥근모", Font.BOLD, 20));
+        timerLabel.setBounds(40, 40, 200, 50);
+        timerLabel.setForeground(Color.BLACK);
+        this.add(timerLabel);
 
         setPreferredSize(new Dimension(1080, 720)); // 패널 크기 설정
         bonusplayer = new Player(500, 100, 100, 100);
@@ -42,6 +52,17 @@ public class BonusPanel extends JPanel {
         setOpaque(true);
 
         // 타이머 설정
+        countTimer = new Timer(1000, e -> { // 1초마다 실행
+            if (remainingTime > 0) {
+                remainingTime--; // 남은 시간 감소
+                timerLabel.setText("남은 시간 : " + remainingTime + "초"); // 타이머 갱신
+            } else {
+                ((Timer) e.getSource()).stop(); // 타이머 종료
+            }
+            repaint();
+        });
+
+        // 타이머 설정
         timer = new Timer(30, e -> {
             if(!isCoinsInitialized) {
                 Coin.resetBonusCoins(); // 패널이 표시될 때마다 코인 초기화
@@ -57,7 +78,7 @@ public class BonusPanel extends JPanel {
     }
 
     private JTextField createPointsTextField() {
-        JTextField textField = new JTextField(pointsManager.getPoints() + "만 원");
+        JTextField textField = new JTextField(pointsManager.getPoints() + "원");
         textField.setFont(new Font("Neo둥근모", Font.BOLD, 20));
         textField.setForeground(Color.black);
         textField.setEditable(false);
@@ -72,6 +93,10 @@ public class BonusPanel extends JPanel {
     public void updateCurpointText() {
         curpointText.setText(pointsManager.getPoints() + "만 원");
         repaint();
+    }
+
+    public void updateTime() {
+        timerLabel.setText("남은 시간 : " + remainingTime + "초");
     }
 
     @Override

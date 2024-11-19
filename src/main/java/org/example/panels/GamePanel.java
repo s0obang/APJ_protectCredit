@@ -71,7 +71,7 @@ public class GamePanel extends JPanel {
   }
 
   private JTextField createPointsTextField() {
-    JTextField textField = new JTextField(pointsManager.getPoints() + "만 원");
+    JTextField textField = new JTextField(pointsManager.getPoints() + "원");
     textField.setFont(new Font("Neo둥근모", Font.BOLD, 20));
     textField.setForeground(Color.black);
     textField.setEditable(false);
