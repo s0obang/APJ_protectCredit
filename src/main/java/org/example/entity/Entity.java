@@ -1,12 +1,17 @@
 package org.example.entity;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class Entity {
 
-  protected int points = 0;
   public int x;
   public int y;
+  protected int points = 0;
   protected int width;
   protected int height;
 
@@ -63,8 +68,8 @@ public abstract class Entity {
   // 각 엔티티가 자신을 그리는 메서드
   public abstract void draw(Graphics g);
 
-    protected void paintComponent(Graphics g) {
-    }
+  protected void paintComponent(Graphics g) {
+  }
 }
 
 

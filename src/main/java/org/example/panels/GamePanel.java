@@ -10,16 +10,17 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
-import org.example.Manager.*;
+import org.example.Manager.GameInitializer;
+import org.example.Manager.GameKeyAdapter;
+import org.example.Manager.GameManager;
+import org.example.Manager.GameTimer;
+import org.example.Manager.IconManager;
+import org.example.Manager.ProfessorManager;
 import org.example.entity.Coin;
 import org.example.entity.Icon;
 import org.example.entity.Player;
-import org.example.entity.Star;
 import org.example.object.CoinCrash;
 import org.example.object.IconCrash;
-import org.example.object.StarCrash;
-import org.example.object.UserStatus;
 
 
 public class GamePanel extends JPanel {
@@ -34,6 +35,7 @@ public class GamePanel extends JPanel {
   private StarPanel starPanel;
   private GameManager gameManager;
   private BufferedImage backgroundImage;
+  private ProfessorManager professorManager;
 
   public GamePanel() {
 
@@ -64,16 +66,30 @@ public class GamePanel extends JPanel {
       }
     });
 
+    professorManager = new ProfessorManager(
+        this.getPlayer(),
+        () -> {
+          System.out.println("교수님 충돌");//로깅용임
+          this.getPlayer().setMovable(false);
+          new Timer(5000, ev -> {
+            this.getPlayer().setMovable(true);
+            System.out.println("복원~");//로깅용 22
+          }).start();
+        }
+    );
+
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
     GameInitializer.initializeEntities(coincrash, iconCrash);
   }
 
   public void startGame() {
-    timer = new GameTimer(iconManager, coincrash, iconCrash, this);
+    timer = new GameTimer(iconManager, coincrash, iconCrash, professorManager, this);
     this.repaint();
     player.x = 500;
     player.y = 500;
+    // 교수님 주기적 등장 시작
+    professorManager.start(5000); //5초마다 등장
     timer.start();
   }
 
@@ -110,6 +126,7 @@ public class GamePanel extends JPanel {
     if (CoinCrash.getCoinImage() != null) {
       g.drawImage(CoinCrash.getCoinImage(), 50, 90, 22, 22, null);
     }
+    professorManager.draw(g);
 
   }
 }

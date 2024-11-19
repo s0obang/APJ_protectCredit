@@ -1,7 +1,6 @@
 package org.example.entity;
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,18 +11,18 @@ import javax.imageio.ImageIO;
 
 public abstract class Icon extends Entity {
 
-  public static ArrayList<Icon> iconList = new ArrayList<>(); // 아이콘 리스트
-  private final BufferedImage iconimg;  // 아이콘 이미지
+  public static ArrayList<Icon> iconList = new ArrayList<>();
+  private final BufferedImage iconimg;
   private final Random random = new Random();
   private int x, y, speed;
-  private int scoreEffect;  // 점수 증가 또는 감소 효과 (1이면 증가, -1이면 감소)
-  private int speedLevel = 1; // 속도 레벨 추적
+  private int scoreEffect;
+  private int speedLevel = 1;
 
   public Icon(int x, int y, int width, int height) {
     super(x, y, width, height);
     this.x = random.nextInt(1080 - 20);
-    this.y = random.nextInt(180);  // 아이콘이 화면 위에서 떨어지도록 초기 위치 설정
-    this.speed = random.nextInt(3) + 2;  // 아이콘의 속도를 2~4 사이에서 랜덤으로 설정
+    this.y = random.nextInt(180);  //아이콘이 화면 위에서 떨어지도록 초기 위치 설정
+    this.speed = random.nextInt(3) + 2;  //아이콘의 속도를 2~4 사이에서 랜덤으로 설정
 
     // 아이콘 이미지 로드
     String[] iconPaths = {
@@ -50,7 +49,7 @@ public abstract class Icon extends Entity {
 
   // 새로운 아이콘 생성 및 리스트에 추가
   public static void createAndAddIcon(int width, int height) {
-    Icon icon = new Icon(width, height, 30, 30) {
+    Icon icon = new Icon(width, height, 40, 40) {
       @Override
       public void update() {
       }
@@ -72,7 +71,7 @@ public abstract class Icon extends Entity {
   // 속도 레벨 증가 메서드
   public void increaseSpeedLevel() {
     speedLevel++;
-    speed = random.nextInt(3) + 2 + (int)Math.pow(speedLevel, 2); // 속도 증가
+    speed = random.nextInt(3) + 2 + (int) Math.pow(speedLevel, 2); // 속도 증가
   }
 
   // 속도 레벨 리셋 메서드
