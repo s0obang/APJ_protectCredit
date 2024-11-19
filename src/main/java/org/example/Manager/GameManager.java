@@ -9,14 +9,29 @@ import javax.swing.Timer;
 
 import org.example.entity.*;
 import org.example.object.CoinCrash;
+import org.example.entity.Coin;
+import org.example.entity.GameResult;
+import org.example.entity.Icon;
+import org.example.entity.Player;
+import org.example.entity.Star;
 import org.example.object.StarCrash;
 import org.example.object.UserStatus;
-import org.example.panels.*;
+import org.example.panels.BonusPanel;
+import org.example.panels.EndPanel;
+import org.example.panels.GamePanel;
+import org.example.panels.LevelUpPanel;
+import org.example.panels.RainbowPanel;
+import org.example.panels.StarPanel;
+import org.example.panels.StartPanel;
 
 public class GameManager extends JFrame {
-  public static int currentCycleCount = 0;
-  public static final int maxCycleCount = 4;
 
+  public static final int maxCycleCount = 4;
+  public static int currentCycleCount = 0;
+  public static BonusPanel bonusPanel;
+  public static RainbowPanel rainbowPanel;
+  public static Star star;
+  public static boolean overStarTime = false;
   private static CardLayout cardLayout;
   private static JPanel mainPanel;
   private DatabaseManager dbManager;
@@ -26,15 +41,10 @@ public class GameManager extends JFrame {
   private static GamePanel gamePanel;
   private static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
-  public static BonusPanel bonusPanel;
-  public static RainbowPanel rainbowPanel;
   public CoinCrash coinCrash;
-  public static Star star;
   public StarCrash starCrash;
-  public static boolean overStarTime = false;
-
-  private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer;
   public Timer collisionCheckTimer;
+  private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer;
   private UserStatus userStatus;
 
 
@@ -84,6 +94,34 @@ public class GameManager extends JFrame {
     });
   }
 
+  public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
+    System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");
+    Timer timer = new Timer(delayMillis, e -> {
+      System.out.println("Attempting to switch to panel: " + nextPanelName);
+      if (nextPanelName.equals("levelup") || (nextPanelName.equals("star")) || nextPanelName.equals(
+          "bonus")
+          || nextPanelName.equals("end") || nextPanelName.equals("rainbow")) {
+        gamePanel.stopGame();// 게임 일시정지
+      } else if (nextPanelName.equals("game")) {
+        gamePanel.startGame(); // 게임 재시작
+        // 아이콘 속도 레벨 증가
+        for (Icon icon : Icon.iconList) {
+          icon.increaseSpeedLevel();
+        }
+        // 코인 속도 레벨 증가
+        for (Coin coin : Coin.arraycoin) {
+          coin.increaseSpeedLevel();
+        }
+      }
+      // 패널 전환
+      System.out.println("Switching to: " + nextPanelName);
+      cardLayout.show(mainPanel, nextPanelName);
+      System.out.println("Successfully switched to: " + nextPanelName);
+    });
+    timer.setRepeats(false); // 한 번만 실행되게 함
+    timer.start();
+  }
+
   public void startGameCycle() {
     currentCycleCount = 0;
     startLevelUpPhase();
@@ -117,7 +155,7 @@ public class GameManager extends JFrame {
       starPanel.initializeStar(star);
 
       // StarPanel 생성 시 StarCrash 객체를 전달
-      starPanel = new StarPanel( this);
+      starPanel = new StarPanel(this);
 
       // 5초 동안 충돌 체크 반복
       final long startTime = System.currentTimeMillis();
@@ -156,7 +194,6 @@ public class GameManager extends JFrame {
     starTimer.setRepeats(false);
     starTimer.start();
   }
-
 
   //일반적으로 충돌할 경우 -> 보너스 패널로 이동
   private void startBonusPhase() {
@@ -227,8 +264,8 @@ public class GameManager extends JFrame {
       returnToGameTimer.setRepeats(false);
       returnToGameTimer.start();
       });
-    bonusTimer.setRepeats(false);
-    bonusTimer.start();
+      bonusTimer.setRepeats(false);
+      bonusTimer.start();
     });
     rainbowTimer.setRepeats(false);
     rainbowTimer.start();
@@ -284,38 +321,10 @@ public class GameManager extends JFrame {
     timer.start();
   }
 
-  public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
-    System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");
-    Timer timer = new Timer(delayMillis, e -> {
-      System.out.println("Attempting to switch to panel: " + nextPanelName);
-      if (nextPanelName.equals("levelup") || (nextPanelName.equals("star")) || nextPanelName.equals("bonus")
-              || nextPanelName.equals("end") || nextPanelName.equals("rainbow")) {
-        gamePanel.stopGame();// 게임 일시정지
-      } else if (nextPanelName.equals("game")) {
-        gamePanel.startGame(); // 게임 재시작
-        // 아이콘 속도 레벨 증가
-        for (Icon icon : Icon.iconList) {
-          icon.increaseSpeedLevel();
-        }
-        // 코인 속도 레벨 증가
-        for (Coin coin : Coin.arraycoin) {
-          coin.increaseSpeedLevel();
-        }
-      }
-      // 패널 전환
-      System.out.println("Switching to: " + nextPanelName);
-      cardLayout.show(mainPanel, nextPanelName);
-      System.out.println("Successfully switched to: " + nextPanelName);
-    });
-    timer.setRepeats(false); // 한 번만 실행되게 함
-    timer.start();
-  }
-
   public void startGameSequence() {
     showScreen("game");
     startGameCycle();
   }
-
 
   // 화면 전환 메서드
   public void showScreen(String screenName) {

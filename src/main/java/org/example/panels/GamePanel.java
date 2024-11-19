@@ -10,6 +10,14 @@ import javax.swing.*;
 
 import org.example.Manager.*;
 import org.example.entity.Blanket;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import org.example.Manager.GameInitializer;
+import org.example.Manager.GameKeyAdapter;
+import org.example.Manager.GameManager;
+import org.example.Manager.GameTimer;
+import org.example.Manager.IconManager;
+import org.example.Manager.ProfessorManager;
 import org.example.entity.Coin;
 import org.example.entity.Icon;
 import org.example.entity.Player;
@@ -31,6 +39,7 @@ public class GamePanel extends JPanel {
   private BufferedImage backgroundImage;
   private JTextField curpointText; // GamePanel의 JTextField
   private boolean blanketDisplayed; // Blanket 표시 여부
+  private ProfessorManager professorManager;
 
   public GamePanel(PointsManager pointsManager) {
     this.pointsManager = pointsManager; // PointsManager 객체 생성
@@ -40,7 +49,7 @@ public class GamePanel extends JPanel {
     // 배경 이미지 로드
     try {
       backgroundImage = ImageIO.read(
-              new File("src/main/java/org/example/img/backgrounds/backgroundReal.jpg"));
+          new File("src/main/java/org/example/img/backgrounds/backgroundReal.jpg"));
     } catch (IOException e) {
       LOGGER.severe("Failed to load background image: " + e.getMessage());
     }
@@ -69,6 +78,17 @@ public class GamePanel extends JPanel {
       }
     });
 
+    professorManager = new ProfessorManager(
+        this.getPlayer(),
+        () -> {
+          System.out.println("교수님 충돌");//로깅용임
+          this.getPlayer().setMovable(false);
+          new Timer(5000, ev -> {
+            this.getPlayer().setMovable(true);
+            System.out.println("복원~");//로깅용 22
+          }).start();
+        }
+    );
 
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
@@ -104,10 +124,13 @@ public class GamePanel extends JPanel {
   }
 
   public void startGame() {
-    timer = new GameTimer(iconManager, coinCrash, iconCrash, this);
-    timer.start();
+    timer = new GameTimer(iconManager, coinCrash, iconCrash, professorManager, this);
+    this.repaint();
     player.x = 500;
     player.y = 500;
+    // 교수님 주기적 등장 시작
+    professorManager.start(5000); //5초마다 등장
+    timer.start();
   }
 
   public void stopGame() {
@@ -124,6 +147,7 @@ public class GamePanel extends JPanel {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
+    // 배경 이미지 그리기
     if (backgroundImage != null) {
       g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
     } else {
@@ -143,6 +167,7 @@ public class GamePanel extends JPanel {
     if (CoinCrash.getCoinImage() != null) {
       g.drawImage(CoinCrash.getCoinImage(), 50, 90, 30, 30, null);
     }
+    professorManager.draw(g);
 
     // Blanket 이미지와 카운터 그리기
     if (blanketDisplayed) {
