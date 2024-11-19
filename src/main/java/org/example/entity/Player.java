@@ -1,9 +1,14 @@
 package org.example.entity;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Player extends Entity {
 
@@ -16,7 +21,10 @@ public class Player extends Entity {
   private int boundaryWidth;  // 경계 너비
   private int boundaryHeight;
   private double GPA; // 학점
-  private int dx = 0, dy =0;
+  private int dx = 0, dy = 0;
+  @Setter
+  @Getter
+  private boolean movable = true;
 
   public Player(int x, int y, int width, int height) {
     super(x, y, width, height);
@@ -60,7 +68,6 @@ public class Player extends Entity {
   }
 
 
-
   public double getGPA() {
     return GPA;
   }
@@ -77,7 +84,7 @@ public class Player extends Entity {
 
   @Override
   public int getPoints() {
-    return (int)points;  // double을 int로 변환하여 반환
+    return (int) points;  // double을 int로 변환하여 반환
   }
 
   @Override
@@ -94,9 +101,10 @@ public class Player extends Entity {
       g.fillRect(x, y, width, height);
     }
   }
+
   @Override
   public Rectangle getBounds() {
-    System.out.println("Player bounds: x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
+    
     return new Rectangle(x, y, width, height);
   }
 
