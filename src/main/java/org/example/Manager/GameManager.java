@@ -46,6 +46,7 @@ public class GameManager extends JFrame {
   public Timer collisionCheckTimer;
   private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer;
   private UserStatus userStatus;
+  private Blanket blanket;
 
 
   public GameManager(UserStatus status) {
@@ -67,6 +68,7 @@ public class GameManager extends JFrame {
 
     //이부분 수정했어엽 민선아
     levelupPanel = new LevelUpPanel();
+    blanket = new Blanket();
     coinCrash = new CoinCrash(gamePanel, bonusPanel, pointsManager);
     starPanel = new StarPanel(this);
     starCrash = new StarCrash(this, starPanel);
@@ -98,7 +100,7 @@ public class GameManager extends JFrame {
     System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");
     Timer timer = new Timer(delayMillis, e -> {
       System.out.println("Attempting to switch to panel: " + nextPanelName);
-      if (nextPanelName.equals("levelup") || (nextPanelName.equals("star")) || nextPanelName.equals(
+      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals(
           "bonus")
           || nextPanelName.equals("end") || nextPanelName.equals("rainbow")) {
         gamePanel.stopGame();// 게임 일시정지
@@ -114,9 +116,7 @@ public class GameManager extends JFrame {
         }
       }
       // 패널 전환
-      System.out.println("Switching to: " + nextPanelName);
       cardLayout.show(mainPanel, nextPanelName);
-      System.out.println("Successfully switched to: " + nextPanelName);
     });
     timer.setRepeats(false); // 한 번만 실행되게 함
     timer.start();
@@ -131,12 +131,13 @@ public class GameManager extends JFrame {
   private void startLevelUpPhase() {
     if (currentCycleCount >= maxCycleCount) {
       endGameCycle();
+      gamePanel.stopGame();
       return;
     }
 
     //30초 뒤에 levelup패널로 전환
     if (levelUpTimer != null) levelUpTimer.stop();
-    levelUpTimer = new Timer(50000, e -> {
+    levelUpTimer = new Timer(5000, e -> {
       switchToPanelWithDelay("levelup", 0);
       startStarPhase(); // levelup 패널로 전환 후 star 패널로 진행
     });
@@ -170,13 +171,7 @@ public class GameManager extends JFrame {
           if (starCrash.distance < starCrash.collisionDistance) {
             System.out.println("충돌 발생!");
             ((Timer) event.getSource()).stop();  // Timer 종료
-
-            if (currentCycleCount == maxCycleCount - 1) {
-              System.out.println("충돌 발생!");
-              startFinalBonusPhase();
-            } else {
-              startBonusPhase();
-            }
+            startBonusPhase();
           }
         } else {
           // 5초가 지나면 Timer를 종료하고 충돌이 없으면 다음 단계로 진행
@@ -234,41 +229,6 @@ public class GameManager extends JFrame {
     rainbowTimer.setRepeats(false);
     rainbowTimer.start();
 
-  }
-
-  //마지막에 충돌할 경우
-  private void startFinalBonusPhase() {
-    if(rainbowTimer != null) rainbowTimer.stop();
-    if (bonusTimer != null) bonusTimer.stop();
-    if (returnToGameTimer != null) returnToGameTimer.stop();
-
-    bonusPanel.remainingTime = 10;
-    bonusPanel.isCoinsInitialized = false;
-
-    rainbowTimer = new Timer(0, e1 -> {
-      switchToPanelWithDelay("rainbow", 0);
-
-    bonusTimer = new Timer(3000, e -> {
-      switchToPanelWithDelay("bonus", 0);
-      bonusPanel.updateTime();
-      bonusPanel.updateCurpointText();
-      bonusPanel.timer.start();
-      bonusPanel.countTimer.start();
-
-      // 마지막 사이클 -> 보너스 패널 10초 후 엔딩으로 이동
-      returnToGameTimer = new Timer(13000, e2 -> {
-        endGameCycle();
-        if(bonusPanel.timer != null) bonusPanel.timer.stop();
-      }
-    );
-      returnToGameTimer.setRepeats(false);
-      returnToGameTimer.start();
-      });
-      bonusTimer.setRepeats(false);
-      bonusTimer.start();
-    });
-    rainbowTimer.setRepeats(false);
-    rainbowTimer.start();
   }
 
   //충돌이 없는 경우 (보너스 실패) -> 다음 학년으로 넘어가기
@@ -343,6 +303,9 @@ public class GameManager extends JFrame {
     for (Coin coin : Coin.arraycoin) {
       coin.resetSpeedLevel();
     }
+
+    blanket.resetBlanket();
+    pointsManager.resetPoints();
   }
 
   public static GamePanel getGamePanel() {

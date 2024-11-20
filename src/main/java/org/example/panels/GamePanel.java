@@ -108,7 +108,8 @@ public class GamePanel extends JPanel {
 
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
-    GameInitializer.initializeEntities(coinCrash, iconCrash);
+    GameInitializer.initializeCoinEntities(coinCrash);
+    GameInitializer.initializeIconEntities(iconCrash);
   }
 
   private JTextField createPointsTextField() {
@@ -124,7 +125,7 @@ public class GamePanel extends JPanel {
   }
 
   public void updateCurpointText() {
-    curpointText.setText(pointsManager.getPoints() + "만 원");
+    curpointText.setText(pointsManager.getPoints() + "만원");
 
     if (pointsManager.getPoints() >= 1) {
       if (pointsManager.getPoints() % 2 ==0) {
@@ -145,6 +146,14 @@ public class GamePanel extends JPanel {
     // 교수님 주기적 등장 시작
     professorManager.start(5000); //5초마다 등장
     timer.start();
+
+    // 코인 감소 로직 추가
+    if (Coin.arraycoin.size() > 2) { // 최소 코인 수를 유지하려면 이 조건 사용
+      if(GameManager.currentCycleCount == 0) return;
+      for (int i = 0; i < 2; i++) {
+        Coin.arraycoin.remove(Coin.arraycoin.size() - 1);
+      }
+    }
   }
 
   public void stopGame() {
