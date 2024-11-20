@@ -164,7 +164,7 @@ public class GameManager extends JFrame {
         long elapsedTime = System.currentTimeMillis() - startTime;
 
         // 충돌 체크 및 5초 경과 체크
-        if (elapsedTime < 7000) {  // 5초 동안 반복
+        if (elapsedTime < 5000) {  // 5초 동안 반복
           starCrash.checkCollision();  // 충돌 체크
 
           // 충돌이 발생하면 바로 패널로 이동
@@ -283,6 +283,7 @@ public class GameManager extends JFrame {
 
   public void startGameSequence() {
     showScreen("game");
+    resetGame();
     startGameCycle();
   }
 
@@ -310,6 +311,26 @@ public class GameManager extends JFrame {
 
   public static GamePanel getGamePanel() {
     return gamePanel;
+  }
+
+  public void resetGame() {
+    // 점수 및 상태 초기화
+    pointsManager.resetPoints(); // 포인트 초기화
+    currentCycleCount = 0; // 사이클 카운트 초기화
+    overStarTime = false; // 충돌 상태 초기화
+
+    // 게임 패널 상태 초기화
+    gamePanel.reset(); // GamePanel 초기화
+
+    // 전역 객체 상태 초기화
+    Icon.iconList.forEach(Icon::resetSpeedLevel); // 아이콘 속도 리셋
+    Coin.arraycoin.forEach(Coin::resetSpeedLevel); // 코인 속도 리셋
+
+    // 유저 상태 초기화
+    userStatus.setUserGrade(1); // 학년 초기화
+    userStatus.setUserScore(4.5); // GPA 초기화
+    userStatus.setUserPoints(0); // 포인트 초기화
+    userStatus.setGraduated(false); // 졸업 상태 초기화
   }
 
 }

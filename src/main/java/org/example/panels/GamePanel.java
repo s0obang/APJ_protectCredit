@@ -166,6 +166,40 @@ public class GamePanel extends JPanel {
     return player;
   }
 
+  public void reset() {
+    // 플레이어 초기 위치와 상태 재설정
+    player.x = 500;
+    player.y = 500;
+    player.setMovable(true); // 이동 가능 상태로 설정
+
+    // 아이콘과 코인 초기화
+    Icon.iconList.clear();
+    Coin.arraycoin.clear();
+    GameInitializer.coinNumber = 7;
+
+    // 필요한 초기 아이콘 및 코인 생성
+    GameInitializer.initializeCoinEntities(coinCrash);
+    GameInitializer.initializeIconEntities(iconCrash);
+    blanket.resetBlanket();
+    // 상태 확인
+    System.out.println("Blanket score after reset: " + blanket.getCount());
+
+    // 텍스트 필드 초기화
+    updateCurpointText();
+
+    // 타이머 초기화
+    if (timer != null) {
+      timer.stop();
+    }
+    timer = new GameTimer(iconManager, coinCrash, iconCrash, professorManager, this);
+
+    // 교수님 상태 초기화
+    professorManager.stop();
+
+    // 패널 다시 그리기
+    repaint();
+  }
+
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);

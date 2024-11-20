@@ -10,7 +10,8 @@ import javax.imageio.ImageIO;
 public class Star extends Entity {
     public Image starImage;
     private int targetX, targetY;
-    private final int MOVE_SPEED = 4;
+    private final int DEFAULT_MOVE_SPEED = 4; // 기본 속도
+    private int MOVE_SPEED = DEFAULT_MOVE_SPEED; // 속도를 변경할 수 있도록 설정
     private Random random;
     private boolean visible = true; // 추가된 속성
 
@@ -38,6 +39,11 @@ public class Star extends Entity {
             targetX = random.nextInt(1080 - getBounds().width);
             targetY = random.nextInt(720 - getBounds().height);
         }
+    }
+
+    // 속도 초기화 메서드
+    public void resetSpeed() {
+        this.MOVE_SPEED = DEFAULT_MOVE_SPEED;
     }
 
     //star가 움직이는 메서드

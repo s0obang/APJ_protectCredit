@@ -76,6 +76,19 @@ public class StarPanel extends JPanel {
 
   }
 
+  public void reset() {
+// starplayer 위치 초기화
+    starplayer.setX(500);
+    starplayer.setY(500);
+
+    // Star 객체 속도 초기화
+    if (GameManager.star != null) {
+      GameManager.star.resetSpeed();
+      GameManager.star.setVisible(true); // 스타를 다시 보이게 설정 (필요시)
+      GameManager.star.setNewTargetPosition(); // 새 목표 위치 설정
+    }
+  }
+
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);

@@ -13,7 +13,6 @@ public class Blanket {
     public Timer timer;
     private int count; // Blanket이 표시된 횟수
     public boolean isPressedF = false;
-    private PointsManager pointsManager;
     private Player player; // GamePanel의 player를 참조
 
     public Blanket() {
@@ -24,7 +23,6 @@ public class Blanket {
             throw new RuntimeException(e);
         }
         count = 0; // 초기값 0
-        pointsManager = new PointsManager();
     }
 
     // Player 객체를 설정하는 메서드
@@ -50,6 +48,7 @@ public class Blanket {
 
     public void resetBlanket() {
         count = 0;
+        System.out.println("Blanket reset, score: " + this.count); // 디버깅용 메시지
     }
 
     // F키 이벤트 처리 메서드
