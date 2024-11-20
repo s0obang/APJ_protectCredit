@@ -127,15 +127,16 @@ public class GamePanel extends JPanel {
   public void updateCurpointText() {
     curpointText.setText(pointsManager.getPoints() + "만원");
 
-    if (pointsManager.getPoints() >= 1) {
-      if (pointsManager.getPoints() % 2 ==0) {
-        blanket.doubleincrementCount();
-      } else if (pointsManager.getPoints() % 10 == 0) {
-        blanket.incrementCount(); // 10 단위 추가 시 카운터 증가
-      }
+    if(pointsManager.getPoints() >= 5 && !pointsManager.getisFirstFive()) {
+      pointsManager.isFirstFive = true;
+      blanket.incrementCount();
+      if(pointsManager.getPoints() % 10 == 0) blanket.incrementCount();
     }
-
-    repaint(); // 패널 다시 그리기
+    else if(pointsManager.getPoints() >= 5 && pointsManager.getPoints() % 10 == 0)
+    {
+      blanket.incrementCount();
+    }
+      repaint(); // 패널 다시 그리기
   }
 
   public void startGame() {

@@ -1,5 +1,6 @@
 package org.example.entity;
 
+import org.example.Manager.GameManager;
 import org.example.Manager.PointsManager;
 
 import javax.imageio.ImageIO;
@@ -34,10 +35,6 @@ public class Blanket {
         count++;
     }
 
-    public void doubleincrementCount() {
-        count += 2;
-    }
-
     public void decrementCount() {
         count--;
     }
@@ -57,7 +54,7 @@ public class Blanket {
             throw new IllegalStateException("Player 객체가 설정되지 않았습니다.");
         }
 
-        if (getCount() > 0 && !isPressedF) {
+        if (getCount() > 0 && !isPressedF && player.isMovable()) {
             decrementCount(); // Blanket의 카운트 감소
             isPressedF = true;
             player.changeImage(); // Player 이미지 변경
@@ -70,6 +67,7 @@ public class Blanket {
             // 새로운 타이머를 설정
             timer = new Timer(5000, ev -> {
                 player.changeOriginImage(); // 원래 이미지로 복원
+                player.setMovable(true);
                 isPressedF = false; // 상태 초기화
                 timer = null; // 타이머 초기화
             });
