@@ -7,10 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import org.example.Manager.BackgroundPanel;
-import org.example.Manager.DatabaseManager;
-import org.example.Manager.GameManager;
-import org.example.Manager.LoginManager;
+
+import org.example.Manager.*;
+import org.example.entity.Blanket;
 import org.example.entity.GameResult;
 import org.example.entity.User;
 
@@ -20,7 +19,6 @@ public class StartPanel extends JPanel {
     private JPanel cardPanel; // 패널들을 담을 메인 패널
     private DatabaseManager dbManager = DatabaseManager.getInstance();
     private LoginManager loginManager;
-
 
     public StartPanel(GameManager manager) {
         this.loginManager = loginManager;
@@ -332,7 +330,6 @@ public class StartPanel extends JPanel {
         playButton.addActionListener(e -> {
             cardLayout.show(cardPanel, "main"); // 이거 왜 안 되냐
             introCardLayout.show(panel, "intro1"); //처음으로 돌려놓기
-
 
             //manager.getGamePanel().startGame();
             manager.startGameSequence();// 아이콘 떨어짐 동작 시작

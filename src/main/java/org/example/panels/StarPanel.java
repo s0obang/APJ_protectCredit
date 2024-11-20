@@ -22,7 +22,8 @@ public class StarPanel extends JPanel {
     // StarCrash 객체 생성: GameManager와 StarPanel을 참조
     this.starCrash = new StarCrash(gameManager, this);
 
-    starplayer = new Player(500, 200, 100, 100);
+    // starplayer 위치 초기화 (500, 500)으로 설정
+    initializeStarPlayer();
 
     setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
@@ -48,9 +49,44 @@ public class StarPanel extends JPanel {
     setOpaque(true);
   }
 
+  // starplayer 위치만 초기화하는 메서드
+  private void initializeStarPlayer() {
+    if (starplayer == null) {
+      starplayer = new Player(500, 500, 100, 100); // 위치 초기화
+    } else {
+      // 이미 존재하는 starplayer가 있으면 위치만 초기화
+      starplayer.setX(500);
+      starplayer.setY(500);
+    }
+  }
+
+  // 패널이 보일 때마다 starplayer 위치 초기화
+  @Override
+  public void setVisible(boolean visible) {
+    super.setVisible(visible);
+    if (visible) {
+      initializeStarPlayer(); // StarPanel이 보일 때마다 위치 초기화
+    }
+  }
+
+
   // 스타 초기화 메서드
   public void initializeStar(Star star) {
     GameManager.star = star;
+
+  }
+
+  public void reset() {
+// starplayer 위치 초기화
+    starplayer.setX(500);
+    starplayer.setY(500);
+
+    // Star 객체 속도 초기화
+    if (GameManager.star != null) {
+      GameManager.star.resetSpeed();
+      GameManager.star.setVisible(true); // 스타를 다시 보이게 설정 (필요시)
+      GameManager.star.setNewTargetPosition(); // 새 목표 위치 설정
+    }
   }
 
   @Override
