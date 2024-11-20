@@ -2,9 +2,7 @@ package org.example.panels;
 
 import javax.swing.*;
 
-import lombok.Setter;
 import org.example.Manager.*;
-import org.example.entity.Blanket;
 import org.example.entity.GameResult;
 
 import java.awt.*;
@@ -12,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EndPanel extends JPanel {
+    private DatabaseManager dbManager = DatabaseManager.getInstance();
     private CardLayout cardLayout;
     private JPanel cardPanel; // 패널들을 담을 메인 패널
     private JPanel graduationCardPanel; // graduationPanel의 내부 CardLayout 패널
@@ -137,9 +136,11 @@ public class EndPanel extends JPanel {
 
         // 점수 띄우기
         score.setText(gameResult.getPoints()+"");
-        // 랭킹 띄우기 (not yet)
+        // 랭킹 띄우기
+        int rank = dbManager.saveScoreAndGetRank(gameResult, LoginManager.getLoggedInUser());
+        ranking.setText(String.valueOf(rank));
 
-        // 3초 후에 점수 띄우는 화면으로 전환
+        // 축하 화면에서 3초 후에 점수 띄우는 화면으로 전환
         Timer timer = new Timer(1500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

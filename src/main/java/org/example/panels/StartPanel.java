@@ -5,12 +5,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
 import java.io.File;
 import java.io.IOException;
 
 import org.example.Manager.*;
-import org.example.entity.Blanket;
-import org.example.entity.GameResult;
 import org.example.entity.User;
 
 public class StartPanel extends JPanel {
@@ -120,6 +119,16 @@ public class StartPanel extends JPanel {
         panel.add(bPanel);
         panel.add(characterPanel);
 
+        panel.addHierarchyListener(e -> {
+            if (e.getID() == HierarchyEvent.HIERARCHY_CHANGED) {
+                if (panel.isShowing()) {
+                    characterPanel.startCharacterMovement();  // 인트로 화면에 돌아왔을 때 이동 시작
+                } else {
+                    characterPanel.stopCharacterMovement();   // 다른 화면으로 갔을 때 이동 멈춤
+                }
+            }
+        });
+
         return panel;
     }
 
@@ -200,8 +209,7 @@ public class StartPanel extends JPanel {
                 boolean isSuccess = dbManager.signIn(dbManager, nick, pass);
 
                 if (isSuccess) {
-                    User user = new User(nick, pass);
-                    LoginManager.saveLoggedInUser(user);
+                    System.out.println(LoginManager.getLoggedInUser());
                     nickname.setText("");
                     password.setText("");
                     cardLayout.show(cardPanel, "intro");
@@ -348,6 +356,10 @@ public class StartPanel extends JPanel {
     //첫 화면에 캐릭터 도동하고 싶어서 이미지 따로 빼놓음
     static class CharacterPanel extends JPanel {
         private Image characterImage;
+        private int xPosition = 0;
+        private int yPosition = 0;
+        private boolean moveUpRight = true;
+        private Timer movementTimer;
 
         public CharacterPanel(String imagePath) {
             try {
@@ -356,16 +368,44 @@ public class StartPanel extends JPanel {
                 e.printStackTrace();
             }
             setOpaque(false);
+
+
+            movementTimer = new Timer(500, e -> moveCharacter());
+        }
+
+        private void moveCharacter() {
+            if (moveUpRight) {
+                xPosition -= 10;
+                yPosition -= 10;
+            } else {
+                xPosition += 10;
+                yPosition += 10;
+            }
+
+            moveUpRight = !moveUpRight;
+
+            repaint();
+        }
+
+        public void startCharacterMovement() {
+            if (!movementTimer.isRunning()) {
+                movementTimer.start();
+            }
+        }
+
+        public void stopCharacterMovement() {
+            if (movementTimer.isRunning()) {
+                movementTimer.stop();
+            }
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (characterImage != null) {
-                g.drawImage(characterImage, 0, 0, 410, 425, this);
+                g.drawImage(characterImage, xPosition, yPosition, 410, 425, this);
             }
         }
     }
-
 
 }
