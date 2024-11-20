@@ -32,12 +32,6 @@ public abstract class Entity {
   }
 
 
-  // 위치 설정 메서드
-  public void setPosition(int x, int y) {
-    this.x = x;
-    this.y = y;
-  }
-
 
   // 위치 가져오기 메서드
   public int getX() {

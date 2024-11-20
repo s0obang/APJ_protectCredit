@@ -2,11 +2,14 @@ package org.example.Manager;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Timer;
+
 import org.example.entity.Player;
 
 public class GameKeyAdapter extends KeyAdapter {
 
   private final Player player;
+  private Timer timer;
 
   public GameKeyAdapter(Player player) {
     this.player = player;
@@ -20,7 +23,7 @@ public class GameKeyAdapter extends KeyAdapter {
     }
 
     if (player.isBlanketActive()) {
-      return;  // Blanket 상태일 때는 이동을 비활성화
+      return;
     }
 
     int dx = 0, dy = 0;

@@ -8,6 +8,7 @@ import java.awt.*;
 public class PointsManager {
 
     private int points; // 포인트 값 저장
+    public boolean isFirstFive = false;
 
     public PointsManager() {
         this.points = 0; // 초기 포인트 값
@@ -27,5 +28,9 @@ public class PointsManager {
     //게임 종료되면 이걸로 초기화
     public void resetPoints() {
         this.points = 0;
+    }
+
+    public boolean getisFirstFive() {
+        return isFirstFive;
     }
 }
