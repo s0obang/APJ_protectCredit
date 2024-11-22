@@ -45,7 +45,6 @@ public class Blanket {
 
     public void resetBlanket() {
         count = 0;
-        System.out.println("Blanket reset, score: " + this.count); // 디버깅용 메시지
     }
 
     // F키 이벤트 처리 메서드

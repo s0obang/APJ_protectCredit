@@ -7,9 +7,9 @@ import java.sql.*;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private String url = "jdbc:mysql://localhost:3306/로컬 DB 주소"; // 로컬 DB 주소
-    private String user = ""; // DB user
-    private String password = ""; // DE password
+    private String url = "jdbc:mysql://localhost:3306/game"; // 로컬 DB 주소
+    private String user = "root"; // DB user
+    private String password = "password"; // DE password
 
     private DatabaseManager() {
         createUserTable();

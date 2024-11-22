@@ -27,6 +27,8 @@ import org.example.object.CoinCrash;
 import org.example.object.IconCrash;
 import org.example.Manager.PointsManager;
 
+import static org.example.entity.Coin.random;
+
 
 public class GamePanel extends JPanel {
 
@@ -125,7 +127,7 @@ public class GamePanel extends JPanel {
   }
 
   public void updateCurpointText() {
-    curpointText.setText(pointsManager.getPoints() + "만원");
+    curpointText.setText(pointsManager.getPoints() + "만 원");
 
     if(pointsManager.getPoints() >= 5 && !pointsManager.getisFirstFive()) {
       pointsManager.isFirstFive = true;
@@ -172,26 +174,29 @@ public class GamePanel extends JPanel {
     player.x = 500;
     player.y = 500;
     player.setMovable(true); // 이동 가능 상태로 설정
+    player.setGPA(4.5);  // 예시: GPA를 초기값으로 설정 (4.5)
 
-    // 아이콘과 코인 초기화
-    Icon.iconList.clear();
-    Coin.arraycoin.clear();
+    // GPA 텍스트 및 이미지 초기화 (IconCrash에서 이를 처리)
+    iconCrash.updateGradeText(4.5);  // 초기 GPA 값 설정
+    iconCrash.updateGradeImage(4.5);  // 초기 GPA 이미지 설정
+
     GameInitializer.coinNumber = 7;
+    pointsManager.isFirstFive = false;
 
-    // 필요한 초기 아이콘 및 코인 생성
-    GameInitializer.initializeCoinEntities(coinCrash);
-    GameInitializer.initializeIconEntities(iconCrash);
+    for (Coin coin : Coin.arraycoin) {
+      coin.setY(random.nextInt(120));
+    }
+
+    for (Icon icon : Icon.iconList) {
+      icon.setY(random.nextInt(120));
+    }
+
+
     blanket.resetBlanket();
-    // 상태 확인
-    System.out.println("Blanket score after reset: " + blanket.getCount());
 
     // 텍스트 필드 초기화
     updateCurpointText();
 
-    // 타이머 초기화
-    if (timer != null) {
-      timer.stop();
-    }
     timer = new GameTimer(iconManager, coinCrash, iconCrash, professorManager, this);
 
     // 교수님 상태 초기화
@@ -199,6 +204,7 @@ public class GamePanel extends JPanel {
 
     // 패널 다시 그리기
     repaint();
+    startGame();
   }
 
   @Override
@@ -212,7 +218,6 @@ public class GamePanel extends JPanel {
       g.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    player.draw(g);
     for (Icon icon : Icon.iconList) {
       icon.draw(g);
     }
@@ -220,15 +225,17 @@ public class GamePanel extends JPanel {
       coin.draw(g);
     }
 
+    player.draw(g);
+
     // 좌측 상단에 띄울 코인 이미지 그리기
     if (CoinCrash.getCoinImage() != null) {
       g.drawImage(CoinCrash.getCoinImage(), 50, 90, 30, 30, null);
     }
     professorManager.draw(g);
 
-    g.drawImage(blanket.itemblanket, 165, 95, 45, 35, null); // Blanket 이미지
+    g.drawImage(blanket.itemblanket, 180, 95, 45, 35, null); // Blanket 이미지
     g.setFont(new Font("Neo둥근모", Font.BOLD, 20));
     g.setColor(Color.BLACK);
-    g.drawString("x" + blanket.getCount(), 213, 114); // Blanket 옆에 카운트 텍스트
+    g.drawString("x" + blanket.getCount(), 228, 114); // Blanket 옆에 카운트 텍스트
   }
 }
