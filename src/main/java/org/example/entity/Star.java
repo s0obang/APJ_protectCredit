@@ -1,5 +1,7 @@
 package org.example.entity;
 
+import org.example.Manager.GameManager;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,9 +13,10 @@ public class Star extends Entity {
     public Image starImage;
     private int targetX, targetY;
     private final int DEFAULT_MOVE_SPEED = 4; // 기본 속도
-    private int MOVE_SPEED = DEFAULT_MOVE_SPEED; // 속도를 변경할 수 있도록 설정
+    private double MOVE_SPEED =4; // 속도를 변경할 수 있도록 설정
     private Random random;
     private boolean visible = true; // 추가된 속성
+
 
     public Star(int initialX, int initialY, int width, int height) {
         super(initialX, initialY, width, height);
@@ -46,8 +49,13 @@ public class Star extends Entity {
         this.MOVE_SPEED = DEFAULT_MOVE_SPEED;
     }
 
+    public void upSpeed() {
+        this.MOVE_SPEED += GameManager.currentCycleCount;
+    }
+
     //star가 움직이는 메서드
     public void moveTowardsTarget() {
+        System.out.println("Current speed: " + MOVE_SPEED);
         int dx = targetX - x;
         int dy = targetY - y;
         double distance = Math.sqrt(dx * dx + dy * dy);

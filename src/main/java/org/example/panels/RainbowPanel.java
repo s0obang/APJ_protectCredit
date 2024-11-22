@@ -43,6 +43,23 @@ public class RainbowPanel extends JPanel {
     }
 
     @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+
+        if (visible) {
+            // 패널이 보이면 타이머 시작
+            colorTimer.start();
+        } else {
+            // 패널이 보이지 않으면 타이머 중지
+            colorTimer.stop();
+        }
+    }
+
+    public void stopRainbow() {
+        colorTimer.stop();
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         // 패널을 무지개 색으로 채우기
