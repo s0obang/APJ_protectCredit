@@ -14,9 +14,9 @@ import java.util.Map;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private String url = "jdbc:mysql://localhost:3306/game"; // 로컬 DB 주소
+    private String url = "jdbc:mysql://localhost:3306/~~"; // 로컬 DB 주소
     private String user = "root"; // DB user
-    private String password = "0428"; // DE password
+    private String password = ""; // DB password
 
     private DatabaseManager() {
         createTables();
@@ -47,10 +47,10 @@ public class DatabaseManager {
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement()) {
             stmt.execute(userTableSql);
-            System.out.println("users 테이블 생성 성공");
+            System.out.println("users 테이블 생성 및 연결 성공");
 
             stmt.execute(historyTableSql);
-            System.out.println("history 테이블 생성 성공");
+            System.out.println("history 테이블 생성 및 연결 성공");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -87,11 +87,9 @@ public class DatabaseManager {
             if (rs.next()) {
                 System.out.println("로그인 성공");
 
-                // userId를 조회하여 User 객체 생성
-                int userId = rs.getInt("id");  // id (PRIMARY KEY)
-                User user = new User(userId, nickname, password);  // User 객체 생성
+                int userId = rs.getInt("id");
+                User user = new User(userId, nickname, password);
 
-                // 로그인한 유저 정보 저장
                 LoginManager.saveLoggedInUser(user);
 
                 return true;
@@ -121,19 +119,18 @@ public class DatabaseManager {
             if (rs.next()) {
                 String storedHashedPassword = rs.getString("password");
 
-                // 입력한 비밀번호 해싱 후 비교
                 String hashedPassword = HashUtil.hashPassword(password);
 
                 if (storedHashedPassword.equals(hashedPassword)) {
                     System.out.println("로그인 성공!");
-                    return user; // 일치하는 경우 사용자 반환
+                    return user;
                 } else {
                     System.out.println("비밀번호가 일치하지 않습니다.");
-                    return null; // 비밀번호가 일치하지 않음
+                    return null;
                 }
             } else {
                 System.out.println("사용자를 찾을 수 없습니다.");
-                return null; // 사용자가 없음
+                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -153,12 +150,12 @@ public class DatabaseManager {
         int rank = -1;
 
         try (Connection conn = DriverManager.getConnection(url, this.user, password)) {
-            // 게임 기록 저장
+            // 기록 저장
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                 insertStmt.setInt(1, user.getUserId());
                 insertStmt.setLong(2, gameResult.getPoints());
 
-                // 현재 날짜만 가져오기 (시간 없이)
+
                 String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 insertStmt.setString(3, formattedDate);
 
@@ -184,8 +181,6 @@ public class DatabaseManager {
 
                 if (rank == -1) {
                     System.out.println("순위를 가져오는 데 실패했습니다.");
-                } else {
-                    System.out.println("현재 순위: " + rank);
                 }
             }
         } catch (SQLException e) {
@@ -197,18 +192,18 @@ public class DatabaseManager {
     }
 
 
-    public List<Map<String, Object>> getRanking() {
+    public List<Map<String, String>> getRanking() {
         String sql = "SELECT nickname, max_points FROM ranking_view";
-        List<Map<String, Object>> rankings = new ArrayList<>();
+        List<Map<String, String>> rankings = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                Map<String, Object> rank = new HashMap<>();
+                Map<String, String> rank = new HashMap<>();
                 rank.put("nickname", rs.getString("nickname"));
-                rank.put("points", rs.getInt("max_points"));
+                rank.put("points", String.valueOf(rs.getInt("max_points")));
                 rankings.add(rank);
             }
         } catch (SQLException e) {
@@ -216,6 +211,83 @@ public class DatabaseManager {
         }
 
         return rankings;
+    }
+
+    public List<Map<String, String>> getRecentRecords(User user) {
+        String nickname = user.getNickname();
+
+        String userIdSql = "SELECT id FROM users WHERE nickname = ?";
+        int userId = -1;
+
+        try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(userIdSql)) {
+            pstmt.setString(1, nickname);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (userId == -1) {
+            System.out.println("유저를 찾을 수 없습니다.");
+            return new ArrayList<>();
+        }
+
+
+        String sql = "SELECT points, date FROM history WHERE userId = ? ORDER BY date DESC, id DESC LIMIT 4";
+        List<Map<String, String>> recentRecords = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> record = new HashMap<>();
+                    record.put("points", String.valueOf(rs.getInt("points")));
+                    record.put("date", rs.getString("date"));
+                    recentRecords.add(record);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return recentRecords;
+    }
+
+    public Map<String, String> getHighestScore(User user) {
+        String sql = "SELECT points, date FROM history h " +
+                "JOIN users u ON h.userId = u.id " +
+                "WHERE u.nickname = ? " +
+                "ORDER BY points DESC, date DESC LIMIT 1";
+
+        Map<String, String> result = new HashMap<>();
+
+        try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getNickname());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    result.put("points", String.valueOf(rs.getInt("points")));
+                    result.put("date", rs.getString("date"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("최고 점수를 가져오는 중 오류 발생: " + e.getMessage());
+        }
+
+        if (result.isEmpty()) {
+            System.out.println(user.getNickname() + "님의 점수 기록이 없습니다.");
+        }
+
+        return result;
     }
 
 

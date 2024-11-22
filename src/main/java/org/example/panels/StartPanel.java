@@ -2,12 +2,16 @@ package org.example.panels;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.List;
 
 import org.example.Manager.*;
 import org.example.entity.User;
@@ -25,19 +29,20 @@ public class StartPanel extends JPanel {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-
-        cardPanel.add(startGamePanel(manager), "main");
+        JPanel history = history();
+        cardPanel.add(startGamePanel(manager, history), "main");
         cardPanel.add(selectSign_(), "selectSign_");
         cardPanel.add(signIn(), "signIn");
         cardPanel.add(signUp(), "signUp");
         cardPanel.add(intro(manager), "intro");
+        cardPanel.add(history, "history");
 
 
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
     }
 
-    private JPanel startGamePanel(GameManager manager) {
+    private JPanel startGamePanel(GameManager manager, JPanel history) {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
         panel.setLayout(null); // bPanel 절대 위치 정하려고
 
@@ -95,6 +100,15 @@ public class StartPanel extends JPanel {
 
             }
         });
+        historyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "history");
+                if (LoginManager.getLoggedInUser() != null) {
+                    getHistory(history);
+                }
+            }
+        });
 
         JLabel playLabel = new JLabel("play!");
         playLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -130,6 +144,121 @@ public class StartPanel extends JPanel {
         });
 
         return panel;
+    }
+
+    private JPanel history() {
+        JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/history.png");
+        panel.setLayout(null);
+
+        ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/backButton2.png");
+        Image img = buttonIcon.getImage().getScaledInstance(73, 73, Image.SCALE_SMOOTH);
+        buttonIcon = new ImageIcon(img);
+        JButton backButton = new JButton(buttonIcon);
+        backButton.setPreferredSize(new Dimension(75, 75));
+        backButton.setBounds(515, 605, 73, 73);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "main");
+            }
+        });
+
+        panel.add(backButton);
+
+        return panel;
+    }
+
+    private void getHistory(JPanel panel) {
+        // 폰트 설정
+        Font labelFont = new Font("Neo둥근모", Font.PLAIN, 25);
+
+        // 최근 기록 가져오기
+        List<Map<String, String>> recentRecords = dbManager.getRecentRecords(LoginManager.getLoggedInUser());
+
+        String[] columns = {"Points", "Date"};  // 컬럼 이름
+        Object[][] data = new Object[recentRecords.size()][2];
+
+        // 데이터를 테이블 모델에 추가
+        for (int i = 0; i < recentRecords.size(); i++) {
+            Map<String, String> record = recentRecords.get(i);
+            data[i][0] = record.get("points");  // Points
+            data[i][1] = record.get("date");    // Date
+        }
+
+        // DefaultTableModel을 이용해 테이블 모델 생성
+        DefaultTableModel model = new DefaultTableModel(data, columns);
+
+        // JTable 생성
+        JTable recordsTable = new JTable(model);
+        recordsTable.setFont(labelFont);
+        recordsTable.setOpaque(false);
+        recordsTable.setBorder(null);   // 테두리 제거
+        recordsTable.setShowGrid(false);  // 그리드(격자선) 제거
+        recordsTable.setRowHeight(45);  // 행 높이 설정
+
+        // 셀 렌더러 설정
+        DefaultTableCellRenderer customRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // 중앙 정렬
+                setHorizontalAlignment(SwingConstants.CENTER);
+
+                // 셀 배경 색상
+                comp.setBackground(Color.decode("#ADB7C4"));
+
+                // 글자 색상: 컬럼별로 다르게 설정
+                if (column == 0) {
+                    comp.setForeground(Color.BLACK);
+                } else {
+                    comp.setForeground(Color.DARK_GRAY);
+                }
+
+                return comp;
+            }
+        };
+
+        // 모든 컬럼에 렌더러 적용
+        for (int i = 0; i < recordsTable.getColumnCount(); i++) {
+            recordsTable.getColumnModel().getColumn(i).setCellRenderer(customRenderer);
+        }
+
+        // 컬럼 너비 설정
+        recordsTable.getColumnModel().getColumn(0).setPreferredWidth(200);  // Points 컬럼
+        recordsTable.getColumnModel().getColumn(1).setPreferredWidth(200);  // Date 컬럼
+
+        // 테이블 위치 및 크기 설정
+        recordsTable.setBounds(325, 257, 400, 180);
+
+        // 패널에 테이블 추가
+        panel.add(recordsTable);
+
+        // 재조정 및 리렌더링
+        recordsTable.revalidate();
+        recordsTable.repaint();
+
+        Font scoreFont = new Font("Neo둥근모", Font.BOLD, 45);
+
+        Map<String, String> highest = dbManager.getHighestScore(LoginManager.getLoggedInUser());
+        JLabel score = new JLabel(highest.get("points"));
+        JLabel date = new JLabel(highest.get("date"));
+
+        score.setBounds(500, 130, 170, 40);
+        score.setFont(scoreFont);
+        score.setForeground(Color.BLACK);
+        score.setHorizontalAlignment(SwingConstants.CENTER);
+        date.setBounds(710, 130, 130, 40);
+        date.setFont(labelFont);
+        date.setForeground(Color.DARK_GRAY);
+
+        panel.add(score);
+        panel.add(date);
+
     }
 
     private JPanel selectSign_() {
@@ -207,13 +336,6 @@ public class StartPanel extends JPanel {
         backButton.setContentAreaFilled(false);
         backButton.setBounds(20, 20, 65, 60);
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "selectSign_");
-            }
-        });
-
         JTextField nickname = new JTextField(15);
         JPasswordField password = new JPasswordField(15);
 
@@ -246,12 +368,22 @@ public class StartPanel extends JPanel {
                     System.out.println(LoginManager.getLoggedInUser());
                     nickname.setText("");
                     password.setText("");
-                    cardLayout.show(cardPanel, "intro");
+                    cardLayout.show(cardPanel, "main");
                 } else {
                     JOptionPane.showMessageDialog(panel, "로그인 실패. 닉네임이나 비밀번호를 확인하세요.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "selectSign_");
+                nickname.setText("");
+                password.setText("");
+            }
+        });
+
         panel.add(nickname);
         panel.add(password);
         panel.add(playButton);
@@ -275,12 +407,6 @@ public class StartPanel extends JPanel {
         backButton.setContentAreaFilled(false);
         backButton.setBounds(20, 20, 65, 60);
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "selectSign_");
-            }
-        });
 
         JTextField nickname = new JTextField(15);
         JPasswordField password = new JPasswordField(15);
@@ -336,6 +462,16 @@ public class StartPanel extends JPanel {
                 } else {
                     JOptionPane.showMessageDialog(panel, "회원가입 실패. 다시 시도해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "selectSign_");
+                nickname.setText("");
+                password.setText("");
+                passwordCheck.setText("");
             }
         });
 
