@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.entity.*;
 import org.example.object.CoinCrash;
 import org.example.entity.Coin;
@@ -23,7 +25,8 @@ import org.example.panels.LevelUpPanel;
 import org.example.panels.RainbowPanel;
 import org.example.panels.StarPanel;
 import org.example.panels.StartPanel;
-
+@Getter
+@Setter
 public class GameManager extends JFrame {
 
   public static final int maxCycleCount = 4;
@@ -318,6 +321,7 @@ public class GameManager extends JFrame {
 
     // 게임 패널 상태 초기화
     gamePanel.reset(); // GamePanel 초기화
+    gamePanel.getPlayer().setGPA(4.5); // 플레이어 학점을 4.5로 리셋
 
     // 전역 객체 상태 초기화
     Icon.iconList.forEach(Icon::resetSpeedLevel); // 아이콘 속도 리셋

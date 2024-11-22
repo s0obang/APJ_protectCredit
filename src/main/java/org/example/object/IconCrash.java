@@ -1,4 +1,5 @@
 package org.example.object;
+import org.example.entity.GameResult;
 import org.example.entity.Icon;
 import org.example.entity.Entity;
 import org.example.entity.Player;
@@ -7,6 +8,8 @@ import org.example.panels.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+
+import static org.example.panels.StarPanel.gameManager;
 
 
 public class IconCrash {
@@ -85,6 +88,16 @@ public class IconCrash {
         updateGradeImage(updatedGPA);
         // 아이콘 초기 위치로 리셋
         icon.resetPosition();
+        // 유저 상태 업데이트
+        gameManager.getUserStatus().setUserScore(updatedGPA);
+        // GPA가 0이 되면 게임 종료
+        if (updatedGPA <= 0) {
+            GameResult result = new GameResult();
+            result.setPoints(gameManager.getPointsManager().getPoints());
+            result.setGraduated(false);
+            gameManager.showEndScreen(result);
+        }
+
     }
 
     private void updateGradeText(double GPA) {
