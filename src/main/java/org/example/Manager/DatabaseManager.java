@@ -56,7 +56,6 @@ public class DatabaseManager {
         }
     }
 
-
     public boolean signUp(String nickname, String password) {
         String hashedPassword = HashUtil.hashPassword(password);
         String sql = "INSERT INTO users (nickname, password) VALUES (?, ?);";
