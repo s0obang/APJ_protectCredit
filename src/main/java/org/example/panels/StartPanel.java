@@ -136,6 +136,23 @@ public class StartPanel extends JPanel {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/selectSign_.png");
         panel.setLayout(null);
 
+        ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/BackButton.png");
+        Image img1 = buttonIcon.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH);
+        buttonIcon = new ImageIcon(img1);
+        JButton backButton = new JButton(buttonIcon);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setBounds(20, 20, 65, 60);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "main");
+            }
+        });
+
+
         ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/signInButton.png");
         Image img = buttonIcon1.getImage().getScaledInstance(393, 105, Image.SCALE_SMOOTH);
         buttonIcon1 = new ImageIcon(img);
@@ -168,6 +185,7 @@ public class StartPanel extends JPanel {
             }
         });
 
+        panel.add(backButton);
         panel.add(signInButton);
         panel.add(signUpButton);
 
@@ -179,6 +197,22 @@ public class StartPanel extends JPanel {
 
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/signInBackground.png");
         panel.setLayout(null);
+
+        ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/BackButton.png");
+        Image img1 = buttonIcon1.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH);
+        buttonIcon1 = new ImageIcon(img1);
+        JButton backButton = new JButton(buttonIcon1);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setBounds(20, 20, 65, 60);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "selectSign_");
+            }
+        });
 
         JTextField nickname = new JTextField(15);
         JPasswordField password = new JPasswordField(15);
@@ -221,6 +255,7 @@ public class StartPanel extends JPanel {
         panel.add(nickname);
         panel.add(password);
         panel.add(playButton);
+        panel.add(backButton);
 
         return panel;
     }
@@ -230,6 +265,22 @@ public class StartPanel extends JPanel {
 
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/signUpBackground.png");
         panel.setLayout(null);
+
+        ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/BackButton.png");
+        Image img1 = buttonIcon1.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH);
+        buttonIcon1 = new ImageIcon(img1);
+        JButton backButton = new JButton(buttonIcon1);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setBounds(20, 20, 65, 60);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "selectSign_");
+            }
+        });
 
         JTextField nickname = new JTextField(15);
         JPasswordField password = new JPasswordField(15);
@@ -292,6 +343,7 @@ public class StartPanel extends JPanel {
         panel.add(password);
         panel.add(passwordCheck);
         panel.add(signUpButton);
+        panel.add(backButton);
 
         return panel;
     }
