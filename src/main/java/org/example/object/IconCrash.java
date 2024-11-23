@@ -71,7 +71,7 @@ public class IconCrash {
         }
     }
 
-    private void updateGPA(Player player, Icon icon) {
+    public void updateGPA(Player player, Icon icon) {
         double currentGPA = player.getGPA();
         int scoreEffect = icon.getScoreEffect();
 
@@ -100,13 +100,13 @@ public class IconCrash {
 
     }
 
-    private void updateGradeText(double GPA) {
+    public void updateGradeText(double GPA) {
         if (gradeText != null) { // 필드가 null인 경우를 체크
             gradeText.setText(String.format("학점 : %.1f점", GPA));
         }
     }
 
-     private void updateGradeImage(double GPA) {
+     public void updateGradeImage(double GPA) {
          String imagePath = String.format("src/main/java/org/example/img/gradeItem/%.1f.png", GPA);
          try {
              ImageIcon gradeIcon = new ImageIcon(imagePath);

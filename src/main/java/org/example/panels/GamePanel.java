@@ -178,6 +178,9 @@ public class GamePanel extends JPanel {
     Coin.arraycoin.clear();
     GameInitializer.coinNumber = 7;
 
+    iconCrash.updateGradeText(4.5);
+    iconCrash.updateGradeImage(4.5);
+
     // 필요한 초기 아이콘 및 코인 생성
     GameInitializer.initializeCoinEntities(coinCrash);
     GameInitializer.initializeIconEntities(iconCrash);

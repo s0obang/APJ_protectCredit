@@ -140,7 +140,7 @@ public class GameManager extends JFrame {
 
     //30초 뒤에 levelup패널로 전환
     if (levelUpTimer != null) levelUpTimer.stop();
-    levelUpTimer = new Timer(50000, e -> {
+    levelUpTimer = new Timer(500000, e -> {
       switchToPanelWithDelay("levelup", 0);
       startStarPhase(); // levelup 패널로 전환 후 star 패널로 진행
     });
@@ -275,6 +275,10 @@ public class GameManager extends JFrame {
     if (timer != null) timer.stop();
     // 최종 상태 업데이트
     updateUserStatus();
+    rainbowPanel.setVisible(false);
+    bonusPanel.setVisible(false);
+    starPanel.setVisible(false);
+    gamePanel.stopGame();
     // endPanel로 전환
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());

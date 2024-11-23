@@ -91,7 +91,7 @@ public class BonusPanel extends JPanel {
 
 
     public void updateCurpointText() {
-        curpointText.setText(pointsManager.getPoints() + "만원");
+        curpointText.setText(pointsManager.getPoints() + "만 원");
         repaint();
     }
 
