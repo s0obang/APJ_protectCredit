@@ -18,6 +18,7 @@ public class BonusPanel extends JPanel {
     public Timer timer, countTimer;
     private JLabel timerLabel; // 타이머 표시용 JLabel 추가
     public int remainingTime = 10; // 남은 시간 (10초)
+    private boolean isTimerRunning = false;
 
 
 
@@ -97,6 +98,35 @@ public class BonusPanel extends JPanel {
 
     public void updateTime() {
         timerLabel.setText("남은 시간 : " + remainingTime + "초");
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+
+        if (visible) {
+            // BonusPanel이 보일 때는 타이머 시작
+            startTimer();
+        } else {
+            // BonusPanel이 사라질 때는 타이머 중지
+            stopTimer();
+        }
+    }
+
+    // 타이머 시작 메서드
+    private void startTimer() {
+        if (timer != null && !isTimerRunning) {
+            timer.start();
+            isTimerRunning = true;
+        }
+    }
+
+    // 타이머 중지 메서드
+    private void stopTimer() {
+        if (timer != null && isTimerRunning) {
+            timer.stop();
+            isTimerRunning = false;
+        }
     }
 
     @Override

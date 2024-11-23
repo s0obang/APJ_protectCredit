@@ -68,6 +68,7 @@ public class GameManager extends JFrame {
     pointsManager = new PointsManager();
     gamePanel = new GamePanel(pointsManager);
     bonusPanel = new BonusPanel(pointsManager);
+    endPanel = new EndPanel(this);
 
     //이부분 수정했어엽 민선아
     levelupPanel = new LevelUpPanel();
@@ -100,23 +101,15 @@ public class GameManager extends JFrame {
   }
 
   public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
-    System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");
     Timer timer = new Timer(delayMillis, e -> {
-      System.out.println("Attempting to switch to panel: " + nextPanelName);
-      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals(
-          "bonus")
-          || nextPanelName.equals("end") || nextPanelName.equals("rainbow")) {
+      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("end")
+              || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow")) {
         gamePanel.stopGame();// 게임 일시정지
-      } else if (nextPanelName.equals("game")) {
+      }
+      else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
-        // 아이콘 속도 레벨 증가
-        for (Icon icon : Icon.iconList) {
-          icon.increaseSpeedLevel();
-        }
-        // 코인 속도 레벨 증가
-        for (Coin coin : Coin.arraycoin) {
-          coin.increaseSpeedLevel();
-        }
+        gamePanel.iconPosition();
+        gamePanel.coinPosition();
       }
       // 패널 전환
       cardLayout.show(mainPanel, nextPanelName);
@@ -126,13 +119,14 @@ public class GameManager extends JFrame {
   }
 
   public void startGameCycle() {
+    resetGame();
     currentCycleCount = 0;
     startLevelUpPhase();
   }
 
   //마지막에는 endGameCycle()로 이동
   private void startLevelUpPhase() {
-    if (currentCycleCount >= maxCycleCount) {
+    if (currentCycleCount == maxCycleCount - 1) {
       endGameCycle();
       gamePanel.stopGame();
       return;
@@ -156,10 +150,14 @@ public class GameManager extends JFrame {
 
       // Star 객체 초기화
       star = new Star(0, 0, 60, 50);
-      starPanel.initializeStar(star);
+      starPanel.initializeStar(GameManager.star);
 
       // StarPanel 생성 시 StarCrash 객체를 전달
       starPanel = new StarPanel(this);
+
+      if(GameManager.currentCycleCount != 0) {
+        GameManager.star.upSpeed();
+      }
 
       // 5초 동안 충돌 체크 반복
       final long startTime = System.currentTimeMillis();
@@ -172,13 +170,14 @@ public class GameManager extends JFrame {
 
           // 충돌이 발생하면 바로 패널로 이동
           if (starCrash.distance < starCrash.collisionDistance) {
-            System.out.println("충돌 발생!");
             ((Timer) event.getSource()).stop();  // Timer 종료
+            starPanel.stopTimer();
             startBonusPhase();
           }
         } else {
           // 5초가 지나면 Timer를 종료하고 충돌이 없으면 다음 단계로 진행
           ((Timer) event.getSource()).stop();
+          starPanel.stopTimer();
           starCrash.handleCollision();
           overStarTime = true;
           startNoCollisionPhase();
@@ -215,10 +214,11 @@ public class GameManager extends JFrame {
       bonusPanel.timer.start();
       bonusPanel.countTimer.start();
 
-      // 10초 후 보너스 패널에서 게임 패널로 복귀
-    returnToGameTimer = new Timer(13000, e3 -> {
+      // 10초 후 보너스 패널에서 게임 패널로 복귀 13000
+    returnToGameTimer = new Timer(5000, e3 -> {
       switchToPanelWithDelay("game", 0);
-      if(bonusPanel.timer != null) bonusPanel.timer.stop();
+      bonusPanel.timer.stop();
+      bonusPanel.countTimer.stop();
       gamePanel.updateCurpointText();
       currentCycleCount++;
       startLevelUpPhase(); // 다음 사이클 시작
@@ -287,6 +287,7 @@ public class GameManager extends JFrame {
     timer.setRepeats(false);
     timer.start();
   }
+
 
   public void startGameSequence() {
     showScreen("game");

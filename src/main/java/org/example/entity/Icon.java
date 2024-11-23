@@ -1,5 +1,7 @@
 package org.example.entity;
 
+import org.example.Manager.GameManager;
+
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -14,9 +16,10 @@ public abstract class Icon extends Entity {
   public static ArrayList<Icon> iconList = new ArrayList<>();
   private final BufferedImage iconimg;
   private final Random random = new Random();
-  private int x, y, speed;
+  private int x;
+    private int y;
+    private static int speed;
   private int scoreEffect;
-  private int speedLevel = 1;
 
   public Icon(int x, int y, int width, int height) {
     super(x, y, width, height);
@@ -69,14 +72,12 @@ public abstract class Icon extends Entity {
   }
 
   // 속도 레벨 증가 메서드
-  public void increaseSpeedLevel() {
-    speedLevel++;
-    speed = random.nextInt(3) + 2 + (int) Math.pow(speedLevel, 2); // 속도 증가
+  public static void increaseSpeedLevel() {
+    speed += (int) (GameManager.currentCycleCount * 0.7);
   }
 
   // 속도 레벨 리셋 메서드
   public void resetSpeedLevel() {
-    speedLevel = 1;
     speed = random.nextInt(3) + 2; // 초기 속도로 리셋
   }
 

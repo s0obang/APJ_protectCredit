@@ -54,6 +54,10 @@ public class IconCrash {
         entities.add(entity);
     }
 
+    public void clearEntities() {
+        entities.clear(); // 기존 엔티티 모두 제거
+    }
+
     public void checkCollisions() {
         for (int i = 0; i < entities.size(); i++) {
             for (int j = i + 1; j < entities.size(); j++) {

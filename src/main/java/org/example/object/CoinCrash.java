@@ -35,6 +35,10 @@ public class CoinCrash {
         }
     }
 
+    public void clearEntities() {
+        entities.clear(); // 기존 엔티티 모두 제거
+    }
+
     // 충돌 처리 메서드
     private void handleCollision(Entity e1, Entity e2, boolean isBonus) {
         if (e1 instanceof Player && e2 instanceof Coin) {

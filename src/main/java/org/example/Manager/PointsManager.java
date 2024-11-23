@@ -17,7 +17,6 @@ public class PointsManager {
     // 포인트 증가
     public void increasePoints(int value) {
         points += value;
-        System.out.println("포인트: " + points);
     }
 
     // 현재 포인트 반환

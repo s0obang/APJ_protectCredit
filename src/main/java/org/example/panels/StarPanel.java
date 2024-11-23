@@ -14,6 +14,7 @@ public class StarPanel extends JPanel {
   public StarCrash starCrash;
   public static GameManager gameManager;
   private Timer timer;
+  private boolean isTimerRunning = false; // Timer 상태를 추적하는 플래그
 
 
   public StarPanel(GameManager gameManager) {
@@ -33,20 +34,33 @@ public class StarPanel extends JPanel {
       }
     });
 
-    // 스타 위치 업데이트와 충돌 타이머 설정
-    if(timer != null) timer.stop();
-    timer = new Timer(20, e -> {
-      if (GameManager.star != null) {
-        GameManager.star.moveTowardsTarget();
-        repaint();
+    // Timer 초기화 (생성 단계에서 중복 방지)
+    if (timer == null) {
+      timer = new Timer(20, e -> {
+        if (GameManager.star != null) {
+          GameManager.star.moveTowardsTarget();
+          repaint();
 
-        if(starCrash.isCollision) starCrash.handleCollision();
-      }
-    });
+          if (starCrash.isCollision) {
+            starCrash.handleCollision();
+          }
+        }
+      });
+    }
+
     timer.start();
-
     setPreferredSize(new Dimension(1080, 720));
     setOpaque(true);
+  }
+
+  // Timer 시작 메서드
+  public void startTimer() {
+      timer.start();
+  }
+
+  // Timer 중지 메서드
+  public void stopTimer() {
+      timer.stop();
   }
 
   // starplayer 위치만 초기화하는 메서드
@@ -60,12 +74,14 @@ public class StarPanel extends JPanel {
     }
   }
 
-  // 패널이 보일 때마다 starplayer 위치 초기화
   @Override
   public void setVisible(boolean visible) {
     super.setVisible(visible);
     if (visible) {
-      initializeStarPlayer(); // StarPanel이 보일 때마다 위치 초기화
+      startTimer();
+      initializeStarPlayer();
+    } else {
+      stopTimer();
     }
   }
 
@@ -73,7 +89,7 @@ public class StarPanel extends JPanel {
   // 스타 초기화 메서드
   public void initializeStar(Star star) {
     GameManager.star = star;
-
+    repaint();
   }
 
   public void reset() {
