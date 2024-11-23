@@ -100,6 +100,7 @@ public class IconCrash {
             result.setPoints(gameManager.getPointsManager().getPoints());
             result.setGraduated(false);
             gameManager.showEndScreen(result);
+            gamePanel.stopGame();
         }
 
     }
