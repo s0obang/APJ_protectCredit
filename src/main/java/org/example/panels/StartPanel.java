@@ -2,15 +2,18 @@ package org.example.panels;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.List;
 
 import org.example.Manager.*;
-import org.example.entity.Blanket;
-import org.example.entity.GameResult;
 import org.example.entity.User;
 
 public class StartPanel extends JPanel {
@@ -26,19 +29,20 @@ public class StartPanel extends JPanel {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-
-        cardPanel.add(startGamePanel(manager), "main");
+        JPanel history = history();
+        cardPanel.add(startGamePanel(manager, history), "main");
         cardPanel.add(selectSign_(), "selectSign_");
         cardPanel.add(signIn(), "signIn");
         cardPanel.add(signUp(), "signUp");
         cardPanel.add(intro(manager), "intro");
+        cardPanel.add(history, "history");
 
 
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
     }
 
-    private JPanel startGamePanel(GameManager manager) {
+    private JPanel startGamePanel(GameManager manager, JPanel history) {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
         panel.setLayout(null); // bPanel 절대 위치 정하려고
 
@@ -96,6 +100,15 @@ public class StartPanel extends JPanel {
 
             }
         });
+        historyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "history");
+                if (LoginManager.getLoggedInUser() != null) {
+                    getHistory(history);
+                }
+            }
+        });
 
         JLabel playLabel = new JLabel("play!");
         playLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -120,12 +133,149 @@ public class StartPanel extends JPanel {
         panel.add(bPanel);
         panel.add(characterPanel);
 
+        panel.addHierarchyListener(e -> {
+            if (e.getID() == HierarchyEvent.HIERARCHY_CHANGED) {
+                if (panel.isShowing()) {
+                    characterPanel.startCharacterMovement();  // 인트로 화면에 돌아왔을 때 이동 시작
+                } else {
+                    characterPanel.stopCharacterMovement();   // 다른 화면으로 갔을 때 이동 멈춤
+                }
+            }
+        });
+
         return panel;
+    }
+
+    private JPanel history() {
+        JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/history.png");
+        panel.setLayout(null);
+
+        ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/backButton2.png");
+        Image img = buttonIcon.getImage().getScaledInstance(73, 73, Image.SCALE_SMOOTH);
+        buttonIcon = new ImageIcon(img);
+        JButton backButton = new JButton(buttonIcon);
+        backButton.setPreferredSize(new Dimension(75, 75));
+        backButton.setBounds(515, 605, 73, 73);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "main");
+            }
+        });
+
+        panel.add(backButton);
+
+        return panel;
+    }
+
+    private void getHistory(JPanel panel) {
+        Font labelFont = new Font("Neo둥근모", Font.PLAIN, 25);
+
+        List<Map<String, String>> recentRecords = dbManager.getRecentRecords(LoginManager.getLoggedInUser());
+
+        String[] columns = {"", ""};
+        Object[][] data = new Object[recentRecords.size()][2];
+
+        for (int i = 0; i < recentRecords.size(); i++) {
+            Map<String, String> record = recentRecords.get(i);
+            data[i][0] = record.get("points");
+            data[i][1] = record.get("date");
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, columns){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        JTable recordsTable = new JTable(model);
+        recordsTable.setFont(labelFont);
+        recordsTable.setOpaque(false);
+        recordsTable.setBorder(null);
+        recordsTable.setShowGrid(false);
+        recordsTable.setRowHeight(45);
+        recordsTable.setRowSelectionAllowed(false);
+        recordsTable.setColumnSelectionAllowed(false);
+        recordsTable.setCellSelectionEnabled(false);
+        recordsTable.setFocusable(false);
+
+        DefaultTableCellRenderer customRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                setHorizontalAlignment(SwingConstants.CENTER);
+                comp.setBackground(Color.decode("#ADB7C4"));
+
+                if (column == 0) {
+                    comp.setForeground(Color.BLACK);
+                } else {
+                    comp.setForeground(Color.DARK_GRAY);
+                }
+
+                return comp;
+            }
+        };
+
+        for (int i = 0; i < recordsTable.getColumnCount(); i++) {
+            recordsTable.getColumnModel().getColumn(i).setCellRenderer(customRenderer);
+        }
+
+        recordsTable.getColumnModel().getColumn(0).setPreferredWidth(200);  // Points 컬럼
+        recordsTable.getColumnModel().getColumn(1).setPreferredWidth(200);  // Date 컬럼
+
+        recordsTable.setBounds(325, 257, 400, 180);
+
+        panel.add(recordsTable);
+
+        recordsTable.revalidate();
+        recordsTable.repaint();
+
+        // 최고점 띄우기
+        Font scoreFont = new Font("Neo둥근모", Font.BOLD, 45);
+
+        Map<String, String> highest = dbManager.getHighestScore(LoginManager.getLoggedInUser());
+        JLabel score = new JLabel(highest.get("points"));
+        JLabel date = new JLabel(highest.get("date"));
+
+        score.setBounds(500, 130, 170, 40);
+        score.setFont(scoreFont);
+        score.setForeground(Color.BLACK);
+        score.setHorizontalAlignment(SwingConstants.CENTER);
+        date.setBounds(710, 130, 130, 40);
+        date.setFont(labelFont);
+        date.setForeground(Color.DARK_GRAY);
+
+        panel.add(score);
+        panel.add(date);
+
     }
 
     private JPanel selectSign_() {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/selectSign_.png");
         panel.setLayout(null);
+
+        ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/BackButton.png");
+        Image img1 = buttonIcon.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH);
+        buttonIcon = new ImageIcon(img1);
+        JButton backButton = new JButton(buttonIcon);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setBounds(20, 20, 65, 60);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "main");
+            }
+        });
+
 
         ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/signInButton.png");
         Image img = buttonIcon1.getImage().getScaledInstance(393, 105, Image.SCALE_SMOOTH);
@@ -159,6 +309,7 @@ public class StartPanel extends JPanel {
             }
         });
 
+        panel.add(backButton);
         panel.add(signInButton);
         panel.add(signUpButton);
 
@@ -170,6 +321,15 @@ public class StartPanel extends JPanel {
 
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/signInBackground.png");
         panel.setLayout(null);
+
+        ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/BackButton.png");
+        Image img1 = buttonIcon1.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH);
+        buttonIcon1 = new ImageIcon(img1);
+        JButton backButton = new JButton(buttonIcon1);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setBounds(20, 20, 65, 60);
 
         JTextField nickname = new JTextField(15);
         JPasswordField password = new JPasswordField(15);
@@ -200,19 +360,29 @@ public class StartPanel extends JPanel {
                 boolean isSuccess = dbManager.signIn(dbManager, nick, pass);
 
                 if (isSuccess) {
-                    User user = new User(nick, pass);
-                    LoginManager.saveLoggedInUser(user);
+                    System.out.println(LoginManager.getLoggedInUser());
                     nickname.setText("");
                     password.setText("");
-                    cardLayout.show(cardPanel, "intro");
+                    cardLayout.show(cardPanel, "main");
                 } else {
                     JOptionPane.showMessageDialog(panel, "로그인 실패. 닉네임이나 비밀번호를 확인하세요.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "selectSign_");
+                nickname.setText("");
+                password.setText("");
+            }
+        });
+
         panel.add(nickname);
         panel.add(password);
         panel.add(playButton);
+        panel.add(backButton);
 
         return panel;
     }
@@ -222,6 +392,16 @@ public class StartPanel extends JPanel {
 
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/signUpBackground.png");
         panel.setLayout(null);
+
+        ImageIcon buttonIcon1 = new ImageIcon("src/main/java/org/example/img/intro/BackButton.png");
+        Image img1 = buttonIcon1.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH);
+        buttonIcon1 = new ImageIcon(img1);
+        JButton backButton = new JButton(buttonIcon1);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setBounds(20, 20, 65, 60);
+
 
         JTextField nickname = new JTextField(15);
         JPasswordField password = new JPasswordField(15);
@@ -280,10 +460,21 @@ public class StartPanel extends JPanel {
             }
         });
 
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "selectSign_");
+                nickname.setText("");
+                password.setText("");
+                passwordCheck.setText("");
+            }
+        });
+
         panel.add(nickname);
         panel.add(password);
         panel.add(passwordCheck);
         panel.add(signUpButton);
+        panel.add(backButton);
 
         return panel;
     }
@@ -348,6 +539,10 @@ public class StartPanel extends JPanel {
     //첫 화면에 캐릭터 도동하고 싶어서 이미지 따로 빼놓음
     static class CharacterPanel extends JPanel {
         private Image characterImage;
+        private int xPosition = 0;
+        private int yPosition = 0;
+        private boolean moveUpRight = true;
+        private Timer movementTimer;
 
         public CharacterPanel(String imagePath) {
             try {
@@ -356,16 +551,44 @@ public class StartPanel extends JPanel {
                 e.printStackTrace();
             }
             setOpaque(false);
+
+
+            movementTimer = new Timer(500, e -> moveCharacter());
+        }
+
+        private void moveCharacter() {
+            if (moveUpRight) {
+                xPosition -= 10;
+                yPosition -= 10;
+            } else {
+                xPosition += 10;
+                yPosition += 10;
+            }
+
+            moveUpRight = !moveUpRight;
+
+            repaint();
+        }
+
+        public void startCharacterMovement() {
+            if (!movementTimer.isRunning()) {
+                movementTimer.start();
+            }
+        }
+
+        public void stopCharacterMovement() {
+            if (movementTimer.isRunning()) {
+                movementTimer.stop();
+            }
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (characterImage != null) {
-                g.drawImage(characterImage, 0, 0, 410, 425, this);
+                g.drawImage(characterImage, xPosition, yPosition, 410, 425, this);
             }
         }
     }
-
 
 }
