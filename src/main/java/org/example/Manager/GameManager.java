@@ -104,11 +104,11 @@ public class GameManager extends JFrame {
     System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");
     Timer timer = new Timer(delayMillis, e -> {
       System.out.println("Attempting to switch to panel: " + nextPanelName);
-      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals(
-          "bonus")
-          || nextPanelName.equals("end") || nextPanelName.equals("rainbow")) {
+      if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("end")
+              || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow")) {
         gamePanel.stopGame();// 게임 일시정지
-      } else if (nextPanelName.equals("game")) {
+      }
+      else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
         // 아이콘 속도 레벨 증가
         for (Icon icon : Icon.iconList) {
@@ -141,7 +141,7 @@ public class GameManager extends JFrame {
 
     //30초 뒤에 levelup패널로 전환
     if (levelUpTimer != null) levelUpTimer.stop();
-    levelUpTimer = new Timer(50000, e -> {
+    levelUpTimer = new Timer(5000, e -> {
       switchToPanelWithDelay("levelup", 0);
       startStarPhase(); // levelup 패널로 전환 후 star 패널로 진행
     });
@@ -152,15 +152,20 @@ public class GameManager extends JFrame {
   //3초 뒤 star 패널로 이동
   public void startStarPhase() {
     if (starTimer != null) starTimer.stop();
+
     starTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("star", 0);
 
       // Star 객체 초기화
       star = new Star(0, 0, 60, 50);
-      starPanel.initializeStar(star);
+      starPanel.initializeStar(GameManager.star);
 
       // StarPanel 생성 시 StarCrash 객체를 전달
       starPanel = new StarPanel(this);
+
+      if(GameManager.currentCycleCount != 0) {
+        GameManager.star.upSpeed();
+      }
 
       // 5초 동안 충돌 체크 반복
       final long startTime = System.currentTimeMillis();
@@ -175,11 +180,13 @@ public class GameManager extends JFrame {
           if (starCrash.distance < starCrash.collisionDistance) {
             System.out.println("충돌 발생!");
             ((Timer) event.getSource()).stop();  // Timer 종료
+            starPanel.stopTimer();
             startBonusPhase();
           }
         } else {
           // 5초가 지나면 Timer를 종료하고 충돌이 없으면 다음 단계로 진행
           ((Timer) event.getSource()).stop();
+          starPanel.stopTimer();
           starCrash.handleCollision();
           overStarTime = true;
           startNoCollisionPhase();
@@ -216,8 +223,8 @@ public class GameManager extends JFrame {
       bonusPanel.timer.start();
       bonusPanel.countTimer.start();
 
-      // 10초 후 보너스 패널에서 게임 패널로 복귀
-    returnToGameTimer = new Timer(13000, e3 -> {
+      // 10초 후 보너스 패널에서 게임 패널로 복귀 13000
+    returnToGameTimer = new Timer(5000, e3 -> {
       switchToPanelWithDelay("game", 0);
       if(bonusPanel.timer != null) bonusPanel.timer.stop();
       gamePanel.updateCurpointText();
@@ -273,7 +280,12 @@ public class GameManager extends JFrame {
 
   //이건 엔드 패널로 이동시키는 거 추가하면 될 듯
   private void endGameCycle() {
-    if (timer != null) timer.stop();
+    timer.stop();
+    rainbowTimer.stop();
+    bonusTimer.stop();
+    starTimer.stop();
+    gamePanel.stopGame();
+
     // 최종 상태 업데이트
     updateUserStatus();
     // endPanel로 전환
@@ -284,6 +296,7 @@ public class GameManager extends JFrame {
     timer.setRepeats(false);
     timer.start();
   }
+
 
   public void startGameSequence() {
     showScreen("game");
@@ -322,11 +335,7 @@ public class GameManager extends JFrame {
 
     // 게임 패널 상태 초기화
     gamePanel.reset(); // GamePanel 초기화
-    gamePanel.getPlayer().setGPA(4.5); // 플레이어 학점을 4.5로 리셋
-
-    // 전역 객체 상태 초기화
-    Icon.iconList.forEach(Icon::resetSpeedLevel); // 아이콘 속도 리셋
-    Coin.arraycoin.forEach(Coin::resetSpeedLevel); // 코인 속도 리셋
+    starPanel.reset();
 
     // 유저 상태 초기화
     userStatus.setUserGrade(1); // 학년 초기화

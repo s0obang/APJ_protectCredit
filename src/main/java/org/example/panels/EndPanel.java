@@ -320,6 +320,7 @@ public class EndPanel extends JPanel {
         }
         else {
             cardLayout.show(cardPanel, "gameOver");
+
         }
     }
 

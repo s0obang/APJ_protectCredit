@@ -14,7 +14,7 @@ public class Coin extends Entity {
 
   public static ArrayList<Coin> arraycoin = new ArrayList<>();
   public Image coinimg;
-  private static final Random random = new Random();
+  public static final Random random = new Random();
   int x, y, speed;
   // 코인 이미지와 좌표 리스트
   public static List<Coin> largeCoins;
@@ -50,13 +50,8 @@ public class Coin extends Entity {
 
   public static void createAndAddCoin(int x, int y, int width, int height) {
     Coin coin = new Coin(random.nextInt(x - 60), random.nextInt(y-600),width, height, Coin.loadImage("coin.png")) {
-      @Override
-      public void update() {
-      }
     }; // 익명 서브클래스로 인스턴스 생성
     arraycoin.add(coin);
-
-
   }
 
   // largecoin 위치 설정
