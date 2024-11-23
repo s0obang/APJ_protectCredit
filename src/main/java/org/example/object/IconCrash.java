@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static org.example.Manager.GameManager.*;
 import static org.example.panels.StarPanel.gameManager;
 
 
@@ -101,6 +102,10 @@ public class IconCrash {
             result.setGraduated(false);
             gameManager.showEndScreen(result);
             gamePanel.stopGame();
+            starPanel.setVisible(false);
+            bonusPanel.setVisible(false);
+            rainbowPanel.setVisible(false);
+            gameManager.getLevelUpTimer().stop();
         }
 
     }

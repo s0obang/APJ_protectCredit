@@ -42,12 +42,12 @@ public class GameManager extends JFrame {
   private EndPanel endPanel;
   private PointsManager pointsManager;
   private static GamePanel gamePanel;
-  private static StarPanel starPanel;
+  public static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
   public CoinCrash coinCrash;
   public StarCrash starCrash;
   public Timer collisionCheckTimer;
-  private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer;
+  private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer, lastgameTimer;
   private UserStatus userStatus;
   private Blanket blanket;
 
@@ -126,14 +126,8 @@ public class GameManager extends JFrame {
 
   //마지막에는 endGameCycle()로 이동
   private void startLevelUpPhase() {
-    if (currentCycleCount == maxCycleCount - 1) {
-      endGameCycle();
-      gamePanel.stopGame();
-      return;
-    }
-
-    //30초 뒤에 levelup패널로 전환
     if (levelUpTimer != null) levelUpTimer.stop();
+    //30초 뒤에 levelup패널로 전환
     levelUpTimer = new Timer(30000, e -> {
       switchToPanelWithDelay("levelup", 0);
       startStarPhase(); // levelup 패널로 전환 후 star 패널로 진행
@@ -214,14 +208,16 @@ public class GameManager extends JFrame {
       bonusPanel.timer.start();
       bonusPanel.countTimer.start();
 
-      // 10초 후 보너스 패널에서 게임 패널로 복귀 13000
-    returnToGameTimer = new Timer(5000, e3 -> {
+      // 10초 후 보너스 패널에서 게임 패널로 복귀
+    returnToGameTimer = new Timer(13000, e3 -> {
       switchToPanelWithDelay("game", 0);
       bonusPanel.timer.stop();
       bonusPanel.countTimer.stop();
       gamePanel.updateCurpointText();
       currentCycleCount++;
-      startLevelUpPhase(); // 다음 사이클 시작
+      if(currentCycleCount == maxCycleCount -1) {
+        startlastGame();
+      } else startLevelUpPhase(); // 다음 사이클 시작
   });
       returnToGameTimer.setRepeats(false);
       returnToGameTimer.start();
@@ -237,7 +233,6 @@ public class GameManager extends JFrame {
   //충돌이 없는 경우 (보너스 실패) -> 다음 학년으로 넘어가기
   private void startNoCollisionPhase() {
     if (noCollisionTimer != null) noCollisionTimer.stop();
-    if(bonusPanel.timer != null) bonusPanel.timer.stop();
     overStarTime = false;
     //스타와 함께 있었던 시간
     noCollisionTimer = new Timer(2000, e -> {
@@ -245,10 +240,23 @@ public class GameManager extends JFrame {
       gamePanel.updateCurpointText();
       // GamePanel로 돌아올 때 BonusPanel 포인트를 동기화
       currentCycleCount++;
-      startLevelUpPhase(); // 다음 사이클 시작
+      if(currentCycleCount == maxCycleCount -1) {
+        startlastGame();
+      } else startLevelUpPhase(); // 다음 사이클 시작
     });
     noCollisionTimer.setRepeats(false);
     noCollisionTimer.start();
+  }
+
+  private void startlastGame() {
+    System.out.println("마지막 게임 진입");
+    if(lastgameTimer != null) lastgameTimer.stop();
+    lastgameTimer = new Timer(30000, e-> {
+      gamePanel.stopGame();
+      endGameCycle();
+    });
+    lastgameTimer.setRepeats(false);
+    lastgameTimer.start();
   }
 
   private void updateUserStatus() {
