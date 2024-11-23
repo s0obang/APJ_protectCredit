@@ -38,11 +38,14 @@ public class GamePanel extends JPanel {
   public CoinCrash coinCrash;
   public Player player; //이거 메인캐릭터임^^
   private IconCrash iconCrash;
-  private Timer timer;
+  private Timer timer, countTimer;
   private IconManager iconManager;
   private BufferedImage backgroundImage;
   private JTextField curpointText; // GamePanel의 JTextField
   private ProfessorManager professorManager;
+  private JLabel timerLabel; // 타이머 표시용 JLabel 추가
+  public int remainingTime = 30; // 남은 시간 (30초)
+  private JLabel gradeLabel; // 학년 표시용 JLabel 추가
 
   public GamePanel(PointsManager pointsManager) {
     this.pointsManager = pointsManager; // PointsManager 객체 생성
@@ -63,6 +66,20 @@ public class GamePanel extends JPanel {
     curpointText = createPointsTextField();
     setLayout(null);
     this.add(curpointText);
+
+    // 타이머 표시용 JLabel 초기화
+    timerLabel = new JLabel("남은 시간: " + remainingTime + "초", SwingConstants.CENTER);
+    timerLabel.setFont(new Font("Neo둥근모", Font.BOLD, 15));
+    timerLabel.setBounds(120, 20, 150, 30);
+    timerLabel.setForeground(Color.BLACK);
+    this.add(timerLabel);
+
+    // 학년 레이블 초기화 (새로 추가)
+    gradeLabel = new JLabel("1학년", SwingConstants.CENTER);
+    gradeLabel.setFont(new Font("Neo둥근모", Font.BOLD, 15));
+    gradeLabel.setBounds(20, 0, 100, 30);
+    gradeLabel.setForeground(Color.BLACK);
+    this.add(gradeLabel);
 
     // Crash 객체 생성 -> 충돌 감지에 저장
     coinCrash = new CoinCrash(this, null, pointsManager);
@@ -126,6 +143,11 @@ public class GamePanel extends JPanel {
     return textField;
   }
 
+  // 학년 업데이트 메서드 추가
+  public void updateGrade(int grade) {
+    gradeLabel.setText(grade + "학년");
+  }
+
   public void updateCurpointText() {
     curpointText.setText(pointsManager.getPoints() + "만 원");
 
@@ -146,6 +168,25 @@ public class GamePanel extends JPanel {
     this.repaint();
     player.x = 500;
     player.y = 500;
+    // 기존 타이머가 있다면 중지
+    if (countTimer != null) {
+      countTimer.stop();
+    }
+
+    // 타이머 설정
+    remainingTime = 30; // 시간 명시적으로 초기화
+    timerLabel.setText("남은 시간 : " + remainingTime + "초"); // 레이블 즉시 업데이트
+
+    countTimer = new Timer(1000, e -> {
+      if (remainingTime > 0) {
+        remainingTime--;
+        timerLabel.setText("남은 시간 : " + remainingTime + "초");
+      } else {
+        ((Timer) e.getSource()).stop();
+      }
+      repaint();
+    });
+    countTimer.start();
     // 교수님 주기적 등장 시작
     professorManager.start(5000); //5초마다 등장
     timer.start();
@@ -210,6 +251,8 @@ public class GamePanel extends JPanel {
       timer.stop();
     }
     timer = new GameTimer(iconManager, coinCrash, iconCrash, professorManager, this);
+
+    updateGrade(1); // 1학년으로 초기화
 
     // 교수님 상태 초기화
     professorManager.stop();
