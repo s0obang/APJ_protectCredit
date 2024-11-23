@@ -1,5 +1,7 @@
 package org.example.entity;
 
+import org.example.Manager.GameManager;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -15,15 +17,17 @@ public class Coin extends Entity {
   public static ArrayList<Coin> arraycoin = new ArrayList<>();
   public Image coinimg;
   public static final Random random = new Random();
-  int x, y, speed;
+  int x, y;
   // 코인 이미지와 좌표 리스트
   public static List<Coin> largeCoins;
   public static List<Coin> mediCoins;
   public static List<Coin> smallCoins;
+  public static int speed; // 모든 코인에 공통된 속도
+
 
   public Coin(int x, int y, int width, int height, Image coinimg) {
     super(x, y, width, height);
-    this.speed = 7;
+    speed = 5;
     this.x = x;
     this.y = y;
     this.coinimg = coinimg;
@@ -39,13 +43,13 @@ public class Coin extends Entity {
   }
 
   // 속도 레벨 증가 메서드
-  public void increaseSpeedLevel() {
-    speed += 1.5;
+  public static void increaseSpeedLevel() {
+    Coin.speed += (int) (GameManager.currentCycleCount * 0.7);
   }
 
   // 속도 레벨 리셋 메서드
   public void resetSpeedLevel() {
-    speed = 7;
+    speed = 5;
   }
 
   public static void createAndAddCoin(int x, int y, int width, int height) {

@@ -118,7 +118,6 @@ public class BonusPanel extends JPanel {
         if (timer != null && !isTimerRunning) {
             timer.start();
             isTimerRunning = true;
-            System.out.println("Timer started");
         }
     }
 
@@ -127,7 +126,6 @@ public class BonusPanel extends JPanel {
         if (timer != null && isTimerRunning) {
             timer.stop();
             isTimerRunning = false;
-            System.out.println("Timer stopped");
         }
     }
 

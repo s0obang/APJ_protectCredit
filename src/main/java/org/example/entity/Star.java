@@ -55,7 +55,6 @@ public class Star extends Entity {
 
     //star가 움직이는 메서드
     public void moveTowardsTarget() {
-        System.out.println("Current speed: " + MOVE_SPEED);
         int dx = targetX - x;
         int dy = targetY - y;
         double distance = Math.sqrt(dx * dx + dy * dy);

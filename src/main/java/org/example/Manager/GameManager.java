@@ -77,7 +77,7 @@ public class GameManager extends JFrame {
     starPanel = new StarPanel(this);
     starCrash = new StarCrash(this, starPanel);
     rainbowPanel = new RainbowPanel();
-
+    endPanel = new EndPanel(this);
     // 각 화면을 패널로 추가
     mainPanel.add(new StartPanel(this), "start");
     mainPanel.add(gamePanel, "game");
@@ -101,23 +101,15 @@ public class GameManager extends JFrame {
   }
 
   public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
-    System.out.println("Preparing to switch to: " + nextPanelName + " in " + delayMillis + " ms");
     Timer timer = new Timer(delayMillis, e -> {
-      System.out.println("Attempting to switch to panel: " + nextPanelName);
       if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("end")
               || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow")) {
         gamePanel.stopGame();// 게임 일시정지
       }
       else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
-        // 아이콘 속도 레벨 증가
-        for (Icon icon : Icon.iconList) {
-          icon.increaseSpeedLevel();
-        }
-        // 코인 속도 레벨 증가
-        for (Coin coin : Coin.arraycoin) {
-          coin.increaseSpeedLevel();
-        }
+        gamePanel.iconPosition();
+        gamePanel.coinPosition();
       }
       // 패널 전환
       cardLayout.show(mainPanel, nextPanelName);
@@ -127,13 +119,14 @@ public class GameManager extends JFrame {
   }
 
   public void startGameCycle() {
+    resetGame();
     currentCycleCount = 0;
     startLevelUpPhase();
   }
 
   //마지막에는 endGameCycle()로 이동
   private void startLevelUpPhase() {
-    if (currentCycleCount >= maxCycleCount) {
+    if (currentCycleCount == maxCycleCount - 1) {
       endGameCycle();
       gamePanel.stopGame();
       return;
@@ -141,7 +134,7 @@ public class GameManager extends JFrame {
 
     //30초 뒤에 levelup패널로 전환
     if (levelUpTimer != null) levelUpTimer.stop();
-    levelUpTimer = new Timer(5000, e -> {
+    levelUpTimer = new Timer(500000, e -> {
       switchToPanelWithDelay("levelup", 0);
       startStarPhase(); // levelup 패널로 전환 후 star 패널로 진행
     });
@@ -152,7 +145,6 @@ public class GameManager extends JFrame {
   //3초 뒤 star 패널로 이동
   public void startStarPhase() {
     if (starTimer != null) starTimer.stop();
-
     starTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("star", 0);
 
@@ -178,7 +170,6 @@ public class GameManager extends JFrame {
 
           // 충돌이 발생하면 바로 패널로 이동
           if (starCrash.distance < starCrash.collisionDistance) {
-            System.out.println("충돌 발생!");
             ((Timer) event.getSource()).stop();  // Timer 종료
             starPanel.stopTimer();
             startBonusPhase();
@@ -226,7 +217,8 @@ public class GameManager extends JFrame {
       // 10초 후 보너스 패널에서 게임 패널로 복귀 13000
     returnToGameTimer = new Timer(5000, e3 -> {
       switchToPanelWithDelay("game", 0);
-      if(bonusPanel.timer != null) bonusPanel.timer.stop();
+      bonusPanel.timer.stop();
+      bonusPanel.countTimer.stop();
       gamePanel.updateCurpointText();
       currentCycleCount++;
       startLevelUpPhase(); // 다음 사이클 시작
@@ -280,14 +272,13 @@ public class GameManager extends JFrame {
 
   //이건 엔드 패널로 이동시키는 거 추가하면 될 듯
   private void endGameCycle() {
-    timer.stop();
-    rainbowTimer.stop();
-    bonusTimer.stop();
-    starTimer.stop();
-    gamePanel.stopGame();
-
+    if (timer != null) timer.stop();
     // 최종 상태 업데이트
     updateUserStatus();
+    rainbowPanel.setVisible(false);
+    bonusPanel.setVisible(false);
+    starPanel.setVisible(false);
+    gamePanel.stopGame();
     // endPanel로 전환
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());
@@ -335,7 +326,11 @@ public class GameManager extends JFrame {
 
     // 게임 패널 상태 초기화
     gamePanel.reset(); // GamePanel 초기화
-    starPanel.reset();
+    gamePanel.getPlayer().setGPA(4.5); // 플레이어 학점을 4.5로 리셋
+
+    // 전역 객체 상태 초기화
+    Icon.iconList.forEach(Icon::resetSpeedLevel); // 아이콘 속도 리셋
+    Coin.arraycoin.forEach(Coin::resetSpeedLevel); // 코인 속도 리셋
 
     // 유저 상태 초기화
     userStatus.setUserGrade(1); // 학년 초기화

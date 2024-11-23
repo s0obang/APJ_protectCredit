@@ -149,14 +149,6 @@ public class GamePanel extends JPanel {
     // 교수님 주기적 등장 시작
     professorManager.start(5000); //5초마다 등장
     timer.start();
-
-    // 코인 감소 로직 추가
-    if (Coin.arraycoin.size() > 2) { // 최소 코인 수를 유지하려면 이 조건 사용
-      if(GameManager.currentCycleCount == 0) return;
-      for (int i = 0; i < 2; i++) {
-        Coin.arraycoin.remove(Coin.arraycoin.size() - 1);
-      }
-    }
   }
 
   public void stopGame() {
@@ -169,34 +161,54 @@ public class GamePanel extends JPanel {
     return player;
   }
 
+  public void coinPosition() {
+    // 첫 사이클에서는 coinNumber를 감소시키지 않음
+    if (GameManager.currentCycleCount > 0) {
+      GameInitializer.coinNumber -= 2; // 두 번째 사이클부터 코인 수 감소
+    } else {
+      GameInitializer.coinNumber = 7; // 첫 사이클에서는 코인을 7개로 초기화
+    }
+
+    Coin.arraycoin.clear(); // 기존 코인 초기화
+    coinCrash.clearEntities(); // 기존 충돌 엔티티 제거
+    GameInitializer.initializeCoinEntities(coinCrash); // 새로 초기화
+    Coin.increaseSpeedLevel();
+    coinCrash.addEntity(player);
+  }
+
+  public void iconPosition() {
+    // 기존 코인 제거
+    Icon.iconList.clear();
+    iconCrash.clearEntities();
+    GameInitializer.initializeIconEntities(iconCrash);
+    Icon.increaseSpeedLevel();
+    iconCrash.addEntity(player);
+  }
+
   public void reset() {
     // 플레이어 초기 위치와 상태 재설정
     player.x = 500;
     player.y = 500;
     player.setMovable(true); // 이동 가능 상태로 설정
-    player.setGPA(4.5);  // 예시: GPA를 초기값으로 설정 (4.5)
 
-    // GPA 텍스트 및 이미지 초기화 (IconCrash에서 이를 처리)
-    iconCrash.updateGradeText(4.5);  // 초기 GPA 값 설정
-    iconCrash.updateGradeImage(4.5);  // 초기 GPA 이미지 설정
+    // 새로 초기화된 코인만 추가
+    coinPosition();
+    iconPosition();
 
-    GameInitializer.coinNumber = 7;
     pointsManager.isFirstFive = false;
 
-    for (Coin coin : Coin.arraycoin) {
-      coin.setY(random.nextInt(120));
-    }
-
-    for (Icon icon : Icon.iconList) {
-      icon.setY(random.nextInt(120));
-    }
-
+    iconCrash.updateGradeText(4.5);
+    iconCrash.updateGradeImage(4.5);
 
     blanket.resetBlanket();
 
     // 텍스트 필드 초기화
     updateCurpointText();
 
+    // 타이머 초기화
+    if (timer != null) {
+      timer.stop();
+    }
     timer = new GameTimer(iconManager, coinCrash, iconCrash, professorManager, this);
 
     // 교수님 상태 초기화
@@ -204,7 +216,6 @@ public class GamePanel extends JPanel {
 
     // 패널 다시 그리기
     repaint();
-    startGame();
   }
 
   @Override

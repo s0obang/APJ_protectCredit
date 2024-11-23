@@ -56,13 +56,11 @@ public class StarPanel extends JPanel {
   // Timer 시작 메서드
   public void startTimer() {
       timer.start();
-      System.out.println("Timer started");
   }
 
   // Timer 중지 메서드
   public void stopTimer() {
       timer.stop();
-      System.out.println("Timer stopped");
   }
 
   // starplayer 위치만 초기화하는 메서드
