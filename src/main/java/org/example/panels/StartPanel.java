@@ -173,46 +173,45 @@ public class StartPanel extends JPanel {
     }
 
     private void getHistory(JPanel panel) {
-        // 폰트 설정
         Font labelFont = new Font("Neo둥근모", Font.PLAIN, 25);
 
-        // 최근 기록 가져오기
         List<Map<String, String>> recentRecords = dbManager.getRecentRecords(LoginManager.getLoggedInUser());
 
-        String[] columns = {"Points", "Date"};  // 컬럼 이름
+        String[] columns = {"", ""};
         Object[][] data = new Object[recentRecords.size()][2];
 
-        // 데이터를 테이블 모델에 추가
         for (int i = 0; i < recentRecords.size(); i++) {
             Map<String, String> record = recentRecords.get(i);
-            data[i][0] = record.get("points");  // Points
-            data[i][1] = record.get("date");    // Date
+            data[i][0] = record.get("points");
+            data[i][1] = record.get("date");
         }
 
-        // DefaultTableModel을 이용해 테이블 모델 생성
-        DefaultTableModel model = new DefaultTableModel(data, columns);
+        DefaultTableModel model = new DefaultTableModel(data, columns){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        // JTable 생성
         JTable recordsTable = new JTable(model);
         recordsTable.setFont(labelFont);
         recordsTable.setOpaque(false);
-        recordsTable.setBorder(null);   // 테두리 제거
-        recordsTable.setShowGrid(false);  // 그리드(격자선) 제거
-        recordsTable.setRowHeight(45);  // 행 높이 설정
+        recordsTable.setBorder(null);
+        recordsTable.setShowGrid(false);
+        recordsTable.setRowHeight(45);
+        recordsTable.setRowSelectionAllowed(false);
+        recordsTable.setColumnSelectionAllowed(false);
+        recordsTable.setCellSelectionEnabled(false);
+        recordsTable.setFocusable(false);
 
-        // 셀 렌더러 설정
         DefaultTableCellRenderer customRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-                // 중앙 정렬
                 setHorizontalAlignment(SwingConstants.CENTER);
-
-                // 셀 배경 색상
                 comp.setBackground(Color.decode("#ADB7C4"));
 
-                // 글자 색상: 컬럼별로 다르게 설정
                 if (column == 0) {
                     comp.setForeground(Color.BLACK);
                 } else {
@@ -223,25 +222,21 @@ public class StartPanel extends JPanel {
             }
         };
 
-        // 모든 컬럼에 렌더러 적용
         for (int i = 0; i < recordsTable.getColumnCount(); i++) {
             recordsTable.getColumnModel().getColumn(i).setCellRenderer(customRenderer);
         }
 
-        // 컬럼 너비 설정
         recordsTable.getColumnModel().getColumn(0).setPreferredWidth(200);  // Points 컬럼
         recordsTable.getColumnModel().getColumn(1).setPreferredWidth(200);  // Date 컬럼
 
-        // 테이블 위치 및 크기 설정
         recordsTable.setBounds(325, 257, 400, 180);
 
-        // 패널에 테이블 추가
         panel.add(recordsTable);
 
-        // 재조정 및 리렌더링
         recordsTable.revalidate();
         recordsTable.repaint();
 
+        // 최고점 띄우기
         Font scoreFont = new Font("Neo둥근모", Font.BOLD, 45);
 
         Map<String, String> highest = dbManager.getHighestScore(LoginManager.getLoggedInUser());

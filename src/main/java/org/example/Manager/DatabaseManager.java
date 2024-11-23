@@ -14,9 +14,9 @@ import java.util.Map;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private String url = "jdbc:mysql://localhost:3306/~~"; // 로컬 DB 주소
+    private String url = "jdbc:mysql://localhost:3306/game"; // 로컬 DB 주소
     private String user = "root"; // DB user
-    private String password = ""; // DB password
+    private String password = "0428"; // DB password
 
     private DatabaseManager() {
         createTables();
@@ -142,10 +142,11 @@ public class DatabaseManager {
         String insertSql = "INSERT INTO history (userId, points, date) VALUES (?, ?, ?)";
         String rankSql =
                 "WITH ranked_history AS (" +
-                        "    SELECT userId, points, RANK() OVER (ORDER BY points DESC) AS `rank` " +
-                        "    FROM history" +
+                        "    SELECT userId, MAX(points) AS max_points, RANK() OVER (ORDER BY MAX(points) DESC) AS `rank` " +
+                        "    FROM history " +
+                        "    GROUP BY userId" +
                         ") " +
-                        "SELECT `rank` FROM ranked_history WHERE userId = ? AND points = ? LIMIT 1";
+                        "SELECT `rank` FROM ranked_history WHERE userId = ? LIMIT 1";
 
         int rank = -1;
 
@@ -154,7 +155,6 @@ public class DatabaseManager {
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                 insertStmt.setInt(1, user.getUserId());
                 insertStmt.setLong(2, gameResult.getPoints());
-
 
                 String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 insertStmt.setString(3, formattedDate);
@@ -168,10 +168,9 @@ public class DatabaseManager {
                 }
             }
 
-            // 순위 조회
+            // 최고 점수 기반 순위 조회
             try (PreparedStatement rankStmt = conn.prepareStatement(rankSql)) {
                 rankStmt.setInt(1, user.getUserId());
-                rankStmt.setLong(2, gameResult.getPoints());
 
                 try (ResultSet rs = rankStmt.executeQuery()) {
                     if (rs.next()) {
@@ -181,6 +180,8 @@ public class DatabaseManager {
 
                 if (rank == -1) {
                     System.out.println("순위를 가져오는 데 실패했습니다.");
+                } else {
+                    System.out.println("현재 순위: " + rank);
                 }
             }
         } catch (SQLException e) {
@@ -192,8 +193,24 @@ public class DatabaseManager {
     }
 
 
+
     public List<Map<String, String>> getRanking() {
-        String sql = "SELECT nickname, max_points FROM ranking_view";
+        String sql =
+                "WITH user_max_scores AS (" +
+                        "    SELECT h.userId, u.nickname, MAX(h.points) AS max_points " +
+                        "    FROM history h " +
+                        "    INNER JOIN users u ON h.userId = u.id " +
+                        "    GROUP BY h.userId, u.nickname" +
+                        "), " +
+                        "ranked_scores AS (" +
+                        "    SELECT nickname, max_points, RANK() OVER (ORDER BY max_points DESC) AS `rank` " +
+                        "    FROM user_max_scores" +
+                        ") " +
+                        "SELECT nickname, max_points, `rank` " +
+                        "FROM ranked_scores " +
+                        "ORDER BY `rank` " +
+                        "LIMIT 11"; // 상위 11명만 가져오기
+
         List<Map<String, String>> rankings = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(url, this.user, this.password);
@@ -204,6 +221,7 @@ public class DatabaseManager {
                 Map<String, String> rank = new HashMap<>();
                 rank.put("nickname", rs.getString("nickname"));
                 rank.put("points", String.valueOf(rs.getInt("max_points")));
+                rank.put("rank", String.valueOf(rs.getInt("rank")));
                 rankings.add(rank);
             }
         } catch (SQLException e) {
@@ -212,6 +230,8 @@ public class DatabaseManager {
 
         return rankings;
     }
+
+
 
     public List<Map<String, String>> getRecentRecords(User user) {
         String nickname = user.getNickname();
