@@ -5,17 +5,16 @@ import javax.swing.Timer;
 import org.example.entity.Player;
 import org.example.entity.Professor;
 
+
 public class ProfessorManager {
 
   private Professor professor;
   private Timer professorTimer;
   private Player player; // 플레이어와의 상호작용 처리
-  private Runnable onCollision; // 충돌 시 동작 실행
+  // 충돌 시 동작 실행
 
-  public ProfessorManager(Player player, Runnable onCollision) {
+  public ProfessorManager(Player player) {
     this.player = player;
-    this.onCollision = onCollision;
-
     // 교수님 객체 초기화
     this.professor = new Professor(100, 100, 90, 90); // 초기 위치와 크기 설정
   }
@@ -28,13 +27,13 @@ public class ProfessorManager {
         moveProfessorRandomly();
 
         // 교수님이 일정 시간 후 사라짐
-        new Timer(10000, ev -> {
+        new Timer(5000, ev -> {
           professor.setVisible(false);
           System.out.println("교수님 퇴장!");
         }).start();
       }
     });
-    professorTimer.setRepeats(true);
+    professorTimer.setRepeats(false);
     professorTimer.start();
   }
 

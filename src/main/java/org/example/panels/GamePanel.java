@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import lombok.Getter;
 import org.example.Manager.*;
 import org.example.entity.Blanket;
 import javax.swing.JPanel;
@@ -29,7 +30,7 @@ import org.example.Manager.PointsManager;
 
 import static org.example.entity.Coin.random;
 
-
+@Getter
 public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
@@ -114,15 +115,7 @@ public class GamePanel extends JPanel {
 
 
     professorManager = new ProfessorManager(
-        this.getPlayer(),
-        () -> {
-          System.out.println("교수님 충돌");//로깅용임
-          this.getPlayer().setMovable(false);
-          new Timer(5000, ev -> {
-            this.getPlayer().setMovable(true);
-            System.out.println("복원~");//로깅용 22
-          }).start();
-        }
+        this.getPlayer()
     );
 
     setPreferredSize(new Dimension(1080, 720));
@@ -188,7 +181,6 @@ public class GamePanel extends JPanel {
     });
     countTimer.start();
     // 교수님 주기적 등장 시작
-    professorManager.start(5000); //5초마다 등장
     timer.start();
   }
 
