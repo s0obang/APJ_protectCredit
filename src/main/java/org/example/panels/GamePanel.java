@@ -38,7 +38,8 @@ public class GamePanel extends JPanel {
   public CoinCrash coinCrash;
   public Player player; //이거 메인캐릭터임^^
   private IconCrash iconCrash;
-  private Timer timer, countTimer;
+  public Timer timer;
+  private Timer countTimer;
   private IconManager iconManager;
   private BufferedImage backgroundImage;
   private JTextField curpointText; // GamePanel의 JTextField

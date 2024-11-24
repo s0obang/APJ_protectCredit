@@ -218,7 +218,6 @@ public class GameManager extends JFrame {
       bonusPanel.countTimer.stop();
       gamePanel.updateCurpointText();
       gamePanel.remainingTime = 30; // 시간 초기화
-      gamePanel.startGame(); // 타이머 재시작
       currentCycleCount++;
       if(currentCycleCount == maxCycleCount -1) {
         startlastGame();
@@ -244,7 +243,6 @@ public class GameManager extends JFrame {
       switchToPanelWithDelay("game", 0);
       gamePanel.updateCurpointText();
       gamePanel.remainingTime = 30; // 시간 초기화
-      gamePanel.startGame(); // 타이머 재시작
       // GamePanel로 돌아올 때 BonusPanel 포인트를 동기화
       currentCycleCount++;
       if(currentCycleCount == maxCycleCount -1) {
@@ -308,7 +306,7 @@ public class GameManager extends JFrame {
   public void startGameSequence() {
     showScreen("game");
     resetGame();
-    gamePanel.updateGrade(1); // 1학년으로 시작
+    gamePanel.updateGrade(1);
     startGameCycle();
   }
 
@@ -339,12 +337,15 @@ public class GameManager extends JFrame {
     // 점수 및 상태 초기화
     pointsManager.resetPoints(); // 포인트 초기화
     currentCycleCount = 0; // 사이클 카운트 초기화
-    gamePanel.updateGrade(1); // 1학년으로 초기화
     overStarTime = false; // 충돌 상태 초기화
 
     // 게임 패널 상태 초기화
     gamePanel.reset(); // GamePanel 초기화
     gamePanel.getPlayer().setGPA(4.5); // 플레이어 학점을 4.5로 리셋
+
+    // 전역 객체 상태 초기화
+    Icon.iconList.forEach(Icon::resetSpeedLevel); // 아이콘 속도 리셋
+    Coin.arraycoin.forEach(Coin::resetSpeedLevel); // 코인 속도 리셋
 
     // 유저 상태 초기화
     userStatus.setUserGrade(1); // 학년 초기화

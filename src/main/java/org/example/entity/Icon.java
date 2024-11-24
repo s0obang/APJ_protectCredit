@@ -17,7 +17,7 @@ public abstract class Icon extends Entity {
   private static final Random random = new Random();
   private int x;
   private int y;
-  private static int speed;
+  public static int speed;
   private int scoreEffect;
   private static int speedLevel = 1;
 
@@ -130,7 +130,7 @@ public abstract class Icon extends Entity {
   // 속도 레벨 증가 메서드
   public static void increaseSpeedLevel() {
     speedLevel++;
-    speed += speedLevel * 0.3; // 속도 증가
+    speed += (int) Math.pow(speedLevel, 2); // 속도 증가
   }
 
   // 속도 레벨 리셋 메서드
