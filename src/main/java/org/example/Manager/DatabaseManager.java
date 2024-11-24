@@ -16,7 +16,7 @@ public class DatabaseManager {
     private static DatabaseManager instance;
     private String url = "jdbc:mysql://localhost:3306/graduation"; // 로컬 DB 주소
     private String user = "root"; // DB user
-    private String password = "1234"; // DE password
+    private String password = "s0obang1121"; // DE password
 
     private DatabaseManager() {
         createTables();
