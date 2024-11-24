@@ -14,7 +14,7 @@ import org.example.object.CoinCrash;
 import org.example.entity.Coin;
 import org.example.entity.GameResult;
 import org.example.entity.Icon;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
 import org.example.object.UserStatus;
@@ -168,13 +168,13 @@ public class GameManager extends JFrame {
           // 충돌이 발생하면 바로 패널로 이동
           if (starCrash.distance < starCrash.collisionDistance) {
             ((Timer) event.getSource()).stop();  // Timer 종료
-            starPanel.stopTimer();
+            starPanel.setVisible(false);
             startBonusPhase();
           }
         } else {
           // 5초가 지나면 Timer를 종료하고 충돌이 없으면 다음 단계로 진행
           ((Timer) event.getSource()).stop();
-          starPanel.stopTimer();
+          starPanel.setVisible(false);
           starCrash.handleCollision();
           overStarTime = true;
           startNoCollisionPhase();
@@ -267,8 +267,8 @@ public class GameManager extends JFrame {
 
   private void updateUserStatus() {
     // GamePanel로부터 현재 점수 가져오기
-    Player player = gamePanel.getPlayer();
-    double currentScore = player.getGPA();
+    GamePlayer gamePlayer = gamePanel.getPlayer();
+    double currentScore = gamePlayer.getGPA();
     int currentPoints = pointsManager.getPoints();
 
     // UserStatus 업데이트

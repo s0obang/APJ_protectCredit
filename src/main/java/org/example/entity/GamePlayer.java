@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Player extends Entity {
+public class GamePlayer extends Entity {
 
   private int speed;
   private Image characterImage;
@@ -27,7 +27,7 @@ public class Player extends Entity {
   @Getter
   private boolean movable = true;
 
-  public Player(int x, int y, int width, int height) {
+  public GamePlayer(int x, int y, int width, int height) {
     super(x, y, width, height);
     this.speed = 10;
     this.boundaryWidth = 1080;

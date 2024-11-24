@@ -3,7 +3,7 @@ package org.example.panels;
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.PointsManager;
 import org.example.entity.Coin;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.object.CoinCrash;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ public class BonusPanel extends JPanel {
     private PointsManager pointsManager; // PointsManager 추가
     private JTextField curpointText; // BonusPanel의 JTextField
     public CoinCrash coinCrash;
-    public Player bonusplayer;
+    public GamePlayer bonusplayer;
     public boolean isCoinsInitialized = false; // 코인 초기화 여부 플래그
     public Timer timer, countTimer;
     private JLabel timerLabel; // 타이머 표시용 JLabel 추가
@@ -38,7 +38,7 @@ public class BonusPanel extends JPanel {
         this.add(timerLabel);
 
         setPreferredSize(new Dimension(1080, 720)); // 패널 크기 설정
-        bonusplayer = new Player(500, 100, 100, 100);
+        bonusplayer = new GamePlayer(500, 100, 100, 100);
 
         //플레이어 방향키로 이동하느느거!!!
         setFocusable(true);

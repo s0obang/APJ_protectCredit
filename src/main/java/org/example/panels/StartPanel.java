@@ -16,6 +16,8 @@ import java.util.List;
 import org.example.Manager.*;
 import org.example.entity.User;
 
+import static org.example.Manager.GameManager.*;
+
 public class StartPanel extends JPanel {
 
     private CardLayout cardLayout;

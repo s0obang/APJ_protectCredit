@@ -1,16 +1,7 @@
 package org.example.object;
 
 import org.example.Manager.GameManager;
-import org.example.entity.Coin;
-import org.example.entity.Entity;
-import org.example.entity.Player;
-import org.example.panels.BonusPanel;
-import org.example.panels.RainbowPanel;
 import org.example.panels.StarPanel;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class StarCrash {
     private final GameManager gameManager;

@@ -2,18 +2,18 @@ package org.example.Manager;
 
 import java.awt.Graphics;
 import javax.swing.Timer;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.entity.Professor;
 
 public class ProfessorManager {
 
   private Professor professor;
   private Timer professorTimer;
-  private Player player; // 플레이어와의 상호작용 처리
+  private GamePlayer gamePlayer; // 플레이어와의 상호작용 처리
   private Runnable onCollision; // 충돌 시 동작 실행
 
-  public ProfessorManager(Player player, Runnable onCollision) {
-    this.player = player;
+  public ProfessorManager(GamePlayer gamePlayer, Runnable onCollision) {
+    this.gamePlayer = gamePlayer;
     this.onCollision = onCollision;
 
     // 교수님 객체 초기화
@@ -46,22 +46,22 @@ public class ProfessorManager {
 
   public void update() {
     if (professor.isVisible()) {
-      professor.move(player.getX(), player.getY());
-      if (professor.checkCollision(player.getX(), player.getY(), player.getWidth(),
-          player.getHeight())) {
+      professor.move(gamePlayer.getX(), gamePlayer.getY());
+      if (professor.checkCollision(gamePlayer.getX(), gamePlayer.getY(), gamePlayer.getWidth(),
+          gamePlayer.getHeight())) {
         if (!professor.isCollided()) {
           professor.setCollided(true);
           //professor.setWidth(120);
           System.out.println("충돌");
 
           // 사용자 컨트롤 제한
-          player.setMovable(false);
+          gamePlayer.setMovable(false);
 
           // 제한 시간이 끝나면 사용자 컨트롤 복원 및 교수님 제거
           new Timer(5000, ev -> {
             professor.setVisible(false);
             professor.setCollided(false);
-            player.setMovable(true);
+            gamePlayer.setMovable(true);
             //professor.setWidth(90);
             System.out.println("충돌 종료");
           }).start();

@@ -4,25 +4,25 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Timer;
 
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 
 public class GameKeyAdapter extends KeyAdapter {
 
-  private final Player player;
+  private final GamePlayer gamePlayer;
   private Timer timer;
 
-  public GameKeyAdapter(Player player) {
-    this.player = player;
+  public GameKeyAdapter(GamePlayer gamePlayer) {
+    this.gamePlayer = gamePlayer;
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
-    if (!player.isMovable()) {
+    if (!gamePlayer.isMovable()) {
       System.out.println("교 수 님 의 따 스 한 훈 화 말 씀 시간 ~ ❤️");
       return;
     }
 
-    if (player.isBlanketActive()) {
+    if (gamePlayer.isBlanketActive()) {
       return;
     }
 
@@ -33,7 +33,7 @@ public class GameKeyAdapter extends KeyAdapter {
       case KeyEvent.VK_LEFT -> dx = -2;
       case KeyEvent.VK_RIGHT -> dx = 2;
     }
-    player.move(dx, dy);
+    gamePlayer.move(dx, dy);
   }
 
 
