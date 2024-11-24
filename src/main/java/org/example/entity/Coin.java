@@ -44,7 +44,7 @@ public class Coin extends Entity {
 
   // 속도 레벨 증가 메서드
   public static void increaseSpeedLevel() {
-    Coin.speed += (int) (GameManager.currentCycleCount * 0.7);
+    Coin.speed += (int) (GameManager.currentCycleCount * 0.6);
   }
 
   // 속도 레벨 리셋 메서드

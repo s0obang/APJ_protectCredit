@@ -23,27 +23,33 @@ public abstract class Icon extends Entity {
 
   // 아이템 타입 열거형
   public enum IconType {
-    F, TEXTBOOK, APLUS, COFFEE
+    F, TEXTBOOK, APLUS, COFFEE, greenF, redA, BOOK
   }
 
   private static final Map<IconType, Integer> SPAWN_COUNTS = new HashMap<>();
   private static final Map<IconType, String> ICON_PATHS = new HashMap<>();
-  private static final long SPAWN_INTERVAL = 300000; // 300초마다 스폰 사이클 실행
+  private static final long SPAWN_INTERVAL = 60000; // 300초마다 스폰 사이클 실행
   private static long lastSpawnTime = 0;
   private static int currentIndex = 0;
 
   static {
     // 각 아이템 타입별 10초당 출현 횟수 설정
-    SPAWN_COUNTS.put(IconType.F, 6);        // F는 30초당 4번
-    SPAWN_COUNTS.put(IconType.TEXTBOOK, 6); // 교과서는 30초당 4번
-    SPAWN_COUNTS.put(IconType.APLUS, 5);    // A+는 30초당 3번
-    SPAWN_COUNTS.put(IconType.COFFEE, 5);   // 커피는 30초당 3번
+    SPAWN_COUNTS.put(IconType.F, 5);
+    SPAWN_COUNTS.put(IconType.greenF, 5);
+    SPAWN_COUNTS.put(IconType.TEXTBOOK, 5);
+    SPAWN_COUNTS.put(IconType.BOOK, 5);
+    SPAWN_COUNTS.put(IconType.APLUS, 4);
+    SPAWN_COUNTS.put(IconType.redA, 4);
+    SPAWN_COUNTS.put(IconType.COFFEE, 4);
 
     // 각 아이템 타입별 이미지 경로 설정
     ICON_PATHS.put(IconType.F, "src/main/java/org/example/img/gradeItem/F.png");
     ICON_PATHS.put(IconType.TEXTBOOK, "src/main/java/org/example/img/gradeItem/textBook.png");
     ICON_PATHS.put(IconType.APLUS, "src/main/java/org/example/img/gradeItem/A+.png");
     ICON_PATHS.put(IconType.COFFEE, "src/main/java/org/example/img/gradeItem/Coffee.png");
+    ICON_PATHS.put(IconType.greenF, "src/main/java/org/example/img/gradeItem/greenF.png");
+    ICON_PATHS.put(IconType.BOOK, "src/main/java/org/example/img/gradeItem/book.png");
+    ICON_PATHS.put(IconType.redA, "src/main/java/org/example/img/gradeItem/redA+.png");
   }
 
   // 아이템 타입을 순서대로 가져오는 리스트 생성
@@ -77,7 +83,7 @@ public abstract class Icon extends Entity {
     }
 
     // 점수 효과 설정
-    if (iconType == IconType.APLUS || iconType == IconType.COFFEE) {
+    if (iconType == IconType.APLUS || iconType == IconType.COFFEE || iconType == IconType.redA) {
       scoreEffect = 1;
     } else {
       scoreEffect = -1;
@@ -95,7 +101,7 @@ public abstract class Icon extends Entity {
   public static void createAndAddIcon(int width, int height) {
     long currentTime = System.currentTimeMillis();
 
-    // SPAWN_INTERVAL(10초)가 지났는지 확인
+    // SPAWN_INTERVAL(60초)가 지났는지 확인
     if (currentTime - lastSpawnTime >= SPAWN_INTERVAL) {
       // 새로운 스폰 사이클 시작
       spawnSequence = createSpawnSequence();
@@ -124,7 +130,7 @@ public abstract class Icon extends Entity {
   // 속도 레벨 증가 메서드
   public static void increaseSpeedLevel() {
     speedLevel++;
-    speed = random.nextInt(3) + 2 + (int) Math.pow(speedLevel, 2); // 속도 증가
+    speed += speedLevel * 0.3; // 속도 증가
   }
 
   // 속도 레벨 리셋 메서드

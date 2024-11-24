@@ -127,6 +127,9 @@ public class GameManager extends JFrame {
   //마지막에는 endGameCycle()로 이동
   private void startLevelUpPhase() {
     if (levelUpTimer != null) levelUpTimer.stop();
+    // 현재 학년 업데이트 (currentCycleCount는 0부터 시작하므로 +1)
+    gamePanel.updateGrade(currentCycleCount + 1);
+
     //30초 뒤에 levelup패널로 전환
     levelUpTimer = new Timer(30000, e -> {
       switchToPanelWithDelay("levelup", 0);
@@ -214,6 +217,8 @@ public class GameManager extends JFrame {
       bonusPanel.timer.stop();
       bonusPanel.countTimer.stop();
       gamePanel.updateCurpointText();
+      gamePanel.remainingTime = 30; // 시간 초기화
+      gamePanel.startGame(); // 타이머 재시작
       currentCycleCount++;
       if(currentCycleCount == maxCycleCount -1) {
         startlastGame();
@@ -238,6 +243,8 @@ public class GameManager extends JFrame {
     noCollisionTimer = new Timer(2000, e -> {
       switchToPanelWithDelay("game", 0);
       gamePanel.updateCurpointText();
+      gamePanel.remainingTime = 30; // 시간 초기화
+      gamePanel.startGame(); // 타이머 재시작
       // GamePanel로 돌아올 때 BonusPanel 포인트를 동기화
       currentCycleCount++;
       if(currentCycleCount == maxCycleCount -1) {
@@ -250,6 +257,7 @@ public class GameManager extends JFrame {
 
   private void startlastGame() {
     System.out.println("마지막 게임 진입");
+    gamePanel.updateGrade(currentCycleCount + 1);
     if(lastgameTimer != null) lastgameTimer.stop();
     lastgameTimer = new Timer(30000, e-> {
       gamePanel.stopGame();
@@ -300,6 +308,7 @@ public class GameManager extends JFrame {
   public void startGameSequence() {
     showScreen("game");
     resetGame();
+    gamePanel.updateGrade(1); // 1학년으로 시작
     startGameCycle();
   }
 
@@ -330,15 +339,12 @@ public class GameManager extends JFrame {
     // 점수 및 상태 초기화
     pointsManager.resetPoints(); // 포인트 초기화
     currentCycleCount = 0; // 사이클 카운트 초기화
+    gamePanel.updateGrade(1); // 1학년으로 초기화
     overStarTime = false; // 충돌 상태 초기화
 
     // 게임 패널 상태 초기화
     gamePanel.reset(); // GamePanel 초기화
     gamePanel.getPlayer().setGPA(4.5); // 플레이어 학점을 4.5로 리셋
-
-    // 전역 객체 상태 초기화
-    Icon.iconList.forEach(Icon::resetSpeedLevel); // 아이콘 속도 리셋
-    Coin.arraycoin.forEach(Coin::resetSpeedLevel); // 코인 속도 리셋
 
     // 유저 상태 초기화
     userStatus.setUserGrade(1); // 학년 초기화

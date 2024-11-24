@@ -66,7 +66,6 @@ public class EndPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 manager.showScreen("start");
-                manager.resetGame();
             }
         });
 
@@ -119,8 +118,6 @@ public class EndPanel extends JPanel {
         nextButton.setBorderPainted(false);
         nextButton.setFocusPainted(false);
         nextButton.setContentAreaFilled(false);
-
-        manager.resetGame();
 
         nextButton.addActionListener(new ActionListener() {
             @Override
