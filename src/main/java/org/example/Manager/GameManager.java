@@ -148,6 +148,7 @@ public class GameManager extends JFrame {
     if (starTimer != null) starTimer.stop();
     starTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("star", 0);
+      levelupPanel.setVisible(false);
 
       // Star 객체 초기화
       star = new Star(0, 0, 60, 50);
@@ -210,15 +211,15 @@ public class GameManager extends JFrame {
 
     bonusTimer = new Timer(3000, e2 -> {
       switchToPanelWithDelay("bonus", 0);
+      rainbowPanel.setVisible(false);
       bonusPanel.updateTime();
       bonusPanel.updateCurpointText(); // 포인트 동기화
-      bonusPanel.timer.start();
       bonusPanel.countTimer.start();
 
       // 10초 후 보너스 패널에서 게임 패널로 복귀
-    returnToGameTimer = new Timer(13000, e3 -> {
+    returnToGameTimer = new Timer(10000, e3 -> {
       switchToPanelWithDelay("game", 0);
-      bonusPanel.timer.stop();
+      bonusPanel.setVisible(false);
       bonusPanel.countTimer.stop();
       gamePanel.updateCurpointText();
       gamePanel.remainingTime = 30; // 시간 초기화
@@ -243,7 +244,7 @@ public class GameManager extends JFrame {
     if (noCollisionTimer != null) noCollisionTimer.stop();
     overStarTime = false;
     //스타와 함께 있었던 시간
-    noCollisionTimer = new Timer(2000, e -> {
+    noCollisionTimer = new Timer(500, e -> {
       switchToPanelWithDelay("game", 0);
       gamePanel.updateCurpointText();
       gamePanel.remainingTime = 30; // 시간 초기화

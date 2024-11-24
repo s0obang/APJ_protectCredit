@@ -107,8 +107,6 @@ public class GamePanel extends JPanel {
       @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F) {
-          // Blanket 효과음 재생
-          blanket.playBlanketSound();
           blanket.handleFKeyEvent();
         }
       }

@@ -62,6 +62,8 @@ public class Blanket {
 
     // F키 이벤트 처리 메서드
     public void handleFKeyEvent() {
+        // Blanket 효과음 재생
+        playBlanketSound();
         if (gamePlayer == null) {
             throw new IllegalStateException("Player 객체가 설정되지 않았습니다.");
         }

@@ -7,7 +7,6 @@ import org.example.entity.Star;
 import org.example.object.StarCrash;
 import javazoom.jl.player.Player;
 import java.io.FileInputStream;
-
 import javax.swing.*;
 import java.awt.*;
 

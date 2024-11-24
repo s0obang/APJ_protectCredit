@@ -1,16 +1,24 @@
 package org.example.panels;
 
+import javazoom.jl.player.Player;
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.PointsManager;
 import org.example.entity.Coin;
 import org.example.entity.GamePlayer;
 import org.example.object.CoinCrash;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import javazoom.jl.player.Player;
 
 public class BonusPanel extends JPanel {
     private PointsManager pointsManager; // PointsManager 추가
+    private RainbowPanel rainbowPanel;
     private JTextField curpointText; // BonusPanel의 JTextField
     public CoinCrash coinCrash;
     public GamePlayer bonusplayer;
@@ -19,16 +27,28 @@ public class BonusPanel extends JPanel {
     private JLabel timerLabel; // 타이머 표시용 JLabel 추가
     public int remainingTime = 10; // 남은 시간 (10초)
     private boolean isTimerRunning = false;
-
+    public Thread sound;
+    public boolean isSoundPlaying = false; // 오디오 재생 상태 추적
+    public Player mp3Player; // MP3 재생을 위한 Player 객체
+    private Image backgroundImage;
 
 
     public BonusPanel(PointsManager pointsManager) {
         this.pointsManager = pointsManager;
+        rainbowPanel = new RainbowPanel();
         coinCrash = new CoinCrash(null,this, pointsManager);
         // 텍스트 필드 초기화
         curpointText = createPointsTextField();
         setLayout(null);
         this.add(curpointText);
+
+        // 배경 이미지 로드
+        try {
+            backgroundImage = ImageIO.read(
+                    new File("src/main/java/org/example/img/backgrounds/backFever.jpeg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // 타이머 표시용 JLabel 초기화
         timerLabel = new JLabel("남은 시간: " + remainingTime + "초", SwingConstants.CENTER);
@@ -90,6 +110,24 @@ public class BonusPanel extends JPanel {
         return textField;
     }
 
+    // MP3 파일 재생 메서드
+    public void playbonusPanelSound() {
+        if (!isSoundPlaying) {
+            isSoundPlaying = true;
+            sound = new Thread(() -> {
+                try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/bonuspanel.mp3")) {
+                    mp3Player = new Player(fis);
+                    mp3Player.play(); // MP3 파일 재생
+                    isSoundPlaying = false; // 오디오 재생 완료
+                } catch (Exception e) {
+                    System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                    isSoundPlaying = false; // 오류 발생 시 상태 변경
+                }
+            });
+            sound.start(); // 비동기적으로 오디오 시작
+        }
+    }
+
 
     public void updateCurpointText() {
         curpointText.setText(pointsManager.getPoints() + "만 원");
@@ -110,6 +148,14 @@ public class BonusPanel extends JPanel {
         } else {
             // BonusPanel이 사라질 때는 타이머 중지
             stopTimer();
+            // setVisible이 false일 때 sound 스레드 멈추기
+            if (sound != null && sound.isAlive()) {
+                sound.interrupt();  // 스레드 멈추기
+                isSoundPlaying = false; // 오디오 재생 상태 초기화
+                if (mp3Player != null) {
+                    mp3Player.close(); // 오디오 파일 종료
+                }
+            }
         }
     }
 
@@ -132,8 +178,13 @@ public class BonusPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.decode("#B0BABA"));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        // 배경 이미지 그리기
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+        } else {
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
         // 보너스 플레이어 및 코인 그리기
         bonusplayer.draw(g);
 
