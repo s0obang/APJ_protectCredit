@@ -22,7 +22,7 @@ public class Coin extends Entity {
   public static List<Coin> largeCoins;
   public static List<Coin> mediCoins;
   public static List<Coin> smallCoins;
-  public static int speed; // 모든 코인에 공통된 속도
+  public static double speed; // 모든 코인에 공통된 속도
 
 
   public Coin(int x, int y, int width, int height, Image coinimg) {
@@ -44,12 +44,12 @@ public class Coin extends Entity {
 
   // 속도 레벨 증가 메서드
   public static void increaseSpeedLevel() {
-    Coin.speed += (int) (GameManager.currentCycleCount * 0.7);
+    Coin.speed += GameManager.currentCycleCount * 1.9;
   }
 
   // 속도 레벨 리셋 메서드
   public void resetSpeedLevel() {
-    speed = 5;
+    speed = 5.0;
   }
 
   public static void createAndAddCoin(int x, int y, int width, int height) {

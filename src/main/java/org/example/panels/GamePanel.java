@@ -23,7 +23,7 @@ import org.example.Manager.IconManager;
 import org.example.Manager.ProfessorManager;
 import org.example.entity.Coin;
 import org.example.entity.Icon;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.object.CoinCrash;
 import org.example.object.IconCrash;
 import org.example.Manager.PointsManager;
@@ -31,13 +31,14 @@ import org.example.Manager.PointsManager;
 import static org.example.entity.Coin.random;
 
 @Getter
+
 public class GamePanel extends JPanel {
 
   private static final Logger LOGGER = Logger.getLogger(GamePanel.class.getName()); // 강한 로그 사용
   private PointsManager pointsManager;
   private Blanket blanket;
   public CoinCrash coinCrash;
-  public Player player; //이거 메인캐릭터임^^
+  public GamePlayer gamePlayer; //이거 메인캐릭터임^^
   private IconCrash iconCrash;
   private Timer timer, countTimer;
   private IconManager iconManager;
@@ -61,7 +62,7 @@ public class GamePanel extends JPanel {
     }
 
     // Player 객체 생성 (초기 위치와 크기 설정)
-    player = new Player(500, 500, 100, 100);
+    gamePlayer = new GamePlayer(500, 500, 100, 100);
 
     // 텍스트 필드 초기화
     curpointText = createPointsTextField();
@@ -84,14 +85,14 @@ public class GamePanel extends JPanel {
 
     // Crash 객체 생성 -> 충돌 감지에 저장
     coinCrash = new CoinCrash(this, null, pointsManager);
-    iconCrash = new IconCrash(this, player);
-    iconCrash.addEntity(player);
-    coinCrash.addEntity(player);
+    iconCrash = new IconCrash(this, gamePlayer);
+    iconCrash.addEntity(gamePlayer);
+    coinCrash.addEntity(gamePlayer);
     iconManager = new IconManager();
 
     // 플레이어 방향키로 이동
     setFocusable(true);
-    addKeyListener(new GameKeyAdapter(player));
+    addKeyListener(new GameKeyAdapter(gamePlayer));
     addHierarchyListener(e -> {
       if (isShowing()) {
         requestFocusInWindow();
@@ -99,7 +100,7 @@ public class GamePanel extends JPanel {
     });
 
     // Blanket에 player 객체 설정
-    blanket.setPlayer(player);
+    blanket.setPlayer(gamePlayer);
 
     // 키 이벤트 추가
     addKeyListener(new KeyAdapter() {
@@ -115,7 +116,7 @@ public class GamePanel extends JPanel {
 
 
     professorManager = new ProfessorManager(
-        this.getPlayer()
+        this.getGamePlayer()
     );
 
     setPreferredSize(new Dimension(1080, 720));
@@ -159,8 +160,8 @@ public class GamePanel extends JPanel {
   public void startGame() {
     timer = new GameTimer(iconManager, coinCrash, iconCrash, professorManager, this);
     this.repaint();
-    player.x = 500;
-    player.y = 500;
+    gamePlayer.x = 500;
+    gamePlayer.y = 500;
     // 기존 타이머가 있다면 중지
     if (countTimer != null) {
       countTimer.stop();
@@ -190,8 +191,8 @@ public class GamePanel extends JPanel {
     }
   }
 
-  public Player getPlayer() {
-    return player;
+  public GamePlayer getPlayer() {
+    return gamePlayer;
   }
 
   public void coinPosition() {
@@ -206,7 +207,7 @@ public class GamePanel extends JPanel {
     coinCrash.clearEntities(); // 기존 충돌 엔티티 제거
     GameInitializer.initializeCoinEntities(coinCrash); // 새로 초기화
     Coin.increaseSpeedLevel();
-    coinCrash.addEntity(player);
+    coinCrash.addEntity(gamePlayer);
   }
 
   public void iconPosition() {
@@ -215,14 +216,14 @@ public class GamePanel extends JPanel {
     iconCrash.clearEntities();
     GameInitializer.initializeIconEntities(iconCrash);
     Icon.increaseSpeedLevel();
-    iconCrash.addEntity(player);
+    iconCrash.addEntity(gamePlayer);
   }
 
   public void reset() {
     // 플레이어 초기 위치와 상태 재설정
-    player.x = 500;
-    player.y = 500;
-    player.setMovable(true); // 이동 가능 상태로 설정
+    gamePlayer.x = 500;
+    gamePlayer.y = 500;
+    gamePlayer.setMovable(true); // 이동 가능 상태로 설정
 
     // 새로 초기화된 코인만 추가
     coinPosition();
@@ -271,7 +272,7 @@ public class GamePanel extends JPanel {
       coin.draw(g);
     }
 
-    player.draw(g);
+    gamePlayer.draw(g);
 
     // 좌측 상단에 띄울 코인 이미지 그리기
     if (CoinCrash.getCoinImage() != null) {

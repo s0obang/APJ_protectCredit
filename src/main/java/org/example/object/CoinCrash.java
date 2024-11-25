@@ -3,11 +3,10 @@ package org.example.object;
 import org.example.Manager.PointsManager;
 import org.example.entity.Coin;
 import org.example.entity.Entity;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.panels.BonusPanel;
 import org.example.panels.GamePanel;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -41,7 +40,7 @@ public class CoinCrash {
 
     // 충돌 처리 메서드
     private void handleCollision(Entity e1, Entity e2, boolean isBonus) {
-        if (e1 instanceof Player && e2 instanceof Coin) {
+        if (e1 instanceof GamePlayer && e2 instanceof Coin) {
             pointsManager.increasePoints(1);
             if (isBonus) {
                 bonusPanel.updateCurpointText();
@@ -49,7 +48,7 @@ public class CoinCrash {
                 gamePanel.updateCurpointText();
             }
             ((Coin) e2).resetPosition();
-        } else if (e1 instanceof Coin && e2 instanceof Player) {
+        } else if (e1 instanceof Coin && e2 instanceof GamePlayer) {
             pointsManager.increasePoints(1);
             if (isBonus) {
                 bonusPanel.updateCurpointText();

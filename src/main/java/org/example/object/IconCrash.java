@@ -2,27 +2,28 @@ package org.example.object;
 import org.example.entity.GameResult;
 import org.example.entity.Icon;
 import org.example.entity.Entity;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.panels.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static org.example.Manager.GameManager.*;
 import static org.example.panels.StarPanel.gameManager;
 
 
 public class IconCrash {
     private final GamePanel gamePanel;
     private final ArrayList<Entity> entities;
-    private Player player;
+    private GamePlayer gamePlayer;
     private JTextField gradeText;
     private JLabel gradeImageLabel;
 
-    public IconCrash(GamePanel gamePanel, Player player) {
+    public IconCrash(GamePanel gamePanel, GamePlayer gamePlayer) {
         entities = new ArrayList<>();
         this.gamePanel = gamePanel;
-        this.player = player;
+        this.gamePlayer = gamePlayer;
 
         // 학점 표시 텍스트 필드와 이미지 레이블 생성
         createGradeTextField();
@@ -65,29 +66,29 @@ public class IconCrash {
                 Entity e2 = entities.get(j);
 
                 if (e1.getBounds().intersects(e2.getBounds())) {
-                    if (e1 instanceof Player && e2 instanceof Icon) {
-                        updateGPA((Player) e1, (Icon) e2);
-                    } else if (e1 instanceof Icon && e2 instanceof Player) {
-                        updateGPA((Player) e2, (Icon) e1);
+                    if (e1 instanceof GamePlayer && e2 instanceof Icon) {
+                        updateGPA((GamePlayer) e1, (Icon) e2);
+                    } else if (e1 instanceof Icon && e2 instanceof GamePlayer) {
+                        updateGPA((GamePlayer) e2, (Icon) e1);
                     }
                 }
             }
         }
     }
 
-    public void updateGPA(Player player, Icon icon) {
-        double currentGPA = player.getGPA();
+    public void updateGPA(GamePlayer gamePlayer, Icon icon) {
+        double currentGPA = gamePlayer.getGPA();
         int scoreEffect = icon.getScoreEffect();
 
         if (scoreEffect == 1 && currentGPA < 4.5) {
-            player.setGPA(currentGPA + 0.5);
+            gamePlayer.setGPA(currentGPA + 0.5);
         } else if (scoreEffect == -1 && currentGPA > 0) {
-            player.setGPA(currentGPA - 0.5);
+            gamePlayer.setGPA(currentGPA - 0.5);
         }
 
 
         // 학점 텍스트 필드와 이미지 레이블 업데이트
-        double updatedGPA = player.getGPA();
+        double updatedGPA = gamePlayer.getGPA();
         updateGradeText(updatedGPA);
         updateGradeImage(updatedGPA);
         // 아이콘 초기 위치로 리셋
@@ -101,6 +102,10 @@ public class IconCrash {
             result.setGraduated(false);
             gameManager.showEndScreen(result);
             gamePanel.stopGame();
+            starPanel.setVisible(false);
+            bonusPanel.setVisible(false);
+            rainbowPanel.setVisible(false);
+            gameManager.getLevelUpTimer().stop();
         }
 
     }

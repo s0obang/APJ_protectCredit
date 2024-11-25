@@ -2,6 +2,10 @@ package org.example.panels;
 
 import javax.swing.*;
 import java.awt.*;
+import javazoom.jl.player.Player;
+import java.io.FileInputStream;
+
+import static org.example.Manager.GameManager.bonusPanel;
 
 public class RainbowPanel extends JPanel {
     private JTextField bonustime;
@@ -49,14 +53,11 @@ public class RainbowPanel extends JPanel {
         if (visible) {
             // 패널이 보이면 타이머 시작
             colorTimer.start();
+            bonusPanel.playbonusPanelSound();
         } else {
             // 패널이 보이지 않으면 타이머 중지
             colorTimer.stop();
         }
-    }
-
-    public void stopRainbow() {
-        colorTimer.stop();
     }
 
     @Override

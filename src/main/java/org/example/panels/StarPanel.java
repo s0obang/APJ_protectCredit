@@ -2,20 +2,23 @@ package org.example.panels;
 
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameManager;
-import org.example.entity.Player;
+import org.example.entity.GamePlayer;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
-
+import javazoom.jl.player.Player;
+import java.io.FileInputStream;
 import javax.swing.*;
 import java.awt.*;
 
 public class StarPanel extends JPanel {
-  public Player starplayer;
+  public GamePlayer starplayer;
   public StarCrash starCrash;
   public static GameManager gameManager;
   private Timer timer;
   private boolean isTimerRunning = false; // Timer 상태를 추적하는 플래그
-
+  private Thread sound;
+  private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
+  private Player mp3Player; // MP3 재생을 위한 Player 객체
 
   public StarPanel(GameManager gameManager) {
     StarPanel.gameManager = gameManager;
@@ -53,20 +56,38 @@ public class StarPanel extends JPanel {
     setOpaque(true);
   }
 
+  // MP3 파일 재생 메서드
+  public void playstarPanelSound() {
+    if (!isSoundPlaying) {
+      isSoundPlaying = true;
+      sound = new Thread(() -> {
+        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/starpanel.mp3")) {
+          mp3Player = new Player(fis);
+          mp3Player.play(); // MP3 파일 재생
+          isSoundPlaying = false; // 오디오 재생 완료
+        } catch (Exception e) {
+          System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+          isSoundPlaying = false; // 오류 발생 시 상태 변경
+        }
+      });
+      sound.start(); // 비동기적으로 오디오 시작
+    }
+  }
+
   // Timer 시작 메서드
   public void startTimer() {
-      timer.start();
+    timer.start();
   }
 
   // Timer 중지 메서드
   public void stopTimer() {
-      timer.stop();
+    timer.stop();
   }
 
   // starplayer 위치만 초기화하는 메서드
   private void initializeStarPlayer() {
     if (starplayer == null) {
-      starplayer = new Player(500, 500, 100, 100); // 위치 초기화
+      starplayer = new GamePlayer(500, 500, 100, 100); // 위치 초기화
     } else {
       // 이미 존재하는 starplayer가 있으면 위치만 초기화
       starplayer.setX(500);
@@ -80,29 +101,25 @@ public class StarPanel extends JPanel {
     if (visible) {
       startTimer();
       initializeStarPlayer();
+      playstarPanelSound();
     } else {
       stopTimer();
+
+      // setVisible이 false일 때 sound 스레드 멈추기
+      if (sound != null && sound.isAlive()) {
+        sound.interrupt();  // 스레드 멈추기
+        isSoundPlaying = false; // 오디오 재생 상태 초기화
+        if (mp3Player != null) {
+          mp3Player.close(); // 오디오 파일 종료
+        }
+      }
     }
   }
-
 
   // 스타 초기화 메서드
   public void initializeStar(Star star) {
     GameManager.star = star;
     repaint();
-  }
-
-  public void reset() {
-// starplayer 위치 초기화
-    starplayer.setX(500);
-    starplayer.setY(500);
-
-    // Star 객체 속도 초기화
-    if (GameManager.star != null) {
-      GameManager.star.resetSpeed();
-      GameManager.star.setVisible(true); // 스타를 다시 보이게 설정 (필요시)
-      GameManager.star.setNewTargetPosition(); // 새 목표 위치 설정
-    }
   }
 
   @Override
