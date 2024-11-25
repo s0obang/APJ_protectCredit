@@ -166,8 +166,8 @@ public class GameManager extends JFrame {
       collisionCheckTimer = new Timer(100, event -> {
         long elapsedTime = System.currentTimeMillis() - startTime;
 
-        // 충돌 체크 및 5초 경과 체크
-        if (elapsedTime < 5000) {  // 5초 동안 반복
+        // 충돌 체크 및 10초 경과 체크
+        if (elapsedTime < 10000) {  // 5초 동안 반복
           starCrash.checkCollision();  // 충돌 체크
 
           // 충돌이 발생하면 바로 패널로 이동
@@ -302,7 +302,7 @@ public class GameManager extends JFrame {
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());
     result.setGraduated(userStatus.isGraduated());
-    timer = new Timer(2000, e -> showEndScreen(result));
+    timer = new Timer(1000, e -> showEndScreen(result));
     timer.setRepeats(false);
     timer.start();
   }
