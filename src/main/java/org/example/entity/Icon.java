@@ -20,61 +20,43 @@ public abstract class Icon extends Entity {
   public static int speed;
   private int scoreEffect;
   private static int speedLevel = 1;
+  private IconType iconType; // 아이콘 타입을 저장할 필드 추가
 
   // 아이템 타입 열거형
   public enum IconType {
     F, TEXTBOOK, APLUS, COFFEE, greenF, redA, BOOK
   }
-
-  private static final Map<IconType, Integer> SPAWN_COUNTS = new HashMap<>();
-  private static final Map<IconType, String> ICON_PATHS = new HashMap<>();
-  private static final long SPAWN_INTERVAL = 60000; // 300초마다 스폰 사이클 실행
-  private static long lastSpawnTime = 0;
-  private static int currentIndex = 0;
+  // 스폰 관리를 위한 정적 변수들
+  private static final long SPAWN_CYCLE = 8000; // 8초 주기
+  private static final int ITEMS_PER_CYCLE = 18; // 주기당 총 아이템 수
+  private static long cycleStartTime = System.currentTimeMillis();
+  private static int currentCycleSpawns = 0;
+  private static Map<IconType, Integer> remainingSpawns = new HashMap<>();
 
   static {
-    // 각 아이템 타입별 10초당 출현 횟수 설정
-    SPAWN_COUNTS.put(IconType.F, 5);
-    SPAWN_COUNTS.put(IconType.greenF, 5);
-    SPAWN_COUNTS.put(IconType.TEXTBOOK, 5);
-    SPAWN_COUNTS.put(IconType.BOOK, 5);
-    SPAWN_COUNTS.put(IconType.APLUS, 4);
-    SPAWN_COUNTS.put(IconType.redA, 4);
-    SPAWN_COUNTS.put(IconType.COFFEE, 4);
-
-    // 각 아이템 타입별 이미지 경로 설정
-    ICON_PATHS.put(IconType.F, "src/main/java/org/example/img/gradeItem/F.png");
-    ICON_PATHS.put(IconType.TEXTBOOK, "src/main/java/org/example/img/gradeItem/textBook.png");
-    ICON_PATHS.put(IconType.APLUS, "src/main/java/org/example/img/gradeItem/A+.png");
-    ICON_PATHS.put(IconType.COFFEE, "src/main/java/org/example/img/gradeItem/Coffee.png");
-    ICON_PATHS.put(IconType.greenF, "src/main/java/org/example/img/gradeItem/greenF.png");
-    ICON_PATHS.put(IconType.BOOK, "src/main/java/org/example/img/gradeItem/book.png");
-    ICON_PATHS.put(IconType.redA, "src/main/java/org/example/img/gradeItem/redA+.png");
+    resetSpawnCounts();
   }
 
-  // 아이템 타입을 순서대로 가져오는 리스트 생성
-  private static List<IconType> createSpawnSequence() {
-    List<IconType> sequence = new ArrayList<>();
-    for (Map.Entry<IconType, Integer> entry : SPAWN_COUNTS.entrySet()) {
-      for (int i = 0; i < entry.getValue(); i++) {
-        sequence.add(entry.getKey());
-      }
-    }
-    Collections.shuffle(sequence); // 순서를 섞어서 랜덤성 부여
-    return sequence;
+  // 스폰 카운트 초기화
+  private static void resetSpawnCounts() {
+    remainingSpawns.clear();
+    remainingSpawns.put(IconType.F, 3);        // F는 주기당 2번
+    remainingSpawns.put(IconType.TEXTBOOK, 3); // 교과서는 주기당 2번
+    remainingSpawns.put(IconType.greenF, 3);
+    remainingSpawns.put(IconType.BOOK, 3);
+    remainingSpawns.put(IconType.APLUS, 2);    // A+는 주기당 2번
+    remainingSpawns.put(IconType.COFFEE, 2);   // 커피는 주기당 2번
+    remainingSpawns.put(IconType.redA, 2);
   }
-
-  private static List<IconType> spawnSequence = createSpawnSequence();
-
   public Icon(int x, int y, int width, int height) {
     super(x, y, width, height);
     this.x = random.nextInt(1080 - 20);
     this.y = random.nextInt(180);  //아이콘이 화면 위에서 떨어지도록 초기 위치 설정
     this.speed = random.nextInt(3) + 2;  //아이콘의 속도를 2~4 사이에서 랜덤으로 설정
 
-    // 다음 아이템 타입 선택
-    IconType iconType = getNextIconType();
-    String iconPath = ICON_PATHS.get(iconType);
+    // 아이콘 타입 선택 및 이미지 로드
+    this.iconType = selectNextIconType();
+    String iconPath = getIconPath(this.iconType);
 
     try {
       iconimg = ImageIO.read(new File(iconPath));
@@ -90,32 +72,63 @@ public abstract class Icon extends Entity {
     }
   }
 
-  private static IconType getNextIconType() {
-    if (currentIndex >= spawnSequence.size()) {
-      spawnSequence = createSpawnSequence();
-      currentIndex = 0;
+  private String getIconPath(IconType type) {
+    switch (type) {
+      case F: return "src/main/java/org/example/img/gradeItem/F.png";
+      case TEXTBOOK: return "src/main/java/org/example/img/gradeItem/textBook.png";
+      case APLUS: return "src/main/java/org/example/img/gradeItem/A+.png";
+      case COFFEE: return "src/main/java/org/example/img/gradeItem/Coffee.png";
+      case redA: return "src/main/java/org/example/img/gradeItem/redA+.png";
+      case BOOK: return "src/main/java/org/example/img/gradeItem/book.png";
+      case greenF: return "src/main/java/org/example/img/gradeItem/greenF.png";
+      default: throw new IllegalStateException("Invalid icon type");
     }
-    return spawnSequence.get(currentIndex++);
   }
+
+  // 다음 아이콘 타입을 선택하는 메서드
+  private static IconType selectNextIconType() {
+    // 남은 스폰이 있는 아이콘 타입들만 선택
+    List<IconType> availableTypes = new ArrayList<>();
+    for (Map.Entry<IconType, Integer> entry : remainingSpawns.entrySet()) {
+      if (entry.getValue() > 0) {
+        availableTypes.add(entry.getKey());
+      }
+    }
+
+    if (availableTypes.isEmpty()) {
+      resetSpawnCounts();
+      return selectNextIconType();
+    }
+
+    // 랜덤하게 하나 선택
+    IconType selectedType = availableTypes.get(random.nextInt(availableTypes.size()));
+    remainingSpawns.put(selectedType, remainingSpawns.get(selectedType) - 1);
+    return selectedType;
+  }
+
   // 새로운 아이콘 생성 및 리스트에 추가
   public static void createAndAddIcon(int width, int height) {
     long currentTime = System.currentTimeMillis();
 
-    // SPAWN_INTERVAL(60초)가 지났는지 확인
-    if (currentTime - lastSpawnTime >= SPAWN_INTERVAL) {
-      // 새로운 스폰 사이클 시작
-      spawnSequence = createSpawnSequence();
-      currentIndex = 0;
-      lastSpawnTime = currentTime;
+  // 주기가 끝났는지 체크
+    if (currentTime - cycleStartTime >= SPAWN_CYCLE) {
+      cycleStartTime = currentTime;
+      currentCycleSpawns = 0;
+      resetSpawnCounts();
     }
 
-    Icon icon = new Icon(width, height, 40, 40) {
-      @Override
-      public void update() {
-      }
-    };
-    iconList.add(icon);
+    // 주기당 아이템 수 체크
+    if (currentCycleSpawns < ITEMS_PER_CYCLE) {
+      Icon icon = new Icon(width, height, 40, 40) {
+        @Override
+        public void update() {
+        }
+      };
+      iconList.add(icon);
+      currentCycleSpawns++;
+    }
   }
+
   // 아이콘이 아래로 떨어지는 메서드
   public void fall() {
     y += speed;
@@ -146,8 +159,18 @@ public abstract class Icon extends Entity {
 
   // 아이콘을 그리는 메서드
   public void draw(Graphics g) {
-    int iconSize = 30;
-    g.drawImage(iconimg, x, y, iconSize, iconSize, null);
+    int iconSize = (iconType == IconType.BOOK) ? 60 : 30; // textbook만 60픽셀, 나머지는 30픽셀
+    //g.drawImage(iconimg, x, y, iconSize, iconSize, null);
+    // textbook인 경우 충돌 영역도 크기에 맞게 조정
+    if (iconType == IconType.BOOK) {
+      width = 60;
+      height = 60;
+      g.drawImage(iconimg, x - 15, y - 15, iconSize, iconSize, null); // 중심점 조정
+    } else {
+      width = 30;
+      height = 30;
+      g.drawImage(iconimg, x, y, iconSize, iconSize, null);
+    }
   }
 
   @Override
