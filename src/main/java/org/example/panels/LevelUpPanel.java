@@ -78,6 +78,6 @@ public class LevelUpPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(levelupchar, 130, 220, 300,300, null);
+        g.drawImage(levelupchar, 130, 220, 230,300, null);
     }
 }

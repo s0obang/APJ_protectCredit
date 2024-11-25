@@ -87,7 +87,7 @@ public class StarPanel extends JPanel {
   // starplayer 위치만 초기화하는 메서드
   private void initializeStarPlayer() {
     if (starplayer == null) {
-      starplayer = new GamePlayer(500, 500, 100, 100); // 위치 초기화
+      starplayer = new GamePlayer(500, 500, 50, 80); // 위치 초기화
     } else {
       // 이미 존재하는 starplayer가 있으면 위치만 초기화
       starplayer.setX(500);
