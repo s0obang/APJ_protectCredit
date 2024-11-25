@@ -63,13 +63,11 @@ public class Blanket {
     public void playBlanketSound() {
         new Thread(() -> { // 별도의 스레드에서 재생
             try {
-                // 재사용된 mp3Player로 음악 재생
-                if (fis != null) {
-                    fis.close(); // 기존 스트림을 닫고
-                    fis = new FileInputStream("src/main/java/org/example/audio/blanket.mp3"); // 새로운 스트림 생성
-                    mp3Player = new Player(fis); // Player 새로 생성
-                    mp3Player.play(); // MP3 파일 재생
-                }
+
+                fis = new FileInputStream("src/main/java/org/example/audio/blanket.mp3"); // 새로운 스트림 생성
+                mp3Player = new Player(fis); // Player 새로 생성
+                mp3Player.play(); // MP3 파일 재생
+
             } catch (JavaLayerException | IOException e) {
                 System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
             }
