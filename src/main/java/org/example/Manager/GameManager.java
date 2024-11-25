@@ -110,7 +110,7 @@ public class GameManager extends JFrame {
         gamePanel.startGame(); // 게임 재시작
         gamePanel.iconPosition();
         gamePanel.coinPosition();
-        if(currentCycleCount >=2){
+        if(currentCycleCount >=0){
           // 교수님 주기적 등장 시작
           gamePanel.getProfessorManager().start(5000); //5초마다 등장
         }
