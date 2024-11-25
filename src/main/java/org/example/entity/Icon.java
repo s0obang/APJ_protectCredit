@@ -118,7 +118,7 @@ public abstract class Icon extends Entity {
     }
 
     // 주기당 아이템 수 체크
-    if (currentCycleSpawns < ITEMS_PER_CYCLE) {
+    //if (currentCycleSpawns < ITEMS_PER_CYCLE) {
       Icon icon = new Icon(width, height, 40, 40) {
         @Override
         public void update() {
@@ -126,7 +126,7 @@ public abstract class Icon extends Entity {
       };
       iconList.add(icon);
       currentCycleSpawns++;
-    }
+   // }
   }
 
   // 아이콘이 아래로 떨어지는 메서드
