@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import static org.example.Manager.GameManager.*;
 import static org.example.panels.StarPanel.gameManager;
 
+import javazoom.jl.player.Player;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 
 public class IconCrash {
     private final GamePanel gamePanel;
@@ -19,6 +23,8 @@ public class IconCrash {
     private GamePlayer gamePlayer;
     private JTextField gradeText;
     private JLabel gradeImageLabel;
+    private static Player mp3Player;
+    private static FileInputStream fis;
 
     public IconCrash(GamePanel gamePanel, GamePlayer gamePlayer) {
         entities = new ArrayList<>();
@@ -42,6 +48,33 @@ public class IconCrash {
         gradeText.setBounds(50, 20, 150, 30);
         gamePanel.setLayout(null);
         gamePanel.add(gradeText);
+    }
+
+    // 오디오 재생 메서드 추가
+    private void playGradeUpSound() {
+        new Thread(() -> {
+            try {
+                fis = new FileInputStream("src/main/java/org/example/audio/gradeUp.mp3");
+                mp3Player = new Player(fis);
+                mp3Player.play();
+            } catch (Exception e) {
+                System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void playGradeDownSound() {
+        new Thread(() -> {
+            try {
+                fis = new FileInputStream("src/main/java/org/example/audio/gradeDown.mp3");
+                mp3Player = new Player(fis);
+                mp3Player.play();
+            } catch (Exception e) {
+                System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void createGradeImageLabel() {
@@ -80,10 +113,12 @@ public class IconCrash {
         double currentGPA = gamePlayer.getGPA();
         int scoreEffect = icon.getScoreEffect();
 
-        if (scoreEffect == 1 && currentGPA < 4.5) {
-            gamePlayer.setGPA(currentGPA + 0.5);
+        if (scoreEffect == 1 && currentGPA <= 4.5) {
+            playGradeUpSound(); // GPA 증가 시 sound 재생
+            if (currentGPA < 4.5) gamePlayer.setGPA(currentGPA + 0.5);
         } else if (scoreEffect == -1 && currentGPA > 0) {
             gamePlayer.setGPA(currentGPA - 0.5);
+            playGradeDownSound(); // GPA 감소 시 sound 재생
         }
 
 
