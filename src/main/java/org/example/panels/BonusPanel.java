@@ -58,7 +58,7 @@ public class BonusPanel extends JPanel {
         this.add(timerLabel);
 
         setPreferredSize(new Dimension(1080, 720)); // 패널 크기 설정
-        bonusplayer = new GamePlayer(500, 100, 100, 100);
+        bonusplayer = new GamePlayer(500, 100, 50, 80);
 
         //플레이어 방향키로 이동하느느거!!!
         setFocusable(true);

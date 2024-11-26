@@ -17,7 +17,7 @@ public class ProfessorManager {
   public ProfessorManager(GamePlayer player) {
     this.gamePlayer = player;
     // 교수님 객체 초기화
-    this.professor = new Professor(100, 100, 90, 90); // 초기 위치와 크기 설정
+    this.professor = new Professor(100, 100, 60, 90); // 초기 위치와 크기 설정
   }
 
   public void start(int interval) {
@@ -51,7 +51,7 @@ public class ProfessorManager {
           gamePlayer.getHeight())) {
         if (!professor.isCollided()) {
           professor.setCollided(true);
-          //professor.setWidth(120);
+          professor.setWidth(190);
           System.out.println("충돌");
 
           // 사용자 컨트롤 제한
@@ -62,7 +62,7 @@ public class ProfessorManager {
             professor.setVisible(false);
             professor.setCollided(false);
             gamePlayer.setMovable(true);
-            //professor.setWidth(90);
+            professor.setWidth(90);
             System.out.println("충돌 종료");
           }).start();
         }
