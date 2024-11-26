@@ -13,15 +13,21 @@ import java.io.IOException;
 public class LevelUpPanel extends JPanel {
     private Image levelupchar;
     private Image starImage;
-    private JTextField congratulation;
-    private JLabel levelLabel, upLabel, starLabel;
+    private JLabel levelLabel, upLabel, starLabel, congratulation;
     private Thread sound;
     private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
     private Player mp3Player; // MP3 재생을 위한 Player
+    private Image backgroundImage;
 
     public LevelUpPanel() {
         setLayout(null);
-        setBackground(Color.decode("#B0BABA"));
+        // 배경 이미지 로드
+        try {
+            backgroundImage = ImageIO.read(
+                    new File("src/main/java/org/example/img/backgrounds/etcback.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Font levelupFont = new Font("Neo둥근모", Font.BOLD, 60);
 
         try {
@@ -32,13 +38,9 @@ public class LevelUpPanel extends JPanel {
             e.printStackTrace();
         }
 
-        congratulation = new JTextField("Congratulation!");
-
+        congratulation = new JLabel("Congratulation!");
         congratulation.setFont(levelupFont);
         congratulation.setForeground(Color.black);
-        congratulation.setEditable(false);
-        congratulation.setOpaque(false); // 배경색 투명하게 만들기
-        congratulation.setBorder(null); // 텍스트 필드 테두리 삭제
         congratulation.setBounds(450, 280, 500, 60);
 
         //levelLabel 텍스트
@@ -49,7 +51,6 @@ public class LevelUpPanel extends JPanel {
         add(levelLabel);
 
         add(congratulation);
-        add(levelLabel);
 
         //star 이미지 삽입
         Image scaledStarImage = starImage.getScaledInstance(147, 120, Image.SCALE_SMOOTH);
@@ -62,28 +63,6 @@ public class LevelUpPanel extends JPanel {
         upLabel.setForeground(Color.black);
         upLabel.setBounds(650, 390, 100, 60);
         add(upLabel);
-
-
-        if(GameManager.currentCycleCount == GameManager.maxCycleCount - 1) {
-            levelLabel.setVisible(false);
-            upLabel.setVisible(false);
-            starLabel.setVisible(false);
-            JTextField lastBonus = new JTextField("LAST BONUS!");
-            lastBonus.setFont(levelupFont);
-            lastBonus.setForeground(Color.black);
-            lastBonus.setEditable(false);
-            lastBonus.setOpaque(false); // 배경색 투명하게 만들기
-            lastBonus.setBorder(null); // 텍스트 필드 테두리 삭제
-            levelLabel.setBounds(450, 390, 200, 60);
-            add(lastBonus);
-            repaint();
-        }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(levelupchar, 130, 220, 210,300, null);
     }
 
     public void playLevelUpPanelSound() {
@@ -101,5 +80,18 @@ public class LevelUpPanel extends JPanel {
             });
             sound.start();
         }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // 배경 이미지 그리기
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+        } else {
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        g.drawImage(levelupchar, 130, 220, 210,300, null);
     }
 }

@@ -219,7 +219,7 @@ public class GameManager extends JFrame {
       bonusPanel.countTimer.start();
 
       // 10초 후 보너스 패널에서 게임 패널로 복귀
-    returnToGameTimer = new Timer(10000, e3 -> {
+    returnToGameTimer = new Timer(13000, e3 -> {
       switchToPanelWithDelay("game", 0);
       bonusPanel.setVisible(false);
       bonusPanel.countTimer.stop();
@@ -245,8 +245,7 @@ public class GameManager extends JFrame {
   private void startNoCollisionPhase() {
     if (noCollisionTimer != null) noCollisionTimer.stop();
     overStarTime = false;
-    //스타와 함께 있었던 시간
-    noCollisionTimer = new Timer(500, e -> {
+    noCollisionTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("game", 0);
       gamePanel.updateCurpointText();
       gamePanel.remainingTime = 30; // 시간 초기화

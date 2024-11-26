@@ -6,9 +6,13 @@ import org.example.entity.GamePlayer;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
 import javazoom.jl.player.Player;
+
+import java.io.File;
 import java.io.FileInputStream;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class StarPanel extends JPanel {
   public GamePlayer starplayer;
@@ -19,9 +23,17 @@ public class StarPanel extends JPanel {
   private Thread sound;
   private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
   private Player mp3Player; // MP3 재생을 위한 Player 객체
+  private Image backgroundImage;
 
   public StarPanel(GameManager gameManager) {
     StarPanel.gameManager = gameManager;
+    // 배경 이미지 로드
+    try {
+      backgroundImage = ImageIO.read(
+              new File("src/main/java/org/example/img/backgrounds/etcback.jpg"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
     // StarCrash 객체 생성: GameManager와 StarPanel을 참조
     this.starCrash = new StarCrash(gameManager, this);
@@ -125,8 +137,13 @@ public class StarPanel extends JPanel {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.setColor(Color.decode("#B0BABA"));
-    g.fillRect(0, 0, getWidth(), getHeight());
+    // 배경 이미지 그리기
+    if (backgroundImage != null) {
+      g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+    } else {
+      g.setColor(Color.LIGHT_GRAY);
+      g.fillRect(0, 0, getWidth(), getHeight());
+    }
     starplayer.draw(g);
 
     if (GameManager.star != null && GameManager.star.isVisible()) {
