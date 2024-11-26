@@ -297,7 +297,7 @@ public class GamePanel extends JPanel {
     if (!isSoundPlaying) {
       isSoundPlaying = true;
       sound = new Thread(() -> {
-        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/MP_엉뚱발랄 모험.mp3")) {
+        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/MP_Ta Da.mp3")) {
           mp3Player = new Player(fis);
           mp3Player.play(); // MP3 파일 재생
           isSoundPlaying = false; // 오디오 재생 완료
