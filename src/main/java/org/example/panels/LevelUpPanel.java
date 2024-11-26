@@ -1,11 +1,13 @@
 package org.example.panels;
 
+import javazoom.jl.player.Player;
 import org.example.Manager.GameManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class LevelUpPanel extends JPanel {
@@ -13,6 +15,9 @@ public class LevelUpPanel extends JPanel {
     private Image starImage;
     private JTextField congratulation;
     private JLabel levelLabel, upLabel, starLabel;
+    private Thread sound;
+    private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
+    private Player mp3Player; // MP3 재생을 위한 Player
 
     public LevelUpPanel() {
         setLayout(null);
@@ -78,6 +83,23 @@ public class LevelUpPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(levelupchar, 130, 220, 230,300, null);
+        g.drawImage(levelupchar, 130, 220, 210,300, null);
+    }
+
+    public void playLevelUpPanelSound() {
+        if (!isSoundPlaying) {
+            isSoundPlaying = true;
+            sound = new Thread(() -> {
+                try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/MP_Ta Da.mp3")) {
+                    mp3Player = new Player(fis);
+                    mp3Player.play(); // MP3 파일 재생
+                    isSoundPlaying = false; // 오디오 재생 완료
+                } catch (Exception e) {
+                    System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                    isSoundPlaying = false; // 오류 발생 시 상태 변경
+                }
+            });
+            sound.start();
+        }
     }
 }

@@ -78,7 +78,7 @@ public class GameManager extends JFrame {
     starCrash = new StarCrash(this, starPanel);
     rainbowPanel = new RainbowPanel();
     endPanel = new EndPanel(this);
-    // 각 화면을 패널로 추가
+
     mainPanel.add(new StartPanel(this), "start");
     mainPanel.add(gamePanel, "game");
     mainPanel.add(starPanel, "star");
@@ -90,7 +90,7 @@ public class GameManager extends JFrame {
     add(mainPanel);
     setVisible(true);
 
-    // 창 닫을 때 로그아웃
+
     addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
@@ -104,15 +104,17 @@ public class GameManager extends JFrame {
     Timer timer = new Timer(delayMillis, e -> {
       if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("end")
               || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow")) {
-        gamePanel.stopGame();// 게임 일시정지
+        gamePanel.stopGame();
+        if(nextPanelName.equals("levelup")) {
+          levelupPanel.playLevelUpPanelSound();
+        }
       }
       else if (nextPanelName.equals("game")) {
         gamePanel.startGame(); // 게임 재시작
         gamePanel.iconPosition();
         gamePanel.coinPosition();
         if(currentCycleCount >=0){
-          // 교수님 주기적 등장 시작
-          gamePanel.getProfessorManager().start(5000); //5초마다 등장
+          gamePanel.getProfessorManager().start(5000);
         }
       }
       // 패널 전환
