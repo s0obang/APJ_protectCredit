@@ -71,11 +71,15 @@ public class GamePlayer extends Entity {
 
   public void changeImage() {
     characterImage = blanket.blanket;
+    this.width = 100;
+    this.height = 100;
     blanketActive = true;  // Blanket 활성화 상태로 설정
   }
 
   public void changeOriginImage() {
     characterImage = characterImageRight;
+    this.width = 50;
+    this.height = 80;
     blanketActive = false;  // Blanket 비활성화 상태로 설정
   }
 

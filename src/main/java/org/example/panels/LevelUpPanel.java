@@ -38,16 +38,16 @@ public class LevelUpPanel extends JPanel {
             e.printStackTrace();
         }
 
-        congratulation = new JLabel("Congratulation!");
+        congratulation = new JLabel("CONGRATULATION!");
         congratulation.setFont(levelupFont);
         congratulation.setForeground(Color.black);
-        congratulation.setBounds(450, 280, 500, 60);
+        congratulation.setBounds(480, 280, 500, 60);
 
         //levelLabel 텍스트
         levelLabel = new JLabel("LEVEL ");
         levelLabel.setFont(levelupFont);
         levelLabel.setForeground(Color.black);
-        levelLabel.setBounds(450, 390, 200, 60);
+        levelLabel.setBounds(480, 390, 200, 60);
         add(levelLabel);
 
         add(congratulation);
@@ -55,13 +55,13 @@ public class LevelUpPanel extends JPanel {
         //star 이미지 삽입
         Image scaledStarImage = starImage.getScaledInstance(147, 120, Image.SCALE_SMOOTH);
         starLabel = new JLabel(new ImageIcon(scaledStarImage));
-        starLabel.setBounds(575, 360, 147, 120);
+        starLabel.setBounds(605, 360, 147, 120);
         add(starLabel);
 
         upLabel = new JLabel(" UP");
         upLabel.setFont(levelupFont);
         upLabel.setForeground(Color.black);
-        upLabel.setBounds(650, 390, 100, 60);
+        upLabel.setBounds(680, 390, 100, 60);
         add(upLabel);
     }
 
@@ -92,6 +92,6 @@ public class LevelUpPanel extends JPanel {
             g.setColor(Color.LIGHT_GRAY);
             g.fillRect(0, 0, getWidth(), getHeight());
         }
-        g.drawImage(levelupchar, 130, 220, 210,300, null);
+        g.drawImage(levelupchar, 130, 165, 273,390, null);
     }
 }

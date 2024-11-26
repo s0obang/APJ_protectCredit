@@ -18,13 +18,8 @@ import org.example.entity.GamePlayer;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
 import org.example.object.UserStatus;
-import org.example.panels.BonusPanel;
-import org.example.panels.EndPanel;
-import org.example.panels.GamePanel;
-import org.example.panels.LevelUpPanel;
-import org.example.panels.RainbowPanel;
-import org.example.panels.StarPanel;
-import org.example.panels.StartPanel;
+import org.example.panels.*;
+
 @Getter
 @Setter
 public class GameManager extends JFrame {
@@ -40,6 +35,7 @@ public class GameManager extends JFrame {
   private DatabaseManager dbManager;
   private LoginManager loginManager;
   private EndPanel endPanel;
+  private BackPanel backPanel;
   private PointsManager pointsManager;
   private static GamePanel gamePanel;
   public static StarPanel starPanel;
@@ -47,7 +43,7 @@ public class GameManager extends JFrame {
   public CoinCrash coinCrash;
   public StarCrash starCrash;
   public Timer collisionCheckTimer;
-  private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer, lastgameTimer;
+  private Timer timer, levelUpTimer, starTimer, rainbowTimer, bonusTimer, returnToGameTimer, noCollisionTimer, lastgameTimer, backTimer;
   private UserStatus userStatus;
   private Blanket blanket;
 
@@ -68,7 +64,6 @@ public class GameManager extends JFrame {
     pointsManager = new PointsManager();
     gamePanel = new GamePanel(pointsManager);
     bonusPanel = new BonusPanel(pointsManager);
-    endPanel = new EndPanel(this);
 
     //이부분 수정했어엽 민선아
     levelupPanel = new LevelUpPanel();
@@ -78,6 +73,7 @@ public class GameManager extends JFrame {
     starCrash = new StarCrash(this, starPanel);
     rainbowPanel = new RainbowPanel();
     endPanel = new EndPanel(this);
+    backPanel = new BackPanel();
 
     mainPanel.add(new StartPanel(this), "start");
     mainPanel.add(gamePanel, "game");
@@ -86,6 +82,7 @@ public class GameManager extends JFrame {
     mainPanel.add(bonusPanel, "bonus");
     mainPanel.add(endPanel, "end");
     mainPanel.add(rainbowPanel, "rainbow");
+    mainPanel.add(backPanel, "back");
 
     add(mainPanel);
     setVisible(true);
@@ -103,7 +100,7 @@ public class GameManager extends JFrame {
   public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     Timer timer = new Timer(delayMillis, e -> {
       if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("end")
-              || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow")) {
+              || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow") || nextPanelName.equals("back")) {
         gamePanel.stopGame();
         if(nextPanelName.equals("levelup")) {
           levelupPanel.playLevelUpPanelSound();
@@ -148,6 +145,7 @@ public class GameManager extends JFrame {
   //3초 뒤 star 패널로 이동
   public void startStarPhase() {
     if (starTimer != null) starTimer.stop();
+    if (backTimer != null) backTimer.stop();
     starTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("star", 0);
       levelupPanel.setVisible(false);
@@ -184,7 +182,11 @@ public class GameManager extends JFrame {
           starPanel.setVisible(false);
           starCrash.handleCollision();
           overStarTime = true;
-          startNoCollisionPhase();
+          // backPanel로 전환하고 3초 후 startNoCollisionPhase() 호출
+          switchToPanelWithDelay("back", 0);
+          backTimer = new Timer(3000, e1 -> startNoCollisionPhase());
+          backTimer.setRepeats(false);
+          backTimer.start();
         }
       });
 
@@ -218,35 +220,43 @@ public class GameManager extends JFrame {
       bonusPanel.updateCurpointText(); // 포인트 동기화
       bonusPanel.countTimer.start();
 
-      // 10초 후 보너스 패널에서 게임 패널로 복귀
-    returnToGameTimer = new Timer(13000, e3 -> {
-      switchToPanelWithDelay("game", 0);
-      bonusPanel.setVisible(false);
-      bonusPanel.countTimer.stop();
-      gamePanel.updateCurpointText();
-      gamePanel.remainingTime = 30; // 시간 초기화
-      currentCycleCount++;
-      if(currentCycleCount == maxCycleCount -1) {
-        startlastGame();
-      } else startLevelUpPhase(); // 다음 사이클 시작
-  });
-      returnToGameTimer.setRepeats(false);
-      returnToGameTimer.start();
+      backTimer = new Timer(10000, e3 -> {
+        bonusPanel.setVisible(false);
+        bonusPanel.countTimer.stop();
+        switchToPanelWithDelay("back", 0);
+
+        // 10초 후 보너스 패널에서 게임 패널로 복귀
+        returnToGameTimer = new Timer(3000, e4 -> {
+          backPanel.setVisible(false);
+          switchToPanelWithDelay("game", 0);
+          gamePanel.updateCurpointText();
+          gamePanel.remainingTime = 30; // 시간 초기화
+          currentCycleCount++;
+          if (currentCycleCount == maxCycleCount - 1) {
+            startlastGame();
+          } else startLevelUpPhase(); // 다음 사이클 시작
+        });
+        returnToGameTimer.setRepeats(false);
+        returnToGameTimer.start();
+      });
+      backTimer.setRepeats(false);
+      backTimer.start();
     });
       bonusTimer.setRepeats(false);
       bonusTimer.start();
     });
     rainbowTimer.setRepeats(false);
     rainbowTimer.start();
-
   }
 
   //충돌이 없는 경우 (보너스 실패) -> 다음 학년으로 넘어가기
   private void startNoCollisionPhase() {
     if (noCollisionTimer != null) noCollisionTimer.stop();
     overStarTime = false;
-    noCollisionTimer = new Timer(3000, e -> {
+
+    noCollisionTimer = new Timer(0, e1 -> {
       switchToPanelWithDelay("game", 0);
+      backPanel.setVisible(false);
       gamePanel.updateCurpointText();
       gamePanel.remainingTime = 30; // 시간 초기화
       // GamePanel로 돌아올 때 BonusPanel 포인트를 동기화
