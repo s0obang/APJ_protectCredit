@@ -5,12 +5,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import javazoom.jl.player.Player;
 import lombok.Getter;
+import lombok.Setter;
 import org.example.Manager.*;
 import org.example.entity.Blanket;
 import javax.swing.JPanel;
@@ -31,6 +34,7 @@ import org.example.Manager.PointsManager;
 import static org.example.entity.Coin.random;
 
 @Getter
+@Setter
 
 public class GamePanel extends JPanel {
 
@@ -48,6 +52,9 @@ public class GamePanel extends JPanel {
   private JLabel timerLabel; // 타이머 표시용 JLabel 추가
   public int remainingTime = 30; // 남은 시간 (30초)
   private JLabel gradeLabel; // 학년 표시용 JLabel 추가
+  private Thread sound;
+  private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
+  private Player mp3Player; // MP3 재생을 위한 Player
 
   public GamePanel(PointsManager pointsManager) {
     this.pointsManager = pointsManager; // PointsManager 객체 생성
@@ -62,7 +69,7 @@ public class GamePanel extends JPanel {
     }
 
     // Player 객체 생성 (초기 위치와 크기 설정)
-    gamePlayer = new GamePlayer(500, 500, 100, 100);
+    gamePlayer = new GamePlayer(500, 500, 50, 80);
 
     // 텍스트 필드 초기화
     curpointText = createPointsTextField();
@@ -154,7 +161,7 @@ public class GamePanel extends JPanel {
     {
       blanket.incrementCount();
     }
-      repaint(); // 패널 다시 그리기
+      repaint();
   }
 
   public void startGame() {
@@ -162,15 +169,12 @@ public class GamePanel extends JPanel {
     this.repaint();
     gamePlayer.x = 500;
     gamePlayer.y = 500;
-    // 기존 타이머가 있다면 중지
+
     if (countTimer != null) {
       countTimer.stop();
     }
-
-    // 타이머 설정
-    remainingTime = 30; // 시간 명시적으로 초기화
-    timerLabel.setText("남은 시간 : " + remainingTime + "초"); // 레이블 즉시 업데이트
-
+    remainingTime = 30;
+    timerLabel.setText("남은 시간 : " + remainingTime + "초");
     countTimer = new Timer(1000, e -> {
       if (remainingTime > 0) {
         remainingTime--;
@@ -181,7 +185,7 @@ public class GamePanel extends JPanel {
       repaint();
     });
     countTimer.start();
-    // 교수님 주기적 등장 시작
+    resumeSound();
     timer.start();
   }
 
@@ -189,6 +193,8 @@ public class GamePanel extends JPanel {
     if (timer != null) {
       timer.stop();
     }
+    professorManager.stop();
+    pauseSound();
   }
 
   public GamePlayer getPlayer() {
@@ -196,7 +202,7 @@ public class GamePanel extends JPanel {
   }
 
   public void coinPosition() {
-    // 첫 사이클에서는 coinNumber를 감소시키지 않음
+
     if (GameManager.currentCycleCount > 0) {
       GameInitializer.coinNumber -= 2; // 두 번째 사이클부터 코인 수 감소
     } else {
@@ -254,6 +260,7 @@ public class GamePanel extends JPanel {
     repaint();
   }
 
+
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -284,5 +291,36 @@ public class GamePanel extends JPanel {
     g.setFont(new Font("Neo둥근모", Font.BOLD, 20));
     g.setColor(Color.BLACK);
     g.drawString("x" + blanket.getCount(), 228, 114); // Blanket 옆에 카운트 텍스트
+  }
+
+  public void playGamePanelSound() {
+    if (!isSoundPlaying) {
+      isSoundPlaying = true;
+      sound = new Thread(() -> {
+        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/MP_엉뚱발랄 모험.mp3")) {
+          mp3Player = new Player(fis);
+          mp3Player.play(); // MP3 파일 재생
+          isSoundPlaying = false; // 오디오 재생 완료
+        } catch (Exception e) {
+          System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+          isSoundPlaying = false; // 오류 발생 시 상태 변경
+        }
+      });
+      sound.start();
+    }
+  }
+
+  public void pauseSound() {
+    if (isSoundPlaying && mp3Player != null) {
+      mp3Player.close(); // 사운드 중지
+      isSoundPlaying = false; // 재생 상태 업데이트
+    }
+  }
+
+  // 사운드 재개
+  public void resumeSound() {
+    if (!isSoundPlaying) {
+      playGamePanelSound(); // 사운드 다시 재생
+    }
   }
 }
