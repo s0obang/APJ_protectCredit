@@ -161,7 +161,7 @@ public class GamePanel extends JPanel {
     {
       blanket.incrementCount();
     }
-      repaint(); // 패널 다시 그리기
+      repaint();
   }
 
   public void startGame() {
@@ -169,15 +169,12 @@ public class GamePanel extends JPanel {
     this.repaint();
     gamePlayer.x = 500;
     gamePlayer.y = 500;
-    // 기존 타이머가 있다면 중지
+
     if (countTimer != null) {
       countTimer.stop();
     }
-
-    // 타이머 설정
-    remainingTime = 30; // 시간 명시적으로 초기화
-    timerLabel.setText("남은 시간 : " + remainingTime + "초"); // 레이블 즉시 업데이트
-
+    remainingTime = 30;
+    timerLabel.setText("남은 시간 : " + remainingTime + "초");
     countTimer = new Timer(1000, e -> {
       if (remainingTime > 0) {
         remainingTime--;
@@ -193,6 +190,10 @@ public class GamePanel extends JPanel {
   }
 
   public void stopGame() {
+    if (timer != null) {
+      timer.stop();
+    }
+    professorManager.stop();
     pauseSound();
   }
 
@@ -201,7 +202,7 @@ public class GamePanel extends JPanel {
   }
 
   public void coinPosition() {
-    // 첫 사이클에서는 coinNumber를 감소시키지 않음
+
     if (GameManager.currentCycleCount > 0) {
       GameInitializer.coinNumber -= 2; // 두 번째 사이클부터 코인 수 감소
     } else {
