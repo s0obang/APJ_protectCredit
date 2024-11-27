@@ -14,11 +14,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import javazoom.jl.player.Player;
-
 public class BonusPanel extends JPanel {
     private PointsManager pointsManager; // PointsManager 추가
-    private RainbowPanel rainbowPanel;
+    private BeforeBonusPanel beforeBonusPanel;
     private JTextField curpointText; // BonusPanel의 JTextField
     public CoinCrash coinCrash;
     public GamePlayer bonusplayer;
@@ -35,7 +33,7 @@ public class BonusPanel extends JPanel {
 
     public BonusPanel(PointsManager pointsManager) {
         this.pointsManager = pointsManager;
-        rainbowPanel = new RainbowPanel();
+        beforeBonusPanel = new BeforeBonusPanel();
         coinCrash = new CoinCrash(null,this, pointsManager);
         // 텍스트 필드 초기화
         curpointText = createPointsTextField();
