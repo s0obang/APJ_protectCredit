@@ -79,7 +79,7 @@ public class GamePanel extends JPanel {
     // 타이머 표시용 JLabel 초기화
     timerLabel = new JLabel("남은 시간: " + remainingTime + "초", SwingConstants.CENTER);
     timerLabel.setFont(new Font("Neo둥근모", Font.BOLD, 15));
-    timerLabel.setBounds(120, 20, 150, 30);
+    timerLabel.setBounds(100, 0, 150, 30);
     timerLabel.setForeground(Color.BLACK);
     this.add(timerLabel);
 
