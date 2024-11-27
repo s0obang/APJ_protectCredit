@@ -5,18 +5,17 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
+import java.awt.event.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 
+import javazoom.jl.player.Player;
 import org.example.Manager.*;
 import org.example.entity.User;
 
-import static org.example.Manager.GameManager.*;
 
 public class StartPanel extends JPanel {
 
@@ -24,6 +23,11 @@ public class StartPanel extends JPanel {
     private JPanel cardPanel; // 패널들을 담을 메인 패널
     private DatabaseManager dbManager = DatabaseManager.getInstance();
     private LoginManager loginManager;
+
+    public Player mp3Player; // MP3 재생을 위한 Player 객체
+    private boolean isSoundPlaying;
+    public Thread sound;
+
 
     public StartPanel(GameManager manager) {
         this.loginManager = loginManager;
@@ -47,6 +51,8 @@ public class StartPanel extends JPanel {
     private JPanel startGamePanel(GameManager manager, JPanel history) {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
         panel.setLayout(null); // bPanel 절대 위치 정하려고
+
+        playStartMusic();
 
         JPanel bPanel = new JPanel(new GridBagLayout()); // 버튼 감싸는 패널
         GridBagConstraints gbc = new GridBagConstraints();
@@ -96,6 +102,8 @@ public class StartPanel extends JPanel {
                 // 로그인 되어있으면 바로 게임 시작
                 if (LoginManager.getLoggedInUser() != null) {
                     cardLayout.show(cardPanel, "intro");
+                    mp3Player.close();
+                    playIntroMusic();
                 } else {
                     cardLayout.show(cardPanel, "selectSign_");
                 }
@@ -130,11 +138,12 @@ public class StartPanel extends JPanel {
         bPanel.setBounds(395, 570, 290, 135);
 
         CharacterPanel characterPanel = new CharacterPanel("src/main/java/org/example/img/character/main_char_left.png");
-        characterPanel.setBounds(360, 75, 410, 435);
+        characterPanel.setBounds(445, 89, 240, 380);
 
         panel.add(bPanel);
         panel.add(characterPanel);
 
+        // 패널의 계층 상태 변경을 감지하는 이벤트 리스너 추가
         panel.addHierarchyListener(e -> {
             if (e.getID() == HierarchyEvent.HIERARCHY_CHANGED) {
                 if (panel.isShowing()) {
@@ -372,6 +381,23 @@ public class StartPanel extends JPanel {
             }
         });
 
+        nickname.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    password.requestFocus(); // password 필드로 이동
+                }
+            }
+        });
+        password.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    playButton.doClick(); // playButton 클릭
+                }
+            }
+        });
+
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -430,6 +456,33 @@ public class StartPanel extends JPanel {
         signUpButton.setFocusPainted(false);
         signUpButton.setContentAreaFilled(false);
         signUpButton.setBounds(500, 580, 70, 70);
+
+        nickname.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    password.requestFocus(); // password 필드로 이동
+                }
+            }
+        });
+
+        password.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    passwordCheck.requestFocus(); // password 필드로 이동
+                }
+            }
+        });
+        passwordCheck.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    signUpButton.doClick(); // playButton 클릭
+                }
+            }
+        });
+
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -444,6 +497,12 @@ public class StartPanel extends JPanel {
 
                 if (!pass.equals(passCheck)) {
                     JOptionPane.showMessageDialog(panel, "비밀번호가 일치하지 않습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // 중복 닉네임 체크
+                if (dbManager.isNicknameDuplicate(nick)) {
+                    JOptionPane.showMessageDialog(panel, "이미 존재하는 닉네임입니다. 다른 닉네임을 입력하세요.", "오류", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -527,6 +586,7 @@ public class StartPanel extends JPanel {
             //manager.getGamePanel().startGame();
             manager.startGameSequence();// 아이콘 떨어짐 동작 시작
             manager.getGamePanel().startGame(); // 아이콘 떨어짐 동작 시작
+            mp3Player.close();
         }); // GameScreen으로 이동
 
         intro3.add(playButton);
@@ -537,6 +597,65 @@ public class StartPanel extends JPanel {
 
         return panel;
     }
+
+    public void playStartMusic() {
+        System.out.println("main 시작"); // 지우면 안 됨
+        if (!isSoundPlaying) {
+            isSoundPlaying = true;
+            sound = new Thread(() -> {
+                try {
+                    // 기존 mp3Player를 닫기 전에 반드시 종료 처리
+                    if (mp3Player != null) {
+                        mp3Player.close();  // 기존 재생 중인 노래 종료
+                    }
+                    try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/start.mp3")) {
+                        mp3Player = new Player(fis);
+                        mp3Player.play(); // MP3 파일 재생
+                        isSoundPlaying = false; // 오디오 재생 완료
+                    } catch (Exception e) {
+                        System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                        isSoundPlaying = false; // 오류 발생 시 상태 변경
+                    }
+                } catch (Exception e) {
+                    System.err.println("음악 재생에 실패했습니다: " + e.getMessage());
+                }
+            });
+            sound.start(); // 비동기적으로 오디오 시작
+        }
+    }
+
+    public void playIntroMusic() {
+        System.out.println("intro 시작"); // 지우면 안 됨
+        if (!isSoundPlaying) {
+            //System.out.println("짜잔");
+
+            isSoundPlaying = true;
+            sound = new Thread(() -> {
+                try {
+                    // 기존 mp3Player를 닫기 전에 반드시 종료 처리
+                    if (mp3Player != null) {
+                        mp3Player.close();  // 기존 재생 중인 노래 종료
+                        System.out.println("노래종료");
+
+                    }
+                    try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/intro.mp3")) {
+                        mp3Player = new Player(fis);
+                        mp3Player.play(); // MP3 파일 재생
+                        isSoundPlaying = false; // 오디오 재생 완료
+                        System.out.println("노래재생");
+
+                    } catch (Exception e) {
+                        System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                        isSoundPlaying = false; // 오류 발생 시 상태 변경
+                    }
+                } catch (Exception e) {
+                    System.err.println("음악 재생에 실패했습니다: " + e.getMessage());
+                }
+            });
+            sound.start(); // 비동기적으로 오디오 시작
+        }
+    }
+
 
     //첫 화면에 캐릭터 도동하고 싶어서 이미지 따로 빼놓음
     static class CharacterPanel extends JPanel {
@@ -560,11 +679,11 @@ public class StartPanel extends JPanel {
 
         private void moveCharacter() {
             if (moveUpRight) {
-                xPosition -= 10;
-                yPosition -= 10;
-            } else {
                 xPosition += 10;
                 yPosition += 10;
+            } else {
+                xPosition -= 10;
+                yPosition -= 10;
             }
 
             moveUpRight = !moveUpRight;
@@ -588,7 +707,7 @@ public class StartPanel extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (characterImage != null) {
-                g.drawImage(characterImage, xPosition, yPosition, 410, 425, this);
+                g.drawImage(characterImage, xPosition, yPosition, 229, 367, this);
             }
         }
     }
