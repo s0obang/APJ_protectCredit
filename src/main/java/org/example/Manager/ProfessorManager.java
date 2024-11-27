@@ -22,7 +22,7 @@ public class ProfessorManager {
 
   public ProfessorManager(GamePlayer player) {
     this.gamePlayer = player;
-    this.professor = new Professor(100, 100, 60, 90);
+    this.professor = new Professor(100, 100, 70, 100);
   }
 
   public void start(int interval) {
@@ -53,14 +53,15 @@ public class ProfessorManager {
 
   public void update() {
     if (professor.isVisible()) {
-      professor.move(gamePlayer.getX(), gamePlayer.getY());
+      if(!professor.isCollided()) professor.move(gamePlayer.getX(), gamePlayer.getY());
       if (professor.checkCollision(gamePlayer.getX(), gamePlayer.getY(), gamePlayer.getWidth(),
           gamePlayer.getHeight())) {
         if (!professor.isCollided()) {
           professorTimer.stop();
           byeTimer.stop();
           professor.setCollided(true);
-          professor.setWidth(190);
+          professor.setWidth(260);
+          professor.setHeight(140);
           System.out.println("충돌");
           playProfessor(2);
           gamePlayer.setMovable(false);
@@ -70,7 +71,8 @@ public class ProfessorManager {
             professor.setVisible(false);
             professor.setCollided(false);
             gamePlayer.setMovable(true);
-            professor.setWidth(60);
+            professor.setWidth(70);
+            professor.setHeight(100);
             professorTimer.restart();
             System.out.println("충돌 종료");
           });
