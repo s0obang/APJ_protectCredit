@@ -40,7 +40,7 @@ public class DatabaseManager {
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
                 + "userId INT NOT NULL,"
                 + "points INT NOT NULL,"
-                + "date DATETIME NOT NULL,"
+                + "date DATE NOT NULL,"
                 + "FOREIGN KEY (userId) REFERENCES users(id)"
                 + ");";
 
@@ -154,17 +154,8 @@ public class DatabaseManager {
         }
     }
 
-    public int saveScoreAndGetRank(GameResult gameResult, User user) {
+    public void saveScore(GameResult gameResult, User user) {
         String insertSql = "INSERT INTO history (userId, points, date) VALUES (?, ?, ?)";
-        String rankSql =
-                "WITH ranked_history AS (" +
-                        "    SELECT userId, MAX(points) AS max_points, RANK() OVER (ORDER BY MAX(points) DESC) AS `rank` " +
-                        "    FROM history " +
-                        "    GROUP BY userId" +
-                        ") " +
-                        "SELECT `rank` FROM ranked_history WHERE userId = ? LIMIT 1";
-
-        int rank = -1;
 
         try (Connection conn = DriverManager.getConnection(url, this.user, password)) {
             // 기록 저장
@@ -180,24 +171,6 @@ public class DatabaseManager {
                     System.out.println("게임 기록이 성공적으로 저장되었습니다.");
                 } else {
                     System.out.println("게임 기록 저장 실패.");
-                    return -1;
-                }
-            }
-
-            // 최고 점수 기반 순위 조회
-            try (PreparedStatement rankStmt = conn.prepareStatement(rankSql)) {
-                rankStmt.setInt(1, user.getUserId());
-
-                try (ResultSet rs = rankStmt.executeQuery()) {
-                    if (rs.next()) {
-                        rank = rs.getInt("rank");
-                    }
-                }
-
-                if (rank == -1) {
-                    System.out.println("순위를 가져오는 데 실패했습니다.");
-                } else {
-                    System.out.println("현재 순위: " + rank);
                 }
             }
         } catch (SQLException e) {
@@ -205,7 +178,6 @@ public class DatabaseManager {
             System.out.println("SQL 처리 중 오류 발생: " + e.getMessage());
         }
 
-        return rank;
     }
 
 
