@@ -69,7 +69,7 @@ public class GamePanel extends JPanel {
     }
 
     // Player 객체 생성 (초기 위치와 크기 설정)
-    gamePlayer = new GamePlayer(500, 500, 50, 80);
+    gamePlayer = new GamePlayer(500, 500, 60, 90);
 
     // 텍스트 필드 초기화
     curpointText = createPointsTextField();
@@ -297,7 +297,7 @@ public class GamePanel extends JPanel {
     if (!isSoundPlaying) {
       isSoundPlaying = true;
       sound = new Thread(() -> {
-        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/MP_Ta Da.mp3")) {
+        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/gamePanel.mp3")) {
           mp3Player = new Player(fis);
           mp3Player.play(); // MP3 파일 재생
           isSoundPlaying = false; // 오디오 재생 완료
