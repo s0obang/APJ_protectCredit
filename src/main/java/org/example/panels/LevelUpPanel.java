@@ -69,7 +69,7 @@ public class LevelUpPanel extends JPanel {
         if (!isSoundPlaying) {
             isSoundPlaying = true;
             sound = new Thread(() -> {
-                try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/MP_Ta Da.mp3")) {
+                try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/levelUpPanel.mp3")) {
                     mp3Player = new Player(fis);
                     mp3Player.play(); // MP3 파일 재생
                     isSoundPlaying = false; // 오디오 재생 완료
