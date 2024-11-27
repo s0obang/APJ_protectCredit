@@ -77,17 +77,17 @@ public class GamePanel extends JPanel {
     this.add(curpointText);
 
     // 타이머 표시용 JLabel 초기화
-    timerLabel = new JLabel("남은 시간: " + remainingTime + "초", SwingConstants.CENTER);
-    timerLabel.setFont(new Font("Neo둥근모", Font.BOLD, 15));
-    timerLabel.setBounds(100, 0, 150, 30);
+    timerLabel = new JLabel(remainingTime + " 초", SwingConstants.CENTER);
+    timerLabel.setFont(new Font("Neo둥근모", Font.BOLD, 18));
+    timerLabel.setBounds(50, 0, 150, 30);
     timerLabel.setForeground(Color.BLACK);
     this.add(timerLabel);
 
     // 학년 레이블 초기화 (새로 추가)
     gradeLabel = new JLabel("1학년", SwingConstants.CENTER);
-    gradeLabel.setFont(new Font("Neo둥근모", Font.BOLD, 15));
+    gradeLabel.setFont(new Font("Neo둥근모", Font.BOLD, 18));
     gradeLabel.setBounds(20, 0, 100, 30);
-    gradeLabel.setForeground(Color.BLACK);
+    gradeLabel.setForeground(Color.GREEN);
     this.add(gradeLabel);
 
     // Crash 객체 생성 -> 충돌 감지에 저장
@@ -174,11 +174,11 @@ public class GamePanel extends JPanel {
       countTimer.stop();
     }
     remainingTime = 30;
-    timerLabel.setText("남은 시간 : " + remainingTime + "초");
+    timerLabel.setText(remainingTime + " 초");
     countTimer = new Timer(1000, e -> {
       if (remainingTime > 0) {
         remainingTime--;
-        timerLabel.setText("남은 시간 : " + remainingTime + "초");
+        timerLabel.setText(remainingTime + " 초");
       } else {
         ((Timer) e.getSource()).stop();
       }
