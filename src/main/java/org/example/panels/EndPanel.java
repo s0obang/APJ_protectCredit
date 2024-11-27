@@ -4,12 +4,14 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import javazoom.jl.player.Player;
 import org.example.Manager.*;
 import org.example.entity.GameResult;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
 import java.util.Map;
 
 public class EndPanel extends JPanel {
@@ -21,6 +23,9 @@ public class EndPanel extends JPanel {
     private JTextField score;
     private JTextField ranking;
     private GameManager manager;
+    public Player mp3Player; // MP3 재생을 위한 Player 객체
+    private boolean isSoundPlaying;
+    public Thread sound;
 
     public EndPanel(GameManager manager) {
         this.manager = manager;
@@ -67,6 +72,7 @@ public class EndPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 manager.showScreen("start");
                 manager.resetGame();
+                manager.restartStartMusic();
             }
         });
 
@@ -179,7 +185,10 @@ public class EndPanel extends JPanel {
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                mp3Player.close();
                 manager.showScreen("start");
+                manager.restartStartMusic();
             }
         });
 
@@ -314,15 +323,74 @@ public class EndPanel extends JPanel {
         panel.add(nickname);
     }
 
+    public void playGameOverMusic() {
+        if (!isSoundPlaying) {
+            isSoundPlaying = true;
+            sound = new Thread(() -> {
+                try {
+                    // 기존 mp3Player를 닫기 전에 반드시 종료 처리
+                    if (mp3Player != null) {
+                        mp3Player.close();  // 기존 재생 중인 노래 종료
+                    }
+                    try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/gameover.mp3")) {
+                        mp3Player = new Player(fis);
+                        mp3Player.play(); // MP3 파일 재생
+                        isSoundPlaying = false; // 오디오 재생 완료
+                    } catch (Exception e) {
+                        System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                        isSoundPlaying = false; // 오류 발생 시 상태 변경
+                    }
+                } catch (Exception e) {
+                    System.err.println("음악 재생에 실패했습니다: " + e.getMessage());
+                }
+            });
+            sound.start(); // 비동기적으로 오디오 시작
+        }
+    }
+
+    public void playGraduationMusic() {
+        //System.out.println("intro 시작"); // 지우면 안 됨
+        if (!isSoundPlaying) {
+            //System.out.println("짜잔");
+
+            isSoundPlaying = true;
+            sound = new Thread(() -> {
+                try {
+                    // 기존 mp3Player를 닫기 전에 반드시 종료 처리
+                    if (mp3Player != null) {
+                        mp3Player.close();  // 기존 재생 중인 노래 종료
+                        System.out.println("노래종료");
+
+                    }
+                    try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/Graduation.mp3")) {
+                        mp3Player = new Player(fis);
+                        mp3Player.play(); // MP3 파일 재생
+                        isSoundPlaying = false; // 오디오 재생 완료
+                        System.out.println("노래재생");
+
+                    } catch (Exception e) {
+                        System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+                        isSoundPlaying = false; // 오류 발생 시 상태 변경
+                    }
+                } catch (Exception e) {
+                    System.err.println("음악 재생에 실패했습니다: " + e.getMessage());
+                }
+            });
+            sound.start(); // 비동기적으로 오디오 시작
+        }
+    }
+
     // 게임 결과에 따라 화면 다르게 띄움
     public void showEndPanel(GameResult result) {
         this.gameResult = result;
         if (gameResult.isGraduated()) {
             cardLayout.show(cardPanel, "graduation");
             showResultSuccess();
+            playGraduationMusic();
         }
         else {
             cardLayout.show(cardPanel, "gameOver");
+            playGameOverMusic();
 
         }
     }
