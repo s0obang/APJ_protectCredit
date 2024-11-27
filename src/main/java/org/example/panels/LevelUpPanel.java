@@ -11,13 +11,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class LevelUpPanel extends JPanel {
-    private Image levelupchar;
-    private Image starImage;
+    private Image levelupchar, starImage, backgroundImage;
     private JLabel levelLabel, upLabel, starLabel, congratulation;
     private Thread sound;
     private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
     private Player mp3Player; // MP3 재생을 위한 Player
-    private Image backgroundImage;
 
     public LevelUpPanel() {
         setLayout(null);

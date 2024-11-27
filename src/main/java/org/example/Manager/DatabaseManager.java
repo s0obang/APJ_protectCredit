@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private String url = "jdbc:mysql://localhost:3306/db명"; // 로컬 DB 주소
+    private String url = "jdbc:mysql://localhost:3306/db"; // 로컬 DB 주소
     private String user = "root"; // DB user
     private String password = "pw"; // DE password
 

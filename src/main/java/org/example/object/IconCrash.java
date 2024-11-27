@@ -14,7 +14,6 @@ import static org.example.panels.StarPanel.gameManager;
 
 import javazoom.jl.player.Player;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 
 public class IconCrash {
@@ -139,7 +138,7 @@ public class IconCrash {
             gamePanel.stopGame();
             starPanel.setVisible(false);
             bonusPanel.setVisible(false);
-            rainbowPanel.setVisible(false);
+            beforeBonusPanel.setVisible(false);
             gameManager.getLevelUpTimer().stop();
         }
 
