@@ -27,7 +27,7 @@ public class GameManager extends JFrame {
   public static final int maxCycleCount = 4;
   public static int currentCycleCount = 0;
   public static BonusPanel bonusPanel;
-  public static RainbowPanel rainbowPanel;
+  public static BeforeBonusPanel beforeBonusPanel;
   public static Star star;
   public static boolean overStarTime = false;
   private static CardLayout cardLayout;
@@ -72,7 +72,7 @@ public class GameManager extends JFrame {
     coinCrash = new CoinCrash(gamePanel, bonusPanel, pointsManager);
     starPanel = new StarPanel(this);
     starCrash = new StarCrash(this, starPanel);
-    rainbowPanel = new RainbowPanel();
+    beforeBonusPanel = new BeforeBonusPanel();
     endPanel = new EndPanel(this);
     startPanel = new StartPanel(this);
     backPanel = new BackPanel();
@@ -83,7 +83,7 @@ public class GameManager extends JFrame {
     mainPanel.add(levelupPanel, "levelup");
     mainPanel.add(bonusPanel, "bonus");
     mainPanel.add(endPanel, "end");
-    mainPanel.add(rainbowPanel, "rainbow");
+    mainPanel.add(beforeBonusPanel, "before");
     mainPanel.add(backPanel, "back");
 
     add(mainPanel);
@@ -102,7 +102,7 @@ public class GameManager extends JFrame {
   public static void switchToPanelWithDelay(String nextPanelName, int delayMillis) {
     Timer timer = new Timer(delayMillis, e -> {
       if (nextPanelName.equals("levelup") || nextPanelName.equals("star") || nextPanelName.equals("end")
-              || nextPanelName.equals("bonus") || nextPanelName.equals("rainbow") || nextPanelName.equals("back")) {
+              || nextPanelName.equals("bonus") || nextPanelName.equals("before") || nextPanelName.equals("back")) {
         gamePanel.stopGame();
         if(nextPanelName.equals("levelup")) {
           levelupPanel.playLevelUpPanelSound();
@@ -213,11 +213,11 @@ public class GameManager extends JFrame {
     bonusPanel.bonusplayer.y = 100;
 
     rainbowTimer = new Timer(0, e -> {
-      switchToPanelWithDelay("rainbow", 0);
+      switchToPanelWithDelay("before", 0);
 
     bonusTimer = new Timer(3000, e2 -> {
       switchToPanelWithDelay("bonus", 0);
-      rainbowPanel.setVisible(false);
+      beforeBonusPanel.setVisible(false);
       bonusPanel.updateTime();
       bonusPanel.updateCurpointText(); // 포인트 동기화
       bonusPanel.countTimer.start();
@@ -307,7 +307,7 @@ public class GameManager extends JFrame {
     if (timer != null) timer.stop();
     // 최종 상태 업데이트
     updateUserStatus();
-    rainbowPanel.setVisible(false);
+    beforeBonusPanel.setVisible(false);
     bonusPanel.setVisible(false);
     starPanel.setVisible(false);
     gamePanel.stopGame();
@@ -315,7 +315,7 @@ public class GameManager extends JFrame {
     GameResult result = new GameResult();
     result.setPoints(userStatus.getUserPoints());
     result.setGraduated(userStatus.isGraduated());
-    timer = new Timer(1000, e -> showEndScreen(result));
+    timer = new Timer(0, e -> showEndScreen(result));
     timer.setRepeats(false);
     timer.start();
   }
