@@ -74,6 +74,22 @@ public class DatabaseManager {
         }
     }
 
+    public boolean isNicknameDuplicate(String nickname) {
+        String query = "SELECT COUNT(*) FROM users WHERE nickname = ?";
+        try (Connection conn = DriverManager.getConnection(url, user, this.password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, nickname);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     public boolean signIn(DatabaseManager dbManager, String nickname, String password) {
         String hashedPassword = HashUtil.hashPassword(password); // 비번 해싱
         String sql = "SELECT * FROM users WHERE nickname = ? AND password = ?;";

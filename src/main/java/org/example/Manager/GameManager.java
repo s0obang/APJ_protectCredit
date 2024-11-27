@@ -40,6 +40,7 @@ public class GameManager extends JFrame {
   private static GamePanel gamePanel;
   public static StarPanel starPanel;
   private static LevelUpPanel levelupPanel;
+  private StartPanel startPanel;
   public CoinCrash coinCrash;
   public StarCrash starCrash;
   public Timer collisionCheckTimer;
@@ -73,9 +74,10 @@ public class GameManager extends JFrame {
     starCrash = new StarCrash(this, starPanel);
     rainbowPanel = new RainbowPanel();
     endPanel = new EndPanel(this);
+    startPanel = new StartPanel(this);
     backPanel = new BackPanel();
 
-    mainPanel.add(new StartPanel(this), "start");
+    mainPanel.add(startPanel, "start");
     mainPanel.add(gamePanel, "game");
     mainPanel.add(starPanel, "star");
     mainPanel.add(levelupPanel, "levelup");
@@ -368,6 +370,10 @@ public class GameManager extends JFrame {
     userStatus.setUserScore(4.5); // GPA 초기화
     userStatus.setUserPoints(0); // 포인트 초기화
     userStatus.setGraduated(false); // 졸업 상태 초기화
+  }
+
+  public void restartStartMusic() {
+    startPanel.playStartMusic();
   }
 
 }
