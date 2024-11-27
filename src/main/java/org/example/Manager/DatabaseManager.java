@@ -16,7 +16,7 @@ public class DatabaseManager {
     private static DatabaseManager instance;
     private String url = "jdbc:mysql://localhost:3306/db명"; // 로컬 DB 주소
     private String user = "root"; // DB user
-    private String password = "pw"; // DE password
+    private String password = "pw"; // DB password
 
     private DatabaseManager() {
         createTables();
@@ -32,8 +32,8 @@ public class DatabaseManager {
     private void createTables() {
         String userTableSql = "CREATE TABLE IF NOT EXISTS users ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
-                + "nickname VARCHAR(50) NOT NULL,"
-                + "password VARCHAR(255) NOT NULL"
+                + "nickname VARCHAR(50) COLLATE utf8_bin NOT NULL,"
+                + "password VARCHAR(255) COLLATE utf8_bin NOT NULL"
                 + ");";
 
         String historyTableSql = "CREATE TABLE IF NOT EXISTS history ("
