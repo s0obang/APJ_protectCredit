@@ -44,7 +44,7 @@ public class LevelUpPanel extends JPanel {
         congratulation.setBounds(480, 280, 500, 60);
 
         //levelLabel 텍스트
-        levelLabel = new JLabel("LEVEL ");
+        levelLabel = new JLabel("GRADE ");
         levelLabel.setFont(levelupFont);
         levelLabel.setForeground(Color.black);
         levelLabel.setBounds(480, 390, 200, 60);
@@ -55,13 +55,13 @@ public class LevelUpPanel extends JPanel {
         //star 이미지 삽입
         Image scaledStarImage = starImage.getScaledInstance(147, 120, Image.SCALE_SMOOTH);
         starLabel = new JLabel(new ImageIcon(scaledStarImage));
-        starLabel.setBounds(605, 360, 147, 120);
+        starLabel.setBounds(610, 360, 147, 120);
         add(starLabel);
 
         upLabel = new JLabel(" UP");
         upLabel.setFont(levelupFont);
         upLabel.setForeground(Color.black);
-        upLabel.setBounds(680, 390, 100, 60);
+        upLabel.setBounds(690, 390, 100, 60);
         add(upLabel);
     }
 

@@ -28,10 +28,10 @@ public class GameKeyAdapter extends KeyAdapter {
 
     int dx = 0, dy = 0;
     switch (e.getKeyCode()) {
-      case KeyEvent.VK_UP -> dy = -2;
-      case KeyEvent.VK_DOWN -> dy = 2;
-      case KeyEvent.VK_LEFT -> dx = -2;
-      case KeyEvent.VK_RIGHT -> dx = 2;
+      case KeyEvent.VK_UP -> dy = -4;
+      case KeyEvent.VK_DOWN -> dy = 4;
+      case KeyEvent.VK_LEFT -> dx = -4;
+      case KeyEvent.VK_RIGHT -> dx = 4;
     }
     gamePlayer.move(dx, dy);
   }
