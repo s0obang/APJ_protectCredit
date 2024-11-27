@@ -101,20 +101,14 @@ public class EndPanel extends JPanel {
         g2.setLayout(null);
 
         score = new JTextField(15);
-        ranking = new JTextField(15);
 
         score.setFont(labelFont);
-        score.setBounds(485, 255, 180, 60);
+        score.setBounds(485, 340, 180, 60);
         score.setOpaque(false);
         score.setEditable(false);
         score.setFocusable(false);
         score.setBorder(BorderFactory.createEmptyBorder());
-        ranking.setFont(labelFont);
-        ranking.setBounds(485, 364, 140, 60);
-        ranking.setOpaque(false);
-        ranking.setEditable(false);
-        ranking.setFocusable(false);
-        ranking.setBorder(BorderFactory.createEmptyBorder());
+
 
         ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/historyButton.png");
         Image img = buttonIcon.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
@@ -138,7 +132,6 @@ public class EndPanel extends JPanel {
 
 
         g2.add(score);
-        g2.add(ranking);
         g2.add(nextButton);
         graduationCardPanel.add(g1, "g1");
         graduationCardPanel.add(g2, "g2");
@@ -152,11 +145,10 @@ public class EndPanel extends JPanel {
 
         // 점수 띄우기
         score.setText(gameResult.getPoints()+"");
-        // 랭킹 띄우기
-        int rank = dbManager.saveScoreAndGetRank(gameResult, LoginManager.getLoggedInUser());
-        ranking.setText(String.valueOf(rank));
+        // 점수 저장
+        dbManager.saveScore(gameResult, LoginManager.getLoggedInUser());
 
-        // 축하 화면에서 3초 후에 점수 띄우는 화면으로 전환
+        // 축하 화면에서 1.5초 후에 점수 띄우는 화면으로 전환
         Timer timer = new Timer(1500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
