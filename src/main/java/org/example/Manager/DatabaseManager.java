@@ -4,22 +4,44 @@ import org.example.Security.HashUtil;
 import org.example.entity.GameResult;
 import org.example.entity.User;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-    private String url = "jdbc:mysql://localhost:3306/db"; // 로컬 DB 주소
-    private String user = "root"; // DB user
-    private String password = "pw"; // DE password
+    private String url;
+    private String user;
+    private String password;
 
     private DatabaseManager() {
+        loadDatabaseConfig();
         createTables();
+    }
+
+    private void loadDatabaseConfig() {
+        Properties properties = new Properties();
+        try {
+            try (var inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+                if (inputStream == null) {
+                    throw new FileNotFoundException("config.properties 파일을 찾을수 없음");
+                }
+                properties.load(inputStream);
+            }
+            this.url = properties.getProperty("db.url");
+            this.user = properties.getProperty("db.user");
+            this.password = properties.getProperty("db.password");
+
+            if (url == null || user == null || password == null) {
+                throw new IllegalStateException("config.properties에서 DB 정보 로드실패");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("DB설정 파일 로드 중 오류 남", e);
+        }
     }
 
     public static synchronized DatabaseManager getInstance() {
