@@ -500,6 +500,17 @@ public class StartPanel extends JPanel {
                     return;
                 }
 
+                if (nick.length() < 4) {
+                    JOptionPane.showMessageDialog(panel, "닉네임은 최소 4글자 이상이어야 합니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (pass.length() < 4) {
+                    JOptionPane.showMessageDialog(panel, "비밀번호는 최소 4글자 이상이어야 합니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+
                 // 중복 닉네임 체크
                 if (dbManager.isNicknameDuplicate(nick)) {
                     JOptionPane.showMessageDialog(panel, "이미 존재하는 닉네임입니다. 다른 닉네임을 입력하세요.", "오류", JOptionPane.ERROR_MESSAGE);
