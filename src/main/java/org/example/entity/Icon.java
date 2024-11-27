@@ -159,13 +159,18 @@ public abstract class Icon extends Entity {
 
   // 아이콘을 그리는 메서드
   public void draw(Graphics g) {
-    int iconSize = (iconType == IconType.BOOK) ? 60 : 30; // textbook만 60픽셀, 나머지는 30픽셀
-    //g.drawImage(iconimg, x, y, iconSize, iconSize, null);
-    // textbook인 경우 충돌 영역도 크기에 맞게 조정
+    int iconSize = (iconType == IconType.BOOK) ? 60 :
+            (iconType == IconType.COFFEE || iconType == IconType.TEXTBOOK) ? 40 : 30;
+
+    // 각 아이콘 타입에 따른 크기 및 위치 조정
     if (iconType == IconType.BOOK) {
       width = 60;
       height = 60;
-      g.drawImage(iconimg, x - 15, y - 15, iconSize, iconSize, null); // 중심점 조정
+      g.drawImage(iconimg, x - 15, y - 15, iconSize, iconSize, null);
+    } else if (iconType == IconType.COFFEE || iconType == IconType.TEXTBOOK) {
+      width = 40;
+      height = 40;
+      g.drawImage(iconimg, x - 5, y - 5, iconSize, iconSize, null);
     } else {
       width = 30;
       height = 30;
