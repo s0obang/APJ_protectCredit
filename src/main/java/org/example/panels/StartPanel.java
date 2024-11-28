@@ -27,28 +27,31 @@ public class StartPanel extends JPanel {
     public Player mp3Player; // MP3 재생을 위한 Player 객체
     private boolean isSoundPlaying;
     public Thread sound;
+    private GameManager manager;
 
 
     public StartPanel(GameManager manager) {
         this.loginManager = loginManager;
+        this.manager = manager;
 
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
         JPanel history = history();
-        cardPanel.add(startGamePanel(manager, history), "main");
+        cardPanel.add(startGamePanel(history), "main");
         cardPanel.add(selectSign_(), "selectSign_");
         cardPanel.add(signIn(), "signIn");
         cardPanel.add(signUp(), "signUp");
-        cardPanel.add(intro(manager), "intro");
+        cardPanel.add(intro(), "intro");
         cardPanel.add(history, "history");
+        cardPanel.add(gameRule(), "gameRule");
 
 
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
     }
 
-    private JPanel startGamePanel(GameManager manager, JPanel history) {
+    private JPanel startGamePanel(JPanel history) {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/startBackground.png"); // 배경 패널
         panel.setLayout(null); // bPanel 절대 위치 정하려고
 
@@ -137,8 +140,14 @@ public class StartPanel extends JPanel {
 
         bPanel.setBounds(395, 570, 290, 135);
 
-        CharacterPanel characterPanel = new CharacterPanel("src/main/java/org/example/img/character/main_char_left.png");
-        characterPanel.setBounds(445, 89, 240, 380);
+        CharacterPanel characterPanel = new CharacterPanel("src/main/java/org/example/img/intro/mainCharacter.png");
+        characterPanel.setBounds(335, 60, 509, 436);
+        characterPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(cardPanel, "gameRule");
+            }
+        });
 
         panel.add(bPanel);
         panel.add(characterPanel);
@@ -156,6 +165,95 @@ public class StartPanel extends JPanel {
 
         return panel;
     }
+
+    private JPanel gameRule() {
+        JPanel panel = new JPanel(new CardLayout());
+        CardLayout cardLayout = (CardLayout) panel.getLayout();
+
+        JPanel rule1 = new BackgroundPanel("src/main/java/org/example/img/backgrounds/gameRule1.png");
+        rule1.setLayout(null);
+
+        JPanel rule2 = new BackgroundPanel("src/main/java/org/example/img/backgrounds/gameRule2.png");
+        rule2.setLayout(null);
+
+        // 첫번째 화면 버튼(이벤트를 따로 걸어야해서 .. 4개 만들어야함)
+        ImageIcon buttonIcon = new ImageIcon("src/main/java/org/example/img/intro/playButton.png");
+        Image img = buttonIcon.getImage().getScaledInstance(68, 68, Image.SCALE_SMOOTH);
+        buttonIcon = new ImageIcon(img);
+
+        JButton nextButton = new JButton(buttonIcon);
+        nextButton.setPreferredSize(new Dimension(68, 68));
+        nextButton.setBounds(626, 608, 68, 68);
+        nextButton.setBorderPainted(false);
+        nextButton.setFocusPainted(false);
+        nextButton.setContentAreaFilled(false);
+
+        ImageIcon buttonIcon2 = new ImageIcon("src/main/java/org/example/img/intro/backButton2.png");
+        Image img2 = buttonIcon2.getImage().getScaledInstance(68, 68, Image.SCALE_SMOOTH);
+        buttonIcon2 = new ImageIcon(img2);
+
+        JButton backButton = new JButton(buttonIcon2);
+        backButton.setPreferredSize(new Dimension(68, 68));
+        backButton.setBounds(408, 609, 68, 68);
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+
+        // 두번째 화면 버튼
+        JButton homeButton = new JButton(buttonIcon);
+        homeButton.setPreferredSize(new Dimension(68, 68));
+        homeButton.setBounds(626, 608, 68, 68);
+        homeButton.setBorderPainted(false);
+        homeButton.setFocusPainted(false);
+        homeButton.setContentAreaFilled(false);
+
+        JButton backButton2 = new JButton(buttonIcon2);
+        backButton2.setPreferredSize(new Dimension(68, 68));
+        backButton2.setBounds(408, 609, 68, 68);
+        backButton2.setBorderPainted(false);
+        backButton2.setFocusPainted(false);
+        backButton2.setContentAreaFilled(false);
+
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panel, "rule2");
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StartPanel.this.cardLayout.show(cardPanel, "main");
+            }
+        });
+
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panel, "rule1");
+                StartPanel.this.cardLayout.show(cardPanel, "main");
+            }
+        });
+
+        backButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panel, "rule1");
+            }
+        });
+
+        rule1.add(nextButton);
+        rule1.add(backButton);
+        rule2.add(homeButton);
+        rule2.add(backButton2);
+
+        panel.add(rule1, "rule1");
+        panel.add(rule2, "rule2");
+
+        return panel;
+    }
+
 
     private JPanel history() {
         JPanel panel = new BackgroundPanel("src/main/java/org/example/img/backgrounds/history.png");
@@ -552,7 +650,7 @@ public class StartPanel extends JPanel {
     }
 
 
-    private JPanel intro(GameManager manager) {
+    private JPanel intro() {
         JPanel panel = new JPanel(new CardLayout());
         CardLayout introCardLayout = (CardLayout) panel.getLayout();
 
@@ -718,7 +816,7 @@ public class StartPanel extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (characterImage != null) {
-                g.drawImage(characterImage, xPosition, yPosition, 229, 367, this);
+                g.drawImage(characterImage, xPosition, yPosition, 508, 436, this);
             }
         }
     }
