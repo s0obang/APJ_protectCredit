@@ -148,7 +148,7 @@ public class GameManager extends JFrame {
     gamePanel.updateGrade(currentCycleCount + 1);
 
     //30초 뒤에 levelup패널로 전환
-    levelUpTimer = new Timer(30000, e -> {
+    levelUpTimer = new Timer(3000, e -> {
       switchToPanelWithDelay("levelup", 0);
       startStarPhase(); // levelup 패널로 전환 후 star 패널로 진행
     });
