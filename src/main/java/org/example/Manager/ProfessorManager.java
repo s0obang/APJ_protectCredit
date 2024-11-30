@@ -1,7 +1,7 @@
 package org.example.Manager;
 
 import java.awt.Graphics;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Random;
 import javax.swing.Timer;
 import javazoom.jl.player.Player;
@@ -53,7 +53,9 @@ public class ProfessorManager {
 
   public void update() {
     if (professor.isVisible()) {
-      if(!professor.isCollided()) professor.move(gamePlayer.getX(), gamePlayer.getY());
+      if (!professor.isCollided()) {
+        professor.move(gamePlayer.getX(), gamePlayer.getY());
+      }
       if (professor.checkCollision(gamePlayer.getX(), gamePlayer.getY(), gamePlayer.getWidth(),
           gamePlayer.getHeight())) {
         if (!professor.isCollided()) {
@@ -101,7 +103,7 @@ public class ProfessorManager {
         break;
       case 2:
         professor.setX(0);
-        professor.setY(768- professor.getHeight());
+        professor.setY(768 - professor.getHeight());
         break;
       case 3:
         professor.setX(1024 - professor.getWidth());
@@ -113,24 +115,23 @@ public class ProfessorManager {
 
   public void playProfessor(int type) {
     if (!isSoundPlaying) {
-      if( type == 1) {
-        audio = "src/main/java/org/example/audio/prof.mp3";
+      if (type == 1) {
+        audio = "/audio/prof.mp3";
+      } else {
+        audio = "/audio/profCol.mp3";
       }
-      else {
-        audio = "src/main/java/org/example/audio/profCol.mp3";
-      }
-        isSoundPlaying = true;
-        sound = new Thread(() -> {
-          try (FileInputStream fis = new FileInputStream(audio)) {
-            mp3Player = new Player(fis);
-            mp3Player.play();
-            isSoundPlaying = false;
-          } catch (Exception e) {
-            System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
-            isSoundPlaying = false;
-          }
-        });
-        sound.start();
-      }
+      isSoundPlaying = true;
+      sound = new Thread(() -> {
+        try (InputStream fis = getClass().getResourceAsStream(audio)) {
+          mp3Player = new Player(fis);
+          mp3Player.play();
+          isSoundPlaying = false;
+        } catch (Exception e) {
+          System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
+          isSoundPlaying = false;
+        }
+      });
+      sound.start();
+    }
   }
 }

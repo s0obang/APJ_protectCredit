@@ -1,29 +1,78 @@
 package org.example.entity;
 
-import org.example.Manager.GameManager;
-
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import org.example.Manager.GameManager;
 
 public class Coin extends Entity {
 
-  public static ArrayList<Coin> arraycoin = new ArrayList<>();
-  public Image coinimg;
   public static final Random random = new Random();
-  int x, y;
-  // 코인 이미지와 좌표 리스트
+  // largecoin 위치 설정
+  public static final List<int[]> largeCoinPositions = List.of(
+      new int[]{525, 345 + 90}, new int[]{525, 345 + 130}, new int[]{525 + 60, 345 + 75},
+      new int[]{525 - 60, 345 + 75}
+      , new int[]{525 + 60, 345 + 115}, new int[]{525 - 60, 345 + 115},
+      new int[]{525 + 30, 345 + 150}, new int[]{525 - 30, 345 + 150}
+      , new int[]{525 - 220, 345 - 240 + 90}, new int[]{525 - 220, 345 - 240 + 130},
+      new int[]{525 - 220 + 60, 345 - 240 + 75}, new int[]{525 - 220 - 60, 345 - 240 + 75}
+      , new int[]{525 - 220 - 60, 345 - 240 + 115}, new int[]{525 - 220 + 60, 345 - 240 + 115},
+      new int[]{525 - 220 + 30, 345 - 240 + 150}, new int[]{525 - 220 - 30, 345 - 240 + 150}
+      , new int[]{525 - 220, 345 - 240 + 170}, new int[]{525 + 220, 345 - 240 + 90},
+      new int[]{525 + 220, 345 - 240 + 130}, new int[]{525 + 220 - 60, 345 - 240 + 75}
+      , new int[]{525 + 220 + 60, 345 - 240 + 75}, new int[]{525 + 220 - 60, 345 - 240 + 115},
+      new int[]{525 + 220 + 60, 345 - 240 + 115}, new int[]{525 + 220 + 30, 345 - 240 + 150}
+      , new int[]{525 + 220 - 30, 345 - 240 + 150}, new int[]{525 + 220, 345 - 240 + 170},
+      new int[]{525, 345 + 170}
+  );
+  // medicoin 위치 설정
+  public static final List<int[]> medicoinPositions = List.of(
+      new int[]{525 + 220 - 60, 345 - 240 + 160}, new int[]{525 + 220 + 60, 345 - 240 + 160},
+      new int[]{525 + 30, 345 + 190}, new int[]{525 - 30, 345 + 190}
+      , new int[]{525 + 220 - 90, 345 - 240 + 130}, new int[]{525 + 220 + 90, 345 - 240 + 130},
+      new int[]{525 + 60, 345 + 160}, new int[]{525 - 60, 345 + 160}
+      , new int[]{525 + 220 - 90, 345 - 240 + 95}, new int[]{525 + 220 + 90, 345 - 240 + 95},
+      new int[]{525 - 90, 345 + 130}, new int[]{525 + 90, 345 + 130}
+      , new int[]{525 + 220 + 30, 345 - 240 + 100}, new int[]{525 + 220 - 30, 345 - 240 + 100},
+      new int[]{525 + 30, 345 + 100}, new int[]{525 - 30, 345 + 100}
+      , new int[]{525 + 220 - 90, 345 - 240 + 60}, new int[]{525 + 220 + 90, 345 - 240 + 60},
+      new int[]{525 - 90, 345 + 95}, new int[]{525 + 90, 345 + 95}
+      , new int[]{525 + 220 + 30, 345 - 240 + 60}, new int[]{525 + 220 - 30, 345 - 240 + 60},
+      new int[]{525 - 90, 345 + 60}, new int[]{525 + 90, 345 + 60}
+      , new int[]{525 - 220 + 30, 345 - 240 + 190}, new int[]{525 - 220 - 30, 345 - 240 + 190},
+      new int[]{525 + 30, 345 + 60}, new int[]{525 - 30, 345 + 60}
+      , new int[]{525 - 220 - 60, 345 - 240 + 160}, new int[]{525 - 220 + 60, 345 - 240 + 160}
+      , new int[]{525 - 220 - 90, 345 - 240 + 130}, new int[]{525 - 220 + 90, 345 - 240 + 130}
+      , new int[]{525 - 220 - 90, 345 - 240 + 95}, new int[]{525 - 220 + 90, 345 - 240 + 95}
+      , new int[]{525 - 220 + 30, 345 - 240 + 100}, new int[]{525 - 220 - 30, 345 - 240 + 100}
+      , new int[]{525 - 220 - 90, 345 - 240 + 60}, new int[]{525 - 220 + 90, 345 - 240 + 60}
+      , new int[]{525 - 220 + 30, 345 - 240 + 60}, new int[]{525 - 220 - 30, 345 - 240 + 60}
+      , new int[]{525 + 220 + 30, 345 - 240 + 190}, new int[]{525 + 220 - 30, 345 - 240 + 190}
+  );
+  // smallcoin 위치 설정
+  public static final List<int[]> smallcoinPositions = List.of(
+      new int[]{525 + 60, 345 + 30}, new int[]{525 + 115, 345 + 95}, new int[]{525 - 115, 345 + 95}
+      , new int[]{525, 345 + 220}, new int[]{525 - 220, 345 - 240 + 220}
+      , new int[]{525 - 220 - 60, 345 - 240 + 30}, new int[]{525 - 220 + 60, 345 - 240 + 30}
+      , new int[]{525 - 220 + 115, 345 - 240 + 95}, new int[]{525 - 220 - 115, 345 - 240 + 95}
+      , new int[]{525 + 220 - 60, 345 - 240 + 30}, new int[]{525 + 220 + 60, 345 - 240 + 30}
+      , new int[]{525 + 220 + 115, 345 - 240 + 95}, new int[]{525 + 220 - 115, 345 - 240 + 95}
+      , new int[]{525 + 220, 345 - 240 + 220}, new int[]{525 - 60, 345 + 30}
+  );
+  public static ArrayList<Coin> arraycoin = new ArrayList<>();
+
   public static List<Coin> largeCoins;
   public static List<Coin> mediCoins;
   public static List<Coin> smallCoins;
-  public static double speed; // 모든 코인에 공통된 속도
-
+  public static double speed;
+  public Image coinimg;
+  int x, y;
 
   public Coin(int x, int y, int width, int height, Image coinimg) {
     super(x, y, width, height);
@@ -36,7 +85,8 @@ public class Coin extends Entity {
 
   public static Image loadImage(String imageName) {
     try {
-      return ImageIO.read(new File("src/main/java/org/example/img/coin/" + imageName));
+      return ImageIO.read(Objects.requireNonNull(
+          Coin.class.getResourceAsStream("/img/coin/" + imageName)));
     } catch (IOException ex) {
       throw new RuntimeException("이미지 로드 실패: " + imageName, ex);
     }
@@ -47,56 +97,12 @@ public class Coin extends Entity {
     Coin.speed += GameManager.currentCycleCount * 1.9;
   }
 
-  // 속도 레벨 리셋 메서드
-  public void resetSpeedLevel() {
-    speed = 5.0;
-  }
-
   public static void createAndAddCoin(int x, int y, int width, int height) {
-    Coin coin = new Coin(random.nextInt(x - 60), random.nextInt(y-600),width, height, Coin.loadImage("coin.png")) {
-    }; // 익명 서브클래스로 인스턴스 생성
+    Coin coin = new Coin(random.nextInt(x - 60), random.nextInt(y - 600), width, height,
+        Coin.loadImage("coin.png")) {
+    };
     arraycoin.add(coin);
   }
-
-  // largecoin 위치 설정
-  public static final List<int[]> largeCoinPositions = List.of(
-          new int[]{525, 345 + 90}, new int[]{525, 345 + 130}, new int[]{525 + 60, 345 + 75}, new int[]{525 - 60, 345 + 75}
-          , new int[]{525 + 60, 345 + 115}, new int[]{525 - 60, 345 + 115}, new int[]{525 + 30, 345 + 150}, new int[]{525 - 30, 345 + 150}
-          , new int[]{525 - 220, 345 - 240 + 90}, new int[]{525 - 220, 345 - 240 + 130}, new int[]{525 - 220 + 60, 345 - 240 + 75}, new int[]{525 - 220 - 60, 345 - 240 + 75}
-          , new int[]{525 - 220 - 60, 345 - 240 + 115}, new int[]{525 - 220 + 60, 345 - 240 + 115}, new int[]{525 - 220 + 30, 345 - 240 + 150}, new int[]{525 - 220 - 30, 345 - 240 + 150}
-          , new int[]{525 - 220, 345 - 240 + 170}, new int[]{525 + 220, 345 - 240 + 90}, new int[]{525 + 220, 345 - 240 + 130}, new int[]{525 + 220 - 60, 345 - 240 + 75}
-          , new int[]{525 + 220 + 60, 345 - 240 + 75}, new int[]{525 + 220 - 60, 345 - 240 + 115}, new int[]{525 + 220 + 60, 345 - 240 + 115}, new int[]{525 + 220 + 30, 345 - 240 + 150}
-          , new int[]{525 + 220 - 30, 345 - 240 + 150}, new int[]{525 + 220, 345 - 240 + 170}, new int[]{525, 345 + 170}
-  );
-
-  // medicoin 위치 설정
-  public static final List<int[]> medicoinPositions = List.of(
-          new int[]{525 + 220 - 60, 345 - 240 + 160}, new int[]{525 + 220 + 60, 345 - 240 + 160}, new int[]{525 + 30, 345 + 190}, new int[]{525 - 30, 345 + 190}
-          , new int[]{525 + 220 - 90, 345 - 240 + 130}, new int[]{525 + 220 + 90, 345 - 240 + 130}, new int[]{525 + 60, 345 + 160}, new int[]{525 - 60, 345 + 160}
-          , new int[]{525 + 220 - 90, 345 - 240 + 95}, new int[]{525 + 220 + 90, 345 - 240 + 95}, new int[]{525 - 90, 345 + 130}, new int[]{525 + 90, 345 + 130}
-          , new int[]{525 + 220 + 30, 345 - 240 + 100}, new int[]{525 + 220 - 30, 345 - 240 + 100}, new int[]{525 + 30, 345 + 100}, new int[]{525 - 30, 345 + 100}
-          , new int[]{525 + 220 - 90, 345 - 240 + 60}, new int[]{525 + 220 + 90, 345 - 240 + 60}, new int[]{525 - 90, 345 + 95}, new int[]{525 + 90, 345 + 95}
-          , new int[]{525 + 220 + 30, 345 - 240 + 60}, new int[]{525 + 220 - 30, 345 - 240 + 60}, new int[]{525 - 90, 345 + 60}, new int[]{525 + 90, 345 + 60}
-          , new int[]{525 - 220 + 30, 345 - 240 + 190}, new int[]{525 - 220 - 30, 345 - 240 + 190}, new int[]{525 + 30, 345 + 60}, new int[]{525 - 30, 345 + 60}
-          , new int[]{525 - 220 - 60, 345 - 240 + 160}, new int[]{525 - 220 + 60, 345 - 240 + 160}
-          , new int[]{525 - 220 - 90, 345 - 240 + 130}, new int[]{525 - 220 + 90, 345 - 240 + 130}
-          , new int[]{525 - 220 - 90, 345 - 240 + 95}, new int[]{525 - 220 + 90, 345 - 240 + 95}
-          , new int[]{525 - 220 + 30, 345 - 240 + 100}, new int[]{525 - 220 - 30, 345 - 240 + 100}
-          , new int[]{525 - 220 - 90, 345 - 240 + 60}, new int[]{525 - 220 + 90, 345 - 240 + 60}
-          , new int[]{525 - 220 + 30, 345 - 240 + 60}, new int[]{525 - 220 - 30, 345 - 240 + 60}
-          , new int[]{525 + 220 + 30, 345 - 240 + 190}, new int[]{525 + 220 - 30, 345 - 240 + 190}
-  );
-
-  // smallcoin 위치 설정
-  public static final List<int[]> smallcoinPositions = List.of(
-          new int[]{525 + 60, 345+ 30}, new int[]{525 + 115, 345 + 95}, new int[]{525 - 115, 345 + 95}
-          , new int[]{525, 345 + 220}, new int[]{525 - 220, 345 - 240 + 220}
-          , new int[]{525 - 220 - 60, 345 - 240 + 30}, new int[]{525 - 220 + 60, 345 - 240 + 30}
-          , new int[]{525 - 220 + 115, 345 - 240 + 95}, new int[]{525 - 220 - 115, 345 - 240 + 95}
-          , new int[]{525 + 220 - 60, 345 - 240 + 30}, new int[]{525 + 220 + 60, 345 - 240 + 30}
-          , new int[]{525 + 220 + 115, 345 - 240 + 95}, new int[]{525 + 220 - 115, 345 - 240 + 95}
-          , new int[]{525 + 220, 345 - 240 + 220}, new int[]{525 - 60, 345 + 30}
-  );
 
   public static List<Coin> createCoins(List<int[]> positions, String imageName) {
     List<Coin> coins = new ArrayList<>();
@@ -105,6 +111,18 @@ public class Coin extends Entity {
       coins.add(new Coin(pos[0], pos[1], 30, 30, coinImage));
     }
     return coins;
+  }
+
+  public static void resetBonusCoins() {
+
+    largeCoins = Coin.createCoins(Coin.largeCoinPositions, "coin.png");
+    mediCoins = Coin.createCoins(Coin.medicoinPositions, "medicoin.png");
+    smallCoins = Coin.createCoins(Coin.smallcoinPositions, "smallcoin.png");
+  }
+
+  // 속도 레벨 리셋 메서드
+  public void resetSpeedLevel() {
+    speed = 5.0;
   }
 
   public void fall() {
@@ -122,7 +140,7 @@ public class Coin extends Entity {
 
   @Override
   public Rectangle getBounds() {
-    // 코인의 충돌 영역을 정의
+    // 코인 충돌영역정의
     return new Rectangle(x, y, width, height); // 코인 이미지의 크기에 맞게 수정
   }
 
@@ -131,8 +149,6 @@ public class Coin extends Entity {
   public void update() {
 
   }
-
-  // 코인 생성 및 배열에 추가
 
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -145,16 +161,9 @@ public class Coin extends Entity {
   }
 
   public void resetPosition() {
-    // 코인 초기 위치로 리셋
+    // 코인초기위치로 리셋
     this.y = -20; // 화면 위쪽에서 다시 떨어지도록
-    this.x = random.nextInt(1080 - 40); // 무작위 x 위치
-  }
-
-  public static void resetBonusCoins() {
-    // 코인 리스트 초기화
-    largeCoins = Coin.createCoins(Coin.largeCoinPositions, "coin.png");
-    mediCoins = Coin.createCoins(Coin.medicoinPositions, "medicoin.png");
-    smallCoins = Coin.createCoins(Coin.smallcoinPositions, "smallcoin.png");
+    this.x = random.nextInt(1080 - 40);
   }
 
 }
