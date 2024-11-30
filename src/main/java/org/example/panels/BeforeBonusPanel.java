@@ -41,13 +41,13 @@ public class BeforeBonusPanel extends JPanel {
     bonustime.setEditable(false);
     bonustime.setOpaque(false);
     bonustime.setBorder(null);
-    bonustime.setBounds(320, 300, 500, 80);
+    bonustime.setBounds(338, 300, 500, 80);
 
     add(bonustime);
 
     Image scaledCoinImage = coinImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
     leftcoinLabel = new JLabel(new ImageIcon(scaledCoinImage));
-    leftcoinLabel.setBounds(275, 310, 50, 50);
+    leftcoinLabel.setBounds(293, 310, 50, 50);
     rightcoinLabel = new JLabel(new ImageIcon(scaledCoinImage));
     rightcoinLabel.setBounds(700, 310, 50, 50);
     add(leftcoinLabel);
