@@ -1,46 +1,47 @@
 package org.example.panels;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import javazoom.jl.player.Player;
 import org.example.Manager.GameKeyAdapter;
 import org.example.Manager.GameManager;
 import org.example.entity.GamePlayer;
 import org.example.entity.Star;
 import org.example.object.StarCrash;
-import javazoom.jl.player.Player;
-
-import java.io.File;
-import java.io.FileInputStream;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 
 public class StarPanel extends JPanel {
+
+  public static GameManager gameManager;
   public GamePlayer starplayer;
   public StarCrash starCrash;
-  public static GameManager gameManager;
   private Timer timer;
-  private boolean isTimerRunning = false; // Timer 상태를 추적하는 플래그
+  private boolean isTimerRunning = false;
   private Thread sound;
-  private boolean isSoundPlaying = false; // 오디오 재생 상태 추적
-  private Player mp3Player; // MP3 재생을 위한 Player 객체
+  private boolean isSoundPlaying = false;
+  private Player mp3Player;
   private Image backgroundImage;
 
   public StarPanel(GameManager gameManager) {
     StarPanel.gameManager = gameManager;
-    // 배경 이미지 로드
+
     try {
       backgroundImage = ImageIO.read(
-              new File("src/main/java/org/example/img/backgrounds/etcback.jpg"));
+          Objects.requireNonNull(getClass().getResourceAsStream(
+              "/img/backgrounds/etcback.jpg")));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    // StarCrash 객체 생성: GameManager와 StarPanel을 참조
     this.starCrash = new StarCrash(gameManager, this);
-
-    // starplayer 위치 초기화 (500, 500)으로 설정
     initializeStarPlayer();
-
     setFocusable(true);
     addKeyListener(new GameKeyAdapter(starplayer));
     addHierarchyListener(e -> {
@@ -68,30 +69,29 @@ public class StarPanel extends JPanel {
     setOpaque(true);
   }
 
-  // MP3 파일 재생 메서드
   public void playstarPanelSound() {
     if (!isSoundPlaying) {
       isSoundPlaying = true;
       sound = new Thread(() -> {
-        try (FileInputStream fis = new FileInputStream("src/main/java/org/example/audio/starpanel.mp3")) {
-          mp3Player = new Player(fis);
-          mp3Player.play(); // MP3 파일 재생
-          isSoundPlaying = false; // 오디오 재생 완료
+        try (InputStream fis = getClass().getResourceAsStream("/audio/starpanel.mp3")) {
+          mp3Player = new Player(Objects.requireNonNull(fis));
+          mp3Player.play();
+          isSoundPlaying = false;
         } catch (Exception e) {
           System.err.println("오디오 파일 재생 중 오류 발생: " + e.getMessage());
-          isSoundPlaying = false; // 오류 발생 시 상태 변경
+          isSoundPlaying = false;
         }
       });
-      sound.start(); // 비동기적으로 오디오 시작
+      sound.start();
     }
   }
 
-  // Timer 시작 메서드
+
   public void startTimer() {
     timer.start();
   }
 
-  // Timer 중지 메서드
+
   public void stopTimer() {
     timer.stop();
   }
@@ -137,7 +137,7 @@ public class StarPanel extends JPanel {
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    // 배경 이미지 그리기
+  
     if (backgroundImage != null) {
       g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
     } else {
@@ -147,7 +147,7 @@ public class StarPanel extends JPanel {
     starplayer.draw(g);
 
     if (GameManager.star != null && GameManager.star.isVisible()) {
-      GameManager.star.draw(g);  // Star 객체의 visible 속성에 따라 그리기
+      GameManager.star.draw(g);
     }
   }
 }

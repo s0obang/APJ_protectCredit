@@ -3,8 +3,8 @@ package org.example.entity;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +31,10 @@ public class Professor {
     this.isVisible = false;
     try {
       this.profImage = ImageIO.read(
-          new File("src/main/java/org/example/img/character/prof.png"));
+          Objects.requireNonNull(
+              getClass().getResourceAsStream("/img/character/prof.png")));
       this.collidedImage1 = ImageIO.read(
-          new File("src/main/java/org/example/img/character/profEle.png"));
+          Objects.requireNonNull(getClass().getResourceAsStream("/img/character/profEle.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class GamePlayer extends Entity {
   private double GPA; // 학점
   private Blanket blanket;
   private boolean blanketActive = false;
-  private int dx = 0, dy =0;
+  private int dx = 0, dy = 0;
   @Setter
   @Getter
   private boolean movable = true;
@@ -37,9 +37,11 @@ public class GamePlayer extends Entity {
 
     try {
       characterImageLeft = ImageIO.read(
-          new File("src/main/java/org/example/img/character/main_char_left.png"));
+          Objects.requireNonNull(getClass().getResourceAsStream(
+              "/img/character/main_char_left.png")));
       characterImageRight = ImageIO.read(
-          new File("src/main/java/org/example/img/character/main_char_right.png"));
+          Objects.requireNonNull(
+              getClass().getResourceAsStream("/img/character/main_char_right.png")));
       characterImage = characterImageRight; // 초기 이미지는 오른쪽보게함
     } catch (IOException e) {
       e.printStackTrace();
@@ -92,13 +94,12 @@ public class GamePlayer extends Entity {
   }
 
   public void setGPA(double newGPA) {
-    // 최대 4.5, 최소 0점 유지
+    // 최대 4.5~최소 0점 유지
     this.GPA = Math.max(0, Math.min(4.5, newGPA));
   }
 
   @Override
   public void update() {
-    // 플레이어의 상태 업데이트 로직 (예: 이동 로직)
   }
 
   @Override

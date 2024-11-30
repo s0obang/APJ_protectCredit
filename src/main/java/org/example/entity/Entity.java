@@ -32,7 +32,6 @@ public abstract class Entity {
   }
 
 
-
   // 위치 가져오기 메서드
   public int getX() {
     return x;
@@ -42,16 +41,16 @@ public abstract class Entity {
     return y;
   }
 
-  // 충돌 판정 메서드 (필요한 경우)
+  // 충돌 판정 메서드
   public boolean isColliding(Entity other) {
     return x < other.x + other.width && x + width > other.x &&
         y < other.y + other.height && y + height > other.y;
   }
 
-  // 각 엔티티가 자신의 상태를 업데이트하는 메서드
+
   public abstract void update();
 
-  // 각 엔티티가 자신을 그리는 메서드
+
   public abstract void draw(Graphics g);
 
   protected void paintComponent(Graphics g) {
