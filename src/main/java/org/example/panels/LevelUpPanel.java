@@ -62,7 +62,7 @@ public class LevelUpPanel extends JPanel {
     starLabel.setBounds(610, 360, 147, 120);
     add(starLabel);
 
-    upLabel = new JLabel("  UP");
+    upLabel = new JLabel("  UP!");
     upLabel.setFont(levelupFont);
     upLabel.setForeground(Color.black);
     upLabel.setBounds(690, 390, 120, 60);
