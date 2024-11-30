@@ -79,17 +79,9 @@ public class StartPanel extends JPanel {
 
   private JPanel startGamePanel(JPanel history) {
     JPanel panel = new BackgroundPanel("/img/backgrounds/startBackground.png"); // 배경 패널
-    panel.setLayout(null); // bPanel 절대 위치 정하려고
+    panel.setLayout(null);
 
     playStartMusic();
-
-    JPanel bPanel = new JPanel(new GridBagLayout()); // 버튼 감싸는 패널
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.anchor = GridBagConstraints.CENTER;
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.weightx = 0;
-    gbc.weighty = 0;
-    bPanel.setOpaque(false);
 
     Font labelFont = new Font("Galmuri11 Regular", Font.PLAIN, 20);
 
@@ -102,20 +94,7 @@ public class StartPanel extends JPanel {
     historyButton.setBorderPainted(false);
     historyButton.setFocusPainted(false);
     historyButton.setContentAreaFilled(false);
-
-    JLabel historyLabel = new JLabel("history");
-    historyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    historyLabel.setFont(labelFont);
-    historyLabel.setForeground(Color.decode("#5E5E5E"));
-
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    gbc.insets = new Insets(0, 0, 0, 0);
-    bPanel.add(historyButton, gbc);
-
-    gbc.gridy = 1;
-    gbc.insets = new Insets(5, 0, 0, 0);
-    bPanel.add(historyLabel, gbc);
+    historyButton.setBounds(405, 580, 75, 75);
 
     ImageIcon buttonIcon2 = new ImageIcon(
         Objects.requireNonNull(getClass().getResource("/img/intro/playButton.png")));
@@ -126,6 +105,7 @@ public class StartPanel extends JPanel {
     playButton.setBorderPainted(false);
     playButton.setFocusPainted(false);
     playButton.setContentAreaFilled(false);
+    playButton.setBounds(610, 580, 75, 75);
     playButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -150,21 +130,7 @@ public class StartPanel extends JPanel {
       }
     });
 
-    JLabel playLabel = new JLabel("play!");
-    playLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    playLabel.setFont(labelFont);
-    playLabel.setForeground(Color.decode("#5E5E5E"));
 
-    gbc.gridx = 1;
-    gbc.gridy = 0;
-    gbc.insets = new Insets(0, 120, 0, 0);
-    bPanel.add(playButton, gbc);
-
-    gbc.gridy = 1;
-    gbc.insets = new Insets(5, 120, 0, 0);
-    bPanel.add(playLabel, gbc);
-
-    bPanel.setBounds(395, 570, 290, 135);
 
     CharacterPanel characterPanel = new CharacterPanel("/img/intro/mainCharacter.png");
     characterPanel.setBounds(335, 60, 509, 436);
@@ -175,7 +141,8 @@ public class StartPanel extends JPanel {
       }
     });
 
-    panel.add(bPanel);
+    panel.add(playButton);
+    panel.add(historyButton);
     panel.add(characterPanel);
 
     // 패널의 계층 상태 변경을 감지하는 이벤트 리스너 추가
@@ -384,11 +351,11 @@ public class StartPanel extends JPanel {
     JLabel score = new JLabel(highest.get("points"));
     JLabel date = new JLabel(highest.get("date"));
 
-    score.setBounds(500, 130, 170, 40);
+    score.setBounds(495, 130, 170, 40);
     score.setFont(scoreFont);
     score.setForeground(Color.BLACK);
     score.setHorizontalAlignment(SwingConstants.CENTER);
-    date.setBounds(710, 130, 130, 40);
+    date.setBounds(700, 130, 160, 40);
     date.setFont(labelFont);
     date.setForeground(Color.DARK_GRAY);
 
