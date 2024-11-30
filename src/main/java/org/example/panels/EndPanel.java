@@ -210,7 +210,7 @@ public class EndPanel extends JPanel {
 
   private void getRanking(JPanel panel) {
     Font labelFont = new Font("Galmuri11 Regular", Font.PLAIN, 25);
-    Font scoreFont = new Font("Galmuri11 Regular", Font.BOLD, 38);
+    Font scoreFont = new Font("Galmuri11 Regular", Font.BOLD, 33);
 
     // 랭킹 가져오기
     java.util.List<Map<String, String>> ranking = dbManager.getRanking();
@@ -357,9 +357,9 @@ public class EndPanel extends JPanel {
   }
 
   public void playGraduationMusic() {
-    //System.out.println("intro 시작"); // 지우면 안 됨
+    System.out.println("intro 시작"); // 지우면 안 됨
     if (!isSoundPlaying) {
-      //System.out.println("짜잔");
+      System.out.println("짜잔");
 
       isSoundPlaying = true;
       sound = new Thread(() -> {

@@ -30,7 +30,7 @@ public class LevelUpPanel extends JPanel {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    Font levelupFont = new Font("Galmuri11 Regular", Font.BOLD, 40);
+    Font levelupFont = new Font("Galmuri11 Regular", Font.BOLD, 45);
 
     try {
       levelupchar = ImageIO.read(
@@ -45,7 +45,7 @@ public class LevelUpPanel extends JPanel {
     congratulation = new JLabel("CONGRATULATION!");
     congratulation.setFont(levelupFont);
     congratulation.setForeground(Color.black);
-    congratulation.setBounds(480, 280, 500, 60);
+    congratulation.setBounds(480, 280, 550, 60);
 
     //levelLabel 텍스트
     levelLabel = new JLabel("GRADE ");
@@ -62,10 +62,10 @@ public class LevelUpPanel extends JPanel {
     starLabel.setBounds(610, 360, 147, 120);
     add(starLabel);
 
-    upLabel = new JLabel(" UP");
+    upLabel = new JLabel("  UP");
     upLabel.setFont(levelupFont);
     upLabel.setForeground(Color.black);
-    upLabel.setBounds(690, 390, 100, 60);
+    upLabel.setBounds(690, 390, 120, 60);
     add(upLabel);
   }
 

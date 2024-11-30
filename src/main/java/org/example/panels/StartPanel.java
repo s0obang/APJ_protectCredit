@@ -378,7 +378,7 @@ public class StartPanel extends JPanel {
     recordsTable.repaint();
 
     // 최고점 띄우기
-    Font scoreFont = new Font("Galmuri11 Regular", Font.BOLD, 40);
+    Font scoreFont = new Font("Galmuri11 Regular", Font.BOLD, 33);
 
     Map<String, String> highest = dbManager.getHighestScore(LoginManager.getLoggedInUser());
     JLabel score = new JLabel(highest.get("points"));
