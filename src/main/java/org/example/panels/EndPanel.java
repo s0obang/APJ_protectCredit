@@ -73,6 +73,7 @@ public class EndPanel extends JPanel {
     homeButton.setBorderPainted(false);
     homeButton.setFocusPainted(false);
     homeButton.setContentAreaFilled(false);
+
     homeButton.setBounds(310, 578, 75, 75);
 
     ImageIcon buttonIcon2 = new ImageIcon(
@@ -371,7 +372,7 @@ public class EndPanel extends JPanel {
 
           }
           try (InputStream fis = getClass().getResourceAsStream(
-              "/audio/Graduation.mp3")) {
+              "/audio/graduation.mp3")) {
             mp3Player = new Player(Objects.requireNonNull(fis));
             mp3Player.play(); // MP3 파일 재생
             isSoundPlaying = false; // 오디오 재생 완료
