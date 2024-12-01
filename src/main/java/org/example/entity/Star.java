@@ -46,10 +46,6 @@ public class Star extends Entity {
     }
   }
 
-  // 속도 초기화 메서드
-  public void resetSpeed() {
-    this.MOVE_SPEED = DEFAULT_MOVE_SPEED;
-  }
 
   public void upSpeed() {
     this.MOVE_SPEED += GameManager.currentCycleCount;
