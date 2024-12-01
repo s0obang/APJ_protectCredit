@@ -5,7 +5,7 @@
 ## 🎮 PLAY
 
 > 아래 링크에서 다운받아 플레이 해보세요🌟</br>
-> > [Windows용 실행파일 링크(.exe)](https://github.com/s0obang/APJ_protectCredit/releases/tag/v1.0.0)
+> > [Windows용 실행파일 링크(.exe)](https://github.com/s0obang/APJ_protectCredit/releases)
 
 ## 📖 Introduce
 
